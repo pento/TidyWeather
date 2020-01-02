@@ -1,0 +1,36 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/weather_widget"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#00000000"
+    android:orientation="vertical"
+    android:paddingTop="16dp">
+
+    <TextView
+        android:id="@+id/current_temp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/current_temp_description"
+        android:gravity="center_horizontal"
+        android:text="@string/current_temp_text"
+        android:textAllCaps="false"
+        android:textColor="#fff" />
+
+    <TextView
+        android:id="@+id/temp_range"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/temp_range_description"
+        android:gravity="center_horizontal"
+        android:text="@string/temp_range_text"
+        android:textAllCaps="false"
+        android:textColor="#fff" />
+
+    <ImageView
+        android:id="@+id/weather_icon"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/icon_description" />
+
+</LinearLayout>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="current_temp_text">0°</string>
+    <string name="current_temp_description">Current temperature</string>
+    <string name="temp_range_text">0-0</string>
+    <string name="temp_range_description">Temperature range forecast</string>
+    <string name="add_widget">Add widget</string>
+    <string name="icon_description">Weather description</string>
+</resources>
