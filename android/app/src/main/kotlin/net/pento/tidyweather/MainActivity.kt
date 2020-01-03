@@ -1,13 +1,17 @@
 package net.pento.tidyweather
 
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.PersistableBundle
-import androidx.annotation.NonNull;
+import androidx.annotation.NonNull
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugins.GeneratedPluginRegistrant
+
 
 class MainActivity: FlutterActivity() {
     private val channel = "net.pento.tidyweather/widget"
@@ -37,6 +41,12 @@ class MainActivity: FlutterActivity() {
                 editor.putString( "max", max!!.toString() )
 
                 editor.commit()
+
+                val intent = Intent( this, WeatherWidget::class.java )
+                intent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+                val ids = AppWidgetManager.getInstance( application ).getAppWidgetIds(ComponentName( application, WeatherWidget::class.java ) )
+                intent.putExtra( AppWidgetManager.EXTRA_APPWIDGET_IDS, ids )
+                sendBroadcast( intent )
             } else {
                 result.notImplemented()
             }
