@@ -1,5 +1,5 @@
 PODS:
-  - background_fetch (0.1.1):
+  - background_fetch (0.4.0):
     - Flutter
   - Flutter (1.0.0)
   - FMDB (2.7.5):
@@ -77,7 +77,7 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/url_launcher_web/ios"
 
 SPEC CHECKSUMS:
-  background_fetch: 385552e57d3bde2c7a3abd6b1edc76b87823b6c4
+  background_fetch: 81de747c63e1ec3558e222af758c1b5fa2662c70
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   geolocator: 80aba2bb48f8c7dfc5a8b70b9d13fc3edc8399c4

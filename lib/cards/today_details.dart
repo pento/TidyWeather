@@ -21,80 +21,53 @@ class _TodayDetailsCardState extends State<TodayDetailsCard> {
         builder: ( context, weather, child ) {
           return Column(
             children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Text( Jiffy().format( 'EEEE do MMMM' ) ),
-                ],
+              Container(
+                padding: EdgeInsets.all( 12 ),
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide( color: Color.fromARGB( 0xFF, 0xCC, 0xCC, 0xCC )),
+                  ),
+                ),
+                child: Row(
+                  children: <Widget>[
+                    Text( Jiffy().format( 'EEEE do MMMM' ) ),
+                  ],
+                ),
               ),
               Row(
+                mainAxisSize: MainAxisSize.max,
                 children: <Widget>[
-                  Column(
-                    children: <Widget>[
-                      Row(
-                        children: <Widget>[
-                          Icon( MdiIcons.beakerOutline ),
-                          Column(
-                            children: <Widget>[
-                              Text( '${ weather.today.observations.rainfall.since9AMAmount }mm' ),
-                              Text( 'Since 9am' ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
+                  buildDetails(
+                    icon: MdiIcons.beakerOutline,
+                    iconColor: Colors.blue,
+                    text: Text( '${ weather.today.observations.rainfall.since9AMAmount }mm' ),
+                    subtext: Text( 'Since 9am' ),
                   ),
-                  Column(
-                    children: <Widget>[
-                      Row(
-                        children: <Widget>[
-                          Icon( MdiIcons.water ),
-                          Column(
-                            children: <Widget>[
-                              Text( '${ weather.today.forecast.rainfall.rangeCode }mm' ),
-                              Text( '${ weather.today.forecast.rainfall.probability }% chance' ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
+                  buildDetails(
+                    icon: MdiIcons.water,
+                    iconColor: Colors.blue,
+                    text: Text( '${ weather.today.forecast.rainfall.rangeCode }mm' ),
+                    subtext: Text( '${ weather.today.forecast.rainfall.probability }% chance' ),
                   ),
                 ],
               ),
               Row(
                 children: <Widget>[
-                  Column(
-                    children: <Widget>[
-                      Row(
-                        children: <Widget>[
-                          Icon( MdiIcons.weatherSunny ),
-                          Consumer<UVModel>(
-                            builder: ( context, uv, child ) {
-                              return Column(
-                                children: <Widget>[
-                                  Text( '${ uv.data.description } - ${ uv.data.index }' ),
-                                  Text( Jiffy( uv.data.utcDateTime ).fromNow() ),
-                                ],
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ],
+                  Consumer<UVModel>(
+                    builder: ( context, uv, child ) {
+                      return buildDetails(
+                        icon: MdiIcons.weatherSunny,
+                        iconColor: Colors.deepPurple,
+                        text: Text( '${ uv.data.description } - ${ uv.data.index }' ),
+                        subtext: Text( Jiffy( uv.data.utcDateTime ).fromNow() ),
+                      );
+                    }
                   ),
-                  Column(
-                    children: <Widget>[
-                      Row(
-                        children: <Widget>[
-                          Icon( MdiIcons.weatherSunnyAlert ),
-                          Column(
-                            children: <Widget>[
-                              Text( '${ weather.today.forecast.uv.description } - ${ weather.today.forecast.uv.max }' ),
-                              Text( Jiffy( weather.today.forecast.uv.start ).format( 'h:mm' ) + ' - ' + Jiffy( weather.today.forecast.uv.end ).format( 'h:mm' ) ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
+                  buildDetails(
+                    icon: MdiIcons.weatherSunnyAlert,
+                    iconColor: Colors.deepPurple,
+                    text: Text( '${ weather.today.forecast.uv.description } - ${ weather.today.forecast.uv.max }' ),
+                    subtext: Text( Jiffy( weather.today.forecast.uv.start ).format( 'h:mm' ) + ' - ' + Jiffy( weather.today.forecast.uv.end ).format( 'h:mm' ) ),
                   ),
                 ],
               ),
@@ -104,4 +77,42 @@ class _TodayDetailsCardState extends State<TodayDetailsCard> {
       ),
     );
   }
+}
+
+Expanded buildDetails( { icon, iconColor, text, subtext } ) {
+  return Expanded(
+    child: Container(
+      padding: EdgeInsets.symmetric( vertical: 5, horizontal: 12 ),
+      child: Row(
+        children: <Widget>[
+          Column(
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.all( 6 ),
+                decoration: BoxDecoration(
+                  color: iconColor,
+                  borderRadius: BorderRadius.circular( 20 ),
+                ),
+
+                child: Icon(
+                  icon,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+          Container(
+            padding: EdgeInsets.only( left: 10 ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                text,
+                subtext,
+              ],
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }
