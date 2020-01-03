@@ -1,3 +1,4 @@
+import 'package:background_fetch/background_fetch.dart';
 import 'package:flutter/material.dart';
 import 'package:preferences/preference_service.dart';
 import 'package:provider/provider.dart';
@@ -23,9 +24,29 @@ void main() async {
         child: MyApp(),
       )
   );
+
+  BackgroundFetch.registerHeadlessTask( backgroundFetchHeadlessTask );
 }
 
 class MyApp extends StatelessWidget {
+
+  MyApp() {
+    BackgroundFetch.configure( BackgroundFetchConfig(
+        minimumFetchInterval: 30,
+        stopOnTerminate: false,
+        enableHeadless: true,
+        startOnBoot: true,
+        requiresBatteryNotLow: false,
+        requiresCharging: false,
+        requiresStorageNotLow: false,
+        requiresDeviceIdle: false,
+        requiredNetworkType: BackgroundFetchConfig.NETWORK_TYPE_ANY
+    ), () async {
+      LocationModel.load().whenComplete( () { BackgroundFetch.finish(); } );
+      BackgroundFetch.finish();
+    } );
+  }
+
   @override
   Widget build( BuildContext context ) {
     return MaterialApp(
@@ -39,4 +60,13 @@ class MyApp extends StatelessWidget {
       },
     );
   }
+}
+
+void backgroundFetchHeadlessTask() async {
+  await PrefService.init( prefix: 'pref_' );
+
+  UVModel();
+  WeatherModel( background: true );
+
+  LocationModel.load().whenComplete( () { BackgroundFetch.finish(); } );
 }

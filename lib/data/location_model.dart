@@ -24,12 +24,22 @@ class LocationModel extends ChangeNotifier {
   }
 
   LocationModel() {
-    _self = this;
+    String locationCache = PrefService.getString( 'cached_location_data' );
+    if ( locationCache != null ) {
+      _location = jsonDecode( locationCache );
+    }
 
-    loadData();
+    if ( _self == null ) {
+      _self = this;
+
+      loadData();
+    }
   }
 
   static Future<void> load() {
+    if ( _self == null ) {
+      LocationModel();
+    }
     return new Future( _self.loadData );
   }
 
@@ -45,6 +55,8 @@ class LocationModel extends ChangeNotifier {
 
     final weatherLocationResponse = await http.get( '$apiRoot/search.json?lat=${ position.latitude }&lng=${ position.longitude }&units=distance:km' );
     _location = jsonDecode( weatherLocationResponse.body );
+
+    PrefService.setString( 'cached_location_data', weatherLocationResponse.body );
 
     notifyListeners();
     WeatherModel.load( _location[ 'location' ][ 'id' ] );
