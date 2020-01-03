@@ -53,6 +53,7 @@ class MyApp extends StatelessWidget {
       title: "Tidy Weather",
       theme: ThemeData(
         brightness: Brightness.light,
+        splashColor: Colors.lightBlue,
       ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
