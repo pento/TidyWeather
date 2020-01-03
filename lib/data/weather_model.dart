@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,9 +10,16 @@ class WeatherModel extends ChangeNotifier {
   Map _weather = new Map();
   static WeatherModel _self;
   static const platform = const MethodChannel( 'net.pento.tidyweather/widget' );
+  bool background;
 
-  WeatherModel() {
+  WeatherModel( { bool background = false } ) {
+    String weatherCache = PrefService.getString( 'cached_weather_data' );
+    if ( weatherCache != null ) {
+      _weather = jsonDecode( weatherCache );
+    }
+
     _self = this;
+    this.background = background;
   }
 
   WeatherDay get today {
@@ -60,16 +68,23 @@ class WeatherModel extends ChangeNotifier {
     final weatherResponse = await http.get( '$apiRoot/locations/$id/weather.json?forecasts=weather,rainfall,uv&observational=true' );
     _weather = jsonDecode( weatherResponse.body );
 
+    PrefService.setString( 'cached_weather_data', weatherResponse.body );
+
     notifyListeners();
 
-    platform.invokeMethod(
-      'updateWeatherData',
-      {
-        'current': _weather[ 'observational' ][ 'observations' ][ 'temperature' ][ 'temperature' ].toString(),
-        'min': _weather[ 'forecasts' ][ 'weather' ][ 'days' ][ 0 ][ 'entries' ][ 0 ][ 'min' ].toString(),
-        'max': _weather[ 'forecasts' ][ 'weather' ][ 'days' ][ 0 ][ 'entries' ][ 0 ][ 'max' ].toString(),
-      }
-    );
+    if ( Platform.isAndroid && ! background ) {
+      platform.invokeMethod(
+          'updateWeatherData',
+          {
+            'current': _weather[ 'observational' ][ 'observations' ][ 'temperature' ][ 'temperature' ]
+                .toString(),
+            'min': _weather[ 'forecasts' ][ 'weather' ][ 'days' ][ 0 ][ 'entries' ][ 0 ][ 'min' ]
+                .toString(),
+            'max': _weather[ 'forecasts' ][ 'weather' ][ 'days' ][ 0 ][ 'entries' ][ 0 ][ 'max' ]
+                .toString(),
+          }
+      );
+    }
   }
 }
 

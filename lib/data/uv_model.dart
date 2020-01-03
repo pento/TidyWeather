@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:preferences/preference_service.dart';
 import 'package:xml2json/xml2json.dart';
 
 class UVModel extends ChangeNotifier {
@@ -35,6 +36,11 @@ class UVModel extends ChangeNotifier {
   }
 
   UVModel() {
+    String uvCache = PrefService.getString( 'cached_uv_data' );
+    if ( uvCache != null ) {
+      _station = jsonDecode( uvCache );
+    }
+
     _self = this;
   }
 
@@ -93,6 +99,8 @@ class UVModel extends ChangeNotifier {
     } );
 
     _station = closestStation;
+
+    PrefService.setString( 'cached_uv_data', jsonEncode( _station ) );
 
     notifyListeners();
   }

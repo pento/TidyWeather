@@ -13,6 +13,7 @@ Icon?
 **/.symlinks/
 profile
 xcuserdata
+*.xcworkspace
 **/.generated/
 Flutter/App.framework
 Flutter/Flutter.framework
