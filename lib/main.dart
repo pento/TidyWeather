@@ -52,7 +52,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: "Tidy Weather",
       theme: ThemeData(
-        primarySwatch: Colors.green,
+        brightness: Brightness.light,
+      ),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
       ),
       home: HomePage(),
       routes: <String, WidgetBuilder>{

@@ -133,7 +133,7 @@ class WeatherDay {
 
     if ( observationalData != null ) {
       observations.temperature.temperature = observationalData[ 'temperature' ][ 'temperature' ].toDouble();
-      observations.temperature.apparentTemperature = observationalData[ 'temperature' ][ 'apparentTemperature' ].toDouble();
+      observations.temperature.apparentTemperature = observationalData[ 'temperature' ][ 'apparentTemperature' ]?.toDouble();
 
       observations.rainfall.since9AMAmount = observationalData[ 'rainfall' ][ 'since9AMAmount' ].toDouble();
     }
