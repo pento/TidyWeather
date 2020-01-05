@@ -121,7 +121,7 @@ class WeatherDay {
     }
 
     if ( uvForecastData != null ) {
-      forecast.uv.max = uvForecastData[ 'alert' ][ 'maxIndex' ];
+      forecast.uv.max = uvForecastData[ 'alert' ][ 'maxIndex' ].toDouble();
 
       if ( forecast.uv.max < 3.0 ) {
         forecast.uv.description = 'Low';
