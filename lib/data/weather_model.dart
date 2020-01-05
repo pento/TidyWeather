@@ -107,7 +107,7 @@ class WeatherDay {
       forecast.temperature.min = temperatureForecastData[ 'min' ];
       forecast.temperature.max = temperatureForecastData[ 'max' ];
       forecast.temperature.code = temperatureForecastData[ 'precisCode' ];
-      forecast.temperature.description = temperatureForecastData[ 'precis' ];
+      forecast.temperature.description = temperatureForecastData[ 'precis' ] + '.';
     }
 
     if ( hourlyTemperatureForecastData != null ) {
