@@ -44,7 +44,7 @@ internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManage
 
     val icon = MaterialDrawableBuilder
             .with( context )
-            .setIcon( weatherIcon( code ) )
+            .setIcon( weatherIcon( "$code" ) )
             .setColor( Color.WHITE )
             .build()
 
