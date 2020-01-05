@@ -35,10 +35,12 @@ class MainActivity: FlutterActivity() {
                 val current: String? = call.argument( "current" )
                 val min: String? = call.argument( "min" )
                 val max: String? = call.argument( "max" )
+                val code: String? = call.argument( "code" )
 
                 editor.putString( "current", current!!.toString() )
                 editor.putString( "min", min!!.toString() )
                 editor.putString( "max", max!!.toString() )
+                editor.putString( "code", code!!.toString() )
 
                 editor.commit()
 
