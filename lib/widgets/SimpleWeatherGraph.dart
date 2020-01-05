@@ -18,7 +18,7 @@ class SimpleWeatherGraph extends StatelessWidget {
   @override
   Widget build( BuildContext context ) {
     return new CustomPaint(
-      painter: new ChartPainter( _prepareEntryList( forecast ) ),
+      painter: new ChartPainter( _prepareEntryList( forecast ), context ),
     );
   }
 
@@ -57,8 +57,9 @@ class SimpleWeatherGraph extends StatelessWidget {
 
 class ChartPainter extends CustomPainter {
   final List<WeatherForecastHourlyTemperature> entries;
+  final BuildContext context;
 
-  ChartPainter( this.entries );
+  ChartPainter( this.entries, this.context );
 
   double drawingHeight;
   double drawingWidth;
@@ -133,7 +134,7 @@ class ChartPainter extends CustomPainter {
   ui.Paragraph _buildParagraphForBottomLabel( int entry ) {
     ui.ParagraphBuilder builder = new ui.ParagraphBuilder(
         new ui.ParagraphStyle( fontSize: 14.0, textAlign: TextAlign.center ) )
-      ..pushStyle( new ui.TextStyle( color: Colors.black ) );
+      ..pushStyle( new ui.TextStyle( color: Theme.of( context ).textTheme.body1.color ) );
 
     if ( entry == 0 ) {
       builder.addText( 'Now' );
