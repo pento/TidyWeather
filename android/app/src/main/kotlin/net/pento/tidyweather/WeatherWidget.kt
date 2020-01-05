@@ -40,10 +40,11 @@ internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManage
     val current = prefs.getString( "current", "-" )
     val min = prefs.getString( "min", "" )
     val max = prefs.getString( "max", "" )
+    val code = prefs.getString( "code", "" )
 
     val icon = MaterialDrawableBuilder
             .with( context )
-            .setIcon( MaterialDrawableBuilder.IconValue.WEATHER_SUNNY )
+            .setIcon( weatherIcon( code ) )
             .setColor( Color.WHITE )
             .build()
 
@@ -63,6 +64,46 @@ internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManage
 
     // Instruct the widget manager to update the widget
     appWidgetManager.updateAppWidget(appWidgetId, views)
+}
+
+internal fun weatherIcon( iconCode: String ): MaterialDrawableBuilder.IconValue? {
+    val iconCodes = HashMap<String, MaterialDrawableBuilder.IconValue>()
+
+  iconCodes[ "chance-shower-cloud" ] = MaterialDrawableBuilder.IconValue.WEATHER_RAINY
+  iconCodes[ "chance-shower-fine" ] = MaterialDrawableBuilder.IconValue.WEATHER_PARTLYCLOUDY
+  iconCodes[ "chance-snow-cloud" ] = MaterialDrawableBuilder.IconValue.WEATHER_SNOWY
+  iconCodes[ "chance-snow-fine" ] = MaterialDrawableBuilder.IconValue.WEATHER_SNOWY
+  iconCodes[ "chance-thunderstorm-cloud" ] = MaterialDrawableBuilder.IconValue.WEATHER_LIGHTNING
+  iconCodes[ "chance-thunderstorm-fine" ] = MaterialDrawableBuilder.IconValue.WEATHER_LIGHTNING
+  iconCodes[ "chance-thunderstorm-showers" ] = MaterialDrawableBuilder.IconValue.WEATHER_LIGHTNING_RAINY
+  iconCodes[ "cloudy" ] = MaterialDrawableBuilder.IconValue.WEATHER_CLOUDY
+  iconCodes[ "drizzle" ] = MaterialDrawableBuilder.IconValue.WEATHER_RAINY
+  iconCodes[ "dust" ] = MaterialDrawableBuilder.IconValue.WEATHER_FOG
+  iconCodes[ "few-showers" ] = MaterialDrawableBuilder.IconValue.WEATHER_RAINY
+  iconCodes[ "fine" ] = MaterialDrawableBuilder.IconValue.WEATHER_SUNNY
+  iconCodes[ "fog" ] = MaterialDrawableBuilder.IconValue.WEATHER_FOG
+  iconCodes[ "frost" ] = MaterialDrawableBuilder.IconValue.SNOWFLAKE
+  iconCodes[ "hail" ] = MaterialDrawableBuilder.IconValue.WEATHER_HAIL
+  iconCodes[ "heavy-showers-rain" ] = MaterialDrawableBuilder.IconValue.WEATHER_POURING
+  iconCodes[ "heavt-snow" ] = MaterialDrawableBuilder.IconValue.WEATHER_SNOWY
+  iconCodes[ "high-cloud" ] = MaterialDrawableBuilder.IconValue.WEATHER_PARTLYCLOUDY
+  iconCodes[ "light-snow" ] = MaterialDrawableBuilder.IconValue.WEATHER_SNOWY
+  iconCodes[ "mostly-cloudy" ] = MaterialDrawableBuilder.IconValue.WEATHER_CLOUDY
+  iconCodes[ "mostly-fine" ] = MaterialDrawableBuilder.IconValue.WEATHER_PARTLYCLOUDY
+  iconCodes[ "overcast" ] = MaterialDrawableBuilder.IconValue.WEATHER_CLOUDY
+  iconCodes[ "partly-cloudy" ] = MaterialDrawableBuilder.IconValue.WEATHER_PARTLYCLOUDY
+  iconCodes[ "shower-or-two" ] = MaterialDrawableBuilder.IconValue.WEATHER_RAINY
+  iconCodes[ "showers-rain" ] = MaterialDrawableBuilder.IconValue.WEATHER_RAINY
+  iconCodes[ "snow" ] = MaterialDrawableBuilder.IconValue.WEATHER_SNOWY
+  iconCodes[ "snow-and-rain" ] = MaterialDrawableBuilder.IconValue.WEATHER_SNOWY_RAINY
+  iconCodes[ "thunderstorm" ] = MaterialDrawableBuilder.IconValue.WEATHER_LIGHTNING
+  iconCodes[ "wind" ] = MaterialDrawableBuilder.IconValue.WEATHER_WINDY
+
+  if ( iconCodes.containsKey( iconCode ) ) {
+    return iconCodes[ iconCode ]
+  }
+
+  return MaterialDrawableBuilder.IconValue.TEXTURE
 }
 
 internal fun drawableToBitmap( drawable: Drawable ): Bitmap {
