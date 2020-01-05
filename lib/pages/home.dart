@@ -4,6 +4,7 @@ import 'package:preferences/preference_service.dart';
 import 'package:provider/provider.dart';
 
 import './settings.dart';
+import '../cards/graph.dart';
 import '../cards/today.dart';
 import '../cards/today_details.dart';
 import '../cards/week.dart';
@@ -46,6 +47,7 @@ class AppState extends State<HomePage> {
               children: <Widget>[
                 TodayCard(),
                 WeekCard(),
+                GraphCard(),
                 TodayDetailsCard(),
               ],
             ),

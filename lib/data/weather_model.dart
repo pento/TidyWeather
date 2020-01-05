@@ -28,6 +28,7 @@ class WeatherModel extends ChangeNotifier {
     if ( _weather.containsKey( 'forecasts' ) ) {
       _weatherToday = new WeatherDay(
           _weather[ 'forecasts' ][ 'weather' ][ 'days' ][ 0 ][ 'entries' ][ 0 ],
+          _weather[ 'forecasts' ][ 'temperature' ][ 'days' ][ 0 ][ 'entries' ],
           _weather[ 'forecasts' ][ 'rainfall' ][ 'days' ][ 0 ][ 'entries' ][ 0 ],
           _weather[ 'forecasts' ][ 'uv' ][ 'days' ][ 0 ],
           _weather[ 'observational' ][ 'observations' ],
@@ -44,7 +45,9 @@ class WeatherModel extends ChangeNotifier {
       for ( var i  = 0; i < _weather[ 'forecasts' ][ 'weather' ][ 'days' ].length; i++ ) {
         WeatherDay _day = new WeatherDay(
           _weather[ 'forecasts' ][ 'weather' ][ 'days' ][ i ][ 'entries' ][ 0 ],
+          _weather[ 'forecasts' ][ 'temperature' ][ 'days' ][ i ][ 'entries' ],
           _weather[ 'forecasts' ][ 'rainfall' ][ 'days' ][ i ][ 'entries' ][ 0 ],
+          i < _weather[ 'forecasts' ][ 'uv' ][ 'days' ].length ? _weather[ 'forecasts' ][ 'uv' ][ 'days' ][ i ] : null,
         );
         _week.days.add( _day );
       }
@@ -65,7 +68,7 @@ class WeatherModel extends ChangeNotifier {
 
     String apiRoot = 'https://api.willyweather.com.au/v2/$apiKey';
 
-    final weatherResponse = await http.get( '$apiRoot/locations/$id/weather.json?forecasts=weather,rainfall,uv&observational=true' );
+    final weatherResponse = await http.get( '$apiRoot/locations/$id/weather.json?forecasts=weather,rainfall,uv,temperature&observational=true' );
     _weather = jsonDecode( weatherResponse.body );
 
     PrefService.setString( 'cached_weather_data', weatherResponse.body );
@@ -97,7 +100,7 @@ class WeatherDay {
   WeatherObservations observations = new WeatherObservations();
   DateTime dateTime;
 
-  WeatherDay( [ Map temperatureForecastData, Map rainfallForecastData, Map uvForecastData, Map observationalData ] ) {
+  WeatherDay( [ Map temperatureForecastData,  List hourlyTemperatureForecastData, Map rainfallForecastData, Map uvForecastData, Map observationalData ] ) {
     if ( temperatureForecastData != null ) {
       dateTime = DateTime.parse( temperatureForecastData[ 'dateTime' ] );
 
@@ -105,6 +108,16 @@ class WeatherDay {
       forecast.temperature.max = temperatureForecastData[ 'max' ];
       forecast.temperature.code = temperatureForecastData[ 'precisCode' ];
       forecast.temperature.description = temperatureForecastData[ 'precis' ];
+    }
+
+    if ( hourlyTemperatureForecastData != null ) {
+      hourlyTemperatureForecastData.forEach( ( hourlyTemperatureData ) {
+        WeatherForecastHourlyTemperature _hourlyTemperature = new WeatherForecastHourlyTemperature();
+        _hourlyTemperature.temperature = hourlyTemperatureData[ 'temperature' ].toDouble();
+        _hourlyTemperature.dateTime = DateTime.parse( hourlyTemperatureData[ 'dateTime' ] );
+
+        forecast.temperature.hourlyTemperature.add( _hourlyTemperature );
+      } );
     }
 
     if ( uvForecastData != null ) {
@@ -151,6 +164,12 @@ class WeatherForecastTemperature {
   int max;
   String code;
   String description;
+  List<WeatherForecastHourlyTemperature> hourlyTemperature = new List();
+}
+
+class WeatherForecastHourlyTemperature {
+  double temperature;
+  DateTime dateTime;
 }
 
 class WeatherForecastRainfall {
