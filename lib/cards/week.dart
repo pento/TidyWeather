@@ -20,6 +20,7 @@ class _WeekCardState extends State<WeekCard> {
         builder: ( context, weather, child ) {
           return ListView.builder(
             shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
             itemCount: weather.week.days.length,
             itemBuilder: ( BuildContext context, int index ) {
               WeatherForecastTemperature day = weather.week.days[ index ].forecast.temperature;
