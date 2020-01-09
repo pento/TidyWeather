@@ -24,6 +24,18 @@ class _WeekCardState extends State<WeekCard> {
             physics: NeverScrollableScrollPhysics(),
             itemCount: weather.week.days.length,
             itemBuilder: ( BuildContext context, int index ) {
+              if ( weather.week.days[ index ].dateTime.day == DateTime.now().day ) {
+                return Container();
+              }
+
+              String dayName;
+              if ( weather.week.days[ index ].dateTime.day == DateTime.now().add( new Duration( days: 1 ) ).day ) {
+                dayName = 'Tomorrow';
+              }
+              else {
+                dayName = Jiffy( weather.week.days[ index ].dateTime ).format( 'EEEE' );
+              }
+
               WeatherForecastTemperature day = weather.week.days[ index ].forecast.temperature;
               return Container(
                 margin: EdgeInsets.symmetric( vertical: 0, horizontal: 12 ),
@@ -36,7 +48,7 @@ class _WeekCardState extends State<WeekCard> {
                 child: Row(
                   children: <Widget>[
                     Expanded(
-                        child: Text( index == 0 ? 'Tomorrow' : Jiffy( weather.week.days[ index ].dateTime ).format( 'EEEE' ) )
+                        child: Text( dayName )
                     ),
                     SvgPicture.asset( weatherIcon( day.code ) ),
                     RichText(
