@@ -12,7 +12,7 @@ Drawer buildDrawer( BuildContext context, String currentRoute ) {
             color: Colors.blue,
           ),
           child: Text(
-            "Gary's Weather",
+            "Tidy Weather",
             style: TextStyle(
               color: Colors.white,
               fontSize: 24,
