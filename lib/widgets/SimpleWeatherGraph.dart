@@ -83,8 +83,8 @@ class ChartPainter extends CustomPainter {
     double maxWeight = entries.map( ( entry ) => entry.temperature ).reduce( max );
     double minWeight = entries.map( ( entry ) => entry.temperature ).reduce( min );
 
-    int maxValue = maxWeight.ceil() + 2;
-    int minValue = minWeight.floor() - 1;
+    int maxValue = maxWeight.ceil() + 5;
+    int minValue = minWeight.floor() - 2;
 
     return new Tuple2( minValue, maxValue );
   }
