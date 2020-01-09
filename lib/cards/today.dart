@@ -38,7 +38,7 @@ class _TodayCardState extends State<TodayCard> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        '${ weather.today.observations.temperature.temperature.toString() }°',
+                        '${ weather.today.observations.temperature.temperature }°',
                         style: TextStyle(
                           color: Colors.white,
                         ),
@@ -87,7 +87,7 @@ class _TodayCardState extends State<TodayCard> {
                                 ),
                               ),
                               TextSpan(
-                                text: '${ weather.today.forecast.temperature.max.toString() }',
+                                text: weather.today.forecast.temperature.max.toString(),
                                 style: TextStyle(
                                   color: Colors.white,
                                 ),
@@ -96,7 +96,7 @@ class _TodayCardState extends State<TodayCard> {
                           ),
                         ),
                         Text(
-                          '${ weather.today.forecast.temperature.description }',
+                          weather.today.forecast.temperature.description,
                           style: TextStyle(
                             color: Color.fromARGB( 255, 0xDD, 0xDD, 0xDD ),
                             fontSize: 16,

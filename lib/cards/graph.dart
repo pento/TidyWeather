@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tidyweather/widgets/SimpleWeatherGraph.dart';
 
 import '../data/weather_model.dart';
+import '../widgets/SimpleWeatherGraph.dart';
 
 class GraphCard extends StatefulWidget {
 

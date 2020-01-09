@@ -57,7 +57,7 @@ class LocationModel extends ChangeNotifier {
     PrefService.setString( 'cached_location_data', weatherLocationResponse.body );
 
     WeatherModel.load( _location[ 'location' ][ 'id' ] );
-    UVModel.load( _location[ 'location']['lat'], _location[ 'location']['lng'] );
+    UVModel.load( _location[ 'location' ][ 'lat' ], _location[ 'location' ][ 'lng' ] );
 
     notifyListeners();
   }

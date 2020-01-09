@@ -77,16 +77,13 @@ class WeatherModel extends ChangeNotifier {
 
     if ( Platform.isAndroid && ! background ) {
       platform.invokeMethod(
-          'updateWeatherData',
-          {
-            'current': _weather[ 'observational' ][ 'observations' ][ 'temperature' ][ 'temperature' ]
-                .toString(),
-            'min': _weather[ 'forecasts' ][ 'weather' ][ 'days' ][ 0 ][ 'entries' ][ 0 ][ 'min' ]
-                .toString(),
-            'max': _weather[ 'forecasts' ][ 'weather' ][ 'days' ][ 0 ][ 'entries' ][ 0 ][ 'max' ]
-                .toString(),
-		  	'code': _weather[ 'forecasts' ][ 'weather' ][ 'days' ][ 0 ][ 'entries' ][ 0 ][ 'precisCode' ]
-          }
+        'updateWeatherData',
+        {
+          'current': _weather[ 'observational' ][ 'observations' ][ 'temperature' ][ 'temperature' ].toString(),
+          'min': _weather[ 'forecasts' ][ 'weather' ][ 'days' ][ 0 ][ 'entries' ][ 0 ][ 'min' ].toString(),
+          'max': _weather[ 'forecasts' ][ 'weather' ][ 'days' ][ 0 ][ 'entries' ][ 0 ][ 'max' ].toString(),
+          'code': _weather[ 'forecasts' ][ 'weather' ][ 'days' ][ 0 ][ 'entries' ][ 0 ][ 'precisCode' ]
+        }
       );
     }
   }
