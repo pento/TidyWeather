@@ -4,6 +4,9 @@ import 'package:preferences/preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import './home.dart';
+import '../data/location_model.dart';
+import '../data/uv_model.dart';
+import '../data/weather_model.dart';
 
 class SettingsPage extends StatefulWidget {
   static const String route = '/settings';
@@ -54,6 +57,12 @@ class _SettingsPageState extends State<SettingsPage> {
         TextFieldPreference( 'API Key', 'api_key' ),
         RaisedButton(
           onPressed: () {
+            LocationModel();
+            UVModel();
+            WeatherModel();
+
+            LocationModel.load();
+
             Navigator.pushNamed( context, HomePage.route );
           },
           child: Text( 'Close Settings' ),

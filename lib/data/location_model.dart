@@ -29,17 +29,15 @@ class LocationModel extends ChangeNotifier {
       _location = jsonDecode( locationCache );
     }
 
-    if ( _self == null ) {
-      _self = this;
+    _self = this;
 
+    String apiKey = PrefService.getString( 'api_key' );
+    if ( apiKey != null || apiKey.isNotEmpty ) {
       loadData();
     }
   }
 
   static Future<void> load() {
-    if ( _self == null ) {
-      LocationModel();
-    }
     return new Future( _self.loadData );
   }
 
@@ -58,9 +56,10 @@ class LocationModel extends ChangeNotifier {
 
     PrefService.setString( 'cached_location_data', weatherLocationResponse.body );
 
-    notifyListeners();
     WeatherModel.load( _location[ 'location' ][ 'id' ] );
     UVModel.load( _location[ 'location']['lat'], _location[ 'location']['lng'] );
+
+    notifyListeners();
   }
 }
 

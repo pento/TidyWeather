@@ -43,7 +43,6 @@ class MyApp extends StatelessWidget {
         requiredNetworkType: BackgroundFetchConfig.NETWORK_TYPE_ANY
     ), () async {
       LocationModel.load().whenComplete( () { BackgroundFetch.finish(); } );
-      BackgroundFetch.finish();
     } );
   }
 
@@ -69,6 +68,7 @@ class MyApp extends StatelessWidget {
 void backgroundFetchHeadlessTask() async {
   await PrefService.init( prefix: 'pref_' );
 
+  LocationModel();
   UVModel();
   WeatherModel( background: true );
 
