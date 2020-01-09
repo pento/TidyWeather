@@ -37,7 +37,7 @@ class AppState extends State<HomePage> {
             if ( weather.today.observations.temperature.temperature == null ) {
               return Scaffold(
                 appBar: AppBar(
-                  title: Text( 'Loading...' ),
+                  title: Text( location.location.name ),
                 ),
                 drawer: buildDrawer( context, HomePage.route ),
                 body: Center(
