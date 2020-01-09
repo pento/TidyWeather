@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 import '../data/weather_model.dart';
@@ -23,10 +24,10 @@ class _TodayCardState extends State<TodayCard> {
             children: <Widget>[
               Row( // Big icon
                 children: <Widget>[
-                  Icon(
+                  SvgPicture.asset(
                     weatherIcon( weather.today.forecast.temperature.code ),
                     color: Colors.white,
-                    size: 96,
+                    width: 96,
                   )
                 ],
               ),

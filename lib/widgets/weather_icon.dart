@@ -1,41 +1,39 @@
-import 'package:flutter/material.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-IconData weatherIcon( String iconCode ) {
+String weatherIcon( String iconCode ) {
   Map iconCodes = new Map();
 
-  iconCodes[ 'chance-shower-cloud' ] = MdiIcons.weatherRainy;
-  iconCodes[ 'chance-shower-fine' ] = MdiIcons.weatherPartlyRainy;
-  iconCodes[ 'chance-snow-cloud' ] = MdiIcons.weatherSnowy;
-  iconCodes[ 'chance-snow-fine' ] = MdiIcons.weatherPartlySnowy;
-  iconCodes[ 'chance-thunderstorm-cloud' ] = MdiIcons.weatherLightning;
-  iconCodes[ 'chance-thunderstorm-fine' ] = MdiIcons.weatherPartlyLightning;
-  iconCodes[ 'chance-thunderstorm-showers' ] = MdiIcons.weatherLightningRainy;
-  iconCodes[ 'cloudy' ] = MdiIcons.weatherCloudy;
-  iconCodes[ 'drizzle' ] = MdiIcons.weatherRainy;
-  iconCodes[ 'dust' ] = MdiIcons.weatherHazy;
-  iconCodes[ 'few-showers' ] = MdiIcons.weatherRainy;
-  iconCodes[ 'fine' ] = MdiIcons.weatherSunny;
-  iconCodes[ 'fog' ] = MdiIcons.weatherFog;
-  iconCodes[ 'frost' ] = MdiIcons.snowflakeVariant;
-  iconCodes[ 'hail' ] = MdiIcons.weatherHail;
-  iconCodes[ 'heavy-showers-rain' ] = MdiIcons.weatherPouring;
-  iconCodes[ 'heavt-snow' ] = MdiIcons.weatherSnowyHeavy;
-  iconCodes[ 'high-cloud' ] = MdiIcons.weatherPartlyCloudy;
-  iconCodes[ 'light-snow' ] = MdiIcons.weatherSnowy;
-  iconCodes[ 'mostly-cloudy' ] = MdiIcons.weatherCloudy;
-  iconCodes[ 'mostly-fine' ] = MdiIcons.weatherPartlyCloudy;
-  iconCodes[ 'overcast' ] = MdiIcons.weatherCloudy;
-  iconCodes[ 'partly-cloudy' ] = MdiIcons.weatherPartlyCloudy;
-  iconCodes[ 'shower-or-two' ] = MdiIcons.weatherPartlyRainy;
-  iconCodes[ 'showers-rain' ] = MdiIcons.weatherRainy;
-  iconCodes[ 'snow' ] = MdiIcons.weatherSnowy;
-  iconCodes[ 'snow-and-rain' ] = MdiIcons.weatherSnowyRainy;
-  iconCodes[ 'thunderstorm' ] = MdiIcons.weatherLightning;
-  iconCodes[ 'wind' ] = MdiIcons.weatherWindy;
+  iconCodes[ 'chance-shower-cloud' ] = 'weather-rainy';
+  iconCodes[ 'chance-shower-fine' ] = 'weather-partly-rainy';
+  iconCodes[ 'chance-snow-cloud' ] = 'weather-snowy';
+  iconCodes[ 'chance-snow-fine' ] = 'weather-partly-snowy';
+  iconCodes[ 'chance-thunderstorm-cloud' ] = 'weather-lightning';
+  iconCodes[ 'chance-thunderstorm-fine' ] = 'weather-partly-lightning';
+  iconCodes[ 'chance-thunderstorm-showers' ] = 'weather-lightning-rainy';
+  iconCodes[ 'cloudy' ] = 'weather-cloudy';
+  iconCodes[ 'drizzle' ] = 'weather-rainy';
+  iconCodes[ 'dust' ] = 'weather-hazy';
+  iconCodes[ 'few-showers' ] = 'weather-rainy';
+  iconCodes[ 'fine' ] = 'weather-sunny';
+  iconCodes[ 'fog' ] = 'weather-fog';
+  iconCodes[ 'frost' ] = 'snowflake-variant';
+  iconCodes[ 'hail' ] = 'weather-hail';
+  iconCodes[ 'heavy-showers-rain' ] = 'weather-pouring';
+  iconCodes[ 'heavt-snow' ] = 'weather-snowy-heavy';
+  iconCodes[ 'high-cloud' ] = 'weather-partly-cloudy';
+  iconCodes[ 'light-snow' ] = 'weather-snowy';
+  iconCodes[ 'mostly-cloudy' ] = 'weather-cloudy';
+  iconCodes[ 'mostly-fine' ] = 'weather-partly-cloudy';
+  iconCodes[ 'overcast' ] = 'weather-cloudy';
+  iconCodes[ 'partly-cloudy' ] = 'weather-partly-cloudy';
+  iconCodes[ 'shower-or-two' ] = 'weather-partly-rainy';
+  iconCodes[ 'showers-rain' ] = 'weather-rainy';
+  iconCodes[ 'snow' ] = 'weather-snowy';
+  iconCodes[ 'snow-and-rain' ] = 'weather-snowy-rainy';
+  iconCodes[ 'thunderstorm' ] = 'weather-lightning';
+  iconCodes[ 'wind' ] = 'weather-windy';
 
   if ( iconCodes.containsKey( iconCode ) ) {
-    return iconCodes[ iconCode ];
+    return 'assets/icons/${ iconCodes[ iconCode ] }.svg';
   }
 
   // A null icon code should be considered an intentional lookup failure.
@@ -43,5 +41,5 @@ IconData weatherIcon( String iconCode ) {
     print( 'Unknown icon code: $iconCode' );
   }
 
-  return Icons.texture;
+  return '';
 }

@@ -42,12 +42,6 @@ internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManage
     val max = prefs.getString( "max", "" )
     val code = prefs.getString( "code", "" )
 
-    val icon = MaterialDrawableBuilder
-            .with( context )
-            .setIcon( weatherIcon( "$code" ) )
-            .setColor( Color.WHITE )
-            .build()
-
     // Construct the RemoteViews object
     val views = RemoteViews( context.packageName, R.layout.weather_widget )
 
@@ -60,50 +54,51 @@ internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManage
     views.setTextViewText( R.id.current_temp, current )
     views.setTextViewText( R.id.temp_range, "$min-$max" )
 
-    views.setImageViewBitmap( R.id.weather_icon, drawableToBitmap( icon ) )
+    views.setImageViewResource( R.id.weather_icon, weatherIcon( "$code" ) )
 
     // Instruct the widget manager to update the widget
     appWidgetManager.updateAppWidget(appWidgetId, views)
 }
 
-internal fun weatherIcon( iconCode: String ): MaterialDrawableBuilder.IconValue? {
-    val iconCodes = HashMap<String, MaterialDrawableBuilder.IconValue>()
+internal fun weatherIcon( iconCode: String ): Int {
+    val iconCodes = HashMap<String, Int>()
 
-  iconCodes[ "chance-shower-cloud" ] = MaterialDrawableBuilder.IconValue.WEATHER_RAINY
-  iconCodes[ "chance-shower-fine" ] = MaterialDrawableBuilder.IconValue.WEATHER_PARTLYCLOUDY
-  iconCodes[ "chance-snow-cloud" ] = MaterialDrawableBuilder.IconValue.WEATHER_SNOWY
-  iconCodes[ "chance-snow-fine" ] = MaterialDrawableBuilder.IconValue.WEATHER_SNOWY
-  iconCodes[ "chance-thunderstorm-cloud" ] = MaterialDrawableBuilder.IconValue.WEATHER_LIGHTNING
-  iconCodes[ "chance-thunderstorm-fine" ] = MaterialDrawableBuilder.IconValue.WEATHER_LIGHTNING
-  iconCodes[ "chance-thunderstorm-showers" ] = MaterialDrawableBuilder.IconValue.WEATHER_LIGHTNING_RAINY
-  iconCodes[ "cloudy" ] = MaterialDrawableBuilder.IconValue.WEATHER_CLOUDY
-  iconCodes[ "drizzle" ] = MaterialDrawableBuilder.IconValue.WEATHER_RAINY
-  iconCodes[ "dust" ] = MaterialDrawableBuilder.IconValue.WEATHER_FOG
-  iconCodes[ "few-showers" ] = MaterialDrawableBuilder.IconValue.WEATHER_RAINY
-  iconCodes[ "fine" ] = MaterialDrawableBuilder.IconValue.WEATHER_SUNNY
-  iconCodes[ "fog" ] = MaterialDrawableBuilder.IconValue.WEATHER_FOG
-  iconCodes[ "frost" ] = MaterialDrawableBuilder.IconValue.SNOWFLAKE
-  iconCodes[ "hail" ] = MaterialDrawableBuilder.IconValue.WEATHER_HAIL
-  iconCodes[ "heavy-showers-rain" ] = MaterialDrawableBuilder.IconValue.WEATHER_POURING
-  iconCodes[ "heavt-snow" ] = MaterialDrawableBuilder.IconValue.WEATHER_SNOWY
-  iconCodes[ "high-cloud" ] = MaterialDrawableBuilder.IconValue.WEATHER_PARTLYCLOUDY
-  iconCodes[ "light-snow" ] = MaterialDrawableBuilder.IconValue.WEATHER_SNOWY
-  iconCodes[ "mostly-cloudy" ] = MaterialDrawableBuilder.IconValue.WEATHER_CLOUDY
-  iconCodes[ "mostly-fine" ] = MaterialDrawableBuilder.IconValue.WEATHER_PARTLYCLOUDY
-  iconCodes[ "overcast" ] = MaterialDrawableBuilder.IconValue.WEATHER_CLOUDY
-  iconCodes[ "partly-cloudy" ] = MaterialDrawableBuilder.IconValue.WEATHER_PARTLYCLOUDY
-  iconCodes[ "shower-or-two" ] = MaterialDrawableBuilder.IconValue.WEATHER_RAINY
-  iconCodes[ "showers-rain" ] = MaterialDrawableBuilder.IconValue.WEATHER_RAINY
-  iconCodes[ "snow" ] = MaterialDrawableBuilder.IconValue.WEATHER_SNOWY
-  iconCodes[ "snow-and-rain" ] = MaterialDrawableBuilder.IconValue.WEATHER_SNOWY_RAINY
-  iconCodes[ "thunderstorm" ] = MaterialDrawableBuilder.IconValue.WEATHER_LIGHTNING
-  iconCodes[ "wind" ] = MaterialDrawableBuilder.IconValue.WEATHER_WINDY
+
+    iconCodes[ "chance-shower-cloud" ] = R.drawable.weather_rainy
+    iconCodes[ "chance-shower-fine" ] = R.drawable.weather_partly_rainy
+    iconCodes[ "chance-snow-cloud" ] = R.drawable.weather_snowy
+    iconCodes[ "chance-snow-fine" ] = R.drawable.weather_partly_snowy
+    iconCodes[ "chance-thunderstorm-cloud" ] = R.drawable.weather_lightning
+    iconCodes[ "chance-thunderstorm-fine" ] = R.drawable.weather_partly_lightning
+    iconCodes[ "chance-thunderstorm-showers" ] = R.drawable.weather_lightning_rainy
+    iconCodes[ "cloudy" ] = R.drawable.weather_cloudy
+    iconCodes[ "drizzle" ] = R.drawable.weather_rainy
+    iconCodes[ "dust" ] = R.drawable.weather_hazy
+    iconCodes[ "few-showers" ] = R.drawable.weather_rainy
+    iconCodes[ "fine" ] = R.drawable.weather_sunny
+    iconCodes[ "fog" ] = R.drawable.weather_fog
+    iconCodes[ "frost" ] = R.drawable.snowflake_variant
+    iconCodes[ "hail" ] = R.drawable.weather_hail
+    iconCodes[ "heavy-showers-rain" ] = R.drawable.weather_pouring
+    iconCodes[ "heavy-snow" ] = R.drawable.weather_snowy_heavy
+    iconCodes[ "high-cloud" ] = R.drawable.weather_partly_cloudy
+    iconCodes[ "light-snow" ] = R.drawable.weather_snowy
+    iconCodes[ "mostly-cloudy" ] = R.drawable.weather_cloudy
+    iconCodes[ "mostly-fine" ] = R.drawable.weather_partly_cloudy
+    iconCodes[ "overcast" ] = R.drawable.weather_cloudy
+    iconCodes[ "partly-cloudy" ] = R.drawable.weather_partly_cloudy
+    iconCodes[ "shower-or-two" ] = R.drawable.weather_partly_rainy
+    iconCodes[ "showers-rain" ] = R.drawable.weather_rainy
+    iconCodes[ "snow" ] = R.drawable.weather_snowy
+    iconCodes[ "snow-and-rain" ] = R.drawable.weather_snowy_rainy
+    iconCodes[ "thunderstorm" ] = R.drawable.weather_lightning
+    iconCodes[ "wind" ] = R.drawable.weather_windy
 
   if ( iconCodes.containsKey( iconCode ) ) {
-    return iconCodes[ iconCode ]
+    return iconCodes[ iconCode ]!!
   }
 
-  return MaterialDrawableBuilder.IconValue.TEXTURE
+  return -1
 }
 
 internal fun drawableToBitmap( drawable: Drawable ): Bitmap {

@@ -31,6 +31,7 @@
         android:id="@+id/weather_icon"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:contentDescription="@string/icon_description" />
+        android:contentDescription="@string/icon_description"
+        android:tint="#FFFFFF" />
 
 </LinearLayout>

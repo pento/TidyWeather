@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:provider/provider.dart';
 
@@ -37,7 +38,7 @@ class _WeekCardState extends State<WeekCard> {
                     Expanded(
                         child: Text( index == 0 ? 'Tomorrow' : Jiffy( weather.week.days[ index ].dateTime ).format( 'EEEE' ) )
                     ),
-                    Icon( weatherIcon( day.code ) ),
+                    SvgPicture.asset( weatherIcon( day.code ) ),
                     RichText(
                       text: TextSpan(
                         style: TextStyle(
