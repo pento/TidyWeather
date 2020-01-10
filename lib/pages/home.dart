@@ -15,8 +15,6 @@ import '../widgets/drawer.dart';
 class HomePage extends StatefulWidget {
   static const String route = '/';
 
-  final String apiRoot = 'https://api.willyweather.com.au/v2/ZjcyYjMxN2RlNjgyMjRiMzE5NTg0MD';
-
   @override
   AppState createState() => AppState();
 }
@@ -34,6 +32,20 @@ class AppState extends State<HomePage> {
       builder: ( context, location, child ) {
         return Consumer<WeatherModel>(
           builder: ( context, weather, child ) {
+            if ( location.location.countryCode != null && location.location.countryCode != 'AU' ) {
+              return Scaffold(
+                appBar: AppBar(
+                  title: Text( 'Outside Australia' ),
+                ),
+                drawer: buildDrawer( context, HomePage.route ),
+                body: Padding(
+                  padding: const EdgeInsets.symmetric( horizontal: 16.0, vertical: 12.0 ),
+                  child: Text( "Thanks for trying out Tidy Weather! We're currently only available in Australia, but will be expanding to other locations soon!" ),
+                ),
+              );
+
+            }
+
             if ( weather.today.observations.temperature.temperature == null ) {
               return Scaffold(
                 appBar: AppBar(
