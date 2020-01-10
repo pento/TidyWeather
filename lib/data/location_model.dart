@@ -10,14 +10,17 @@ import './weather_model.dart';
 
 class LocationModel extends ChangeNotifier {
   Map _location = new Map();
+  Placemark _place = new Placemark();
+
   static LocationModel _self;
 
   WeatherLocation get location {
     WeatherLocation _currentLocation = new WeatherLocation();
 
-    if ( _location.containsKey( 'location' ) ) {
-      _currentLocation.id = _location[ 'location' ][ 'id' ];
-      _currentLocation.name = _location[ 'location' ][ 'name' ];
+    if ( _location.containsKey( 'id' ) ) {
+      _currentLocation.id = _location[ 'id' ];
+      _currentLocation.name = _location[ 'name' ];
+      _currentLocation.countryCode = _place.isoCountryCode;
     }
 
     return _currentLocation;
@@ -51,19 +54,33 @@ class LocationModel extends ChangeNotifier {
 
     Position position = await Geolocator().getCurrentPosition( desiredAccuracy: LocationAccuracy.high );
 
-    final weatherLocationResponse = await http.get( '$apiRoot/search.json?lat=${ position.latitude }&lng=${ position.longitude }&units=distance:km' );
-    _location = jsonDecode( weatherLocationResponse.body );
+    List<Placemark> place = await Geolocator().placemarkFromPosition( position );
 
-    PrefService.setString( 'cached_location_data', weatherLocationResponse.body );
+    if ( place[ 0 ].isoCountryCode != 'AU' ) {
+      _place = place[ 0 ];
+      notifyListeners();
+      return;
+    }
 
-    WeatherModel.load( _location[ 'location' ][ 'id' ] );
-    UVModel.load( _location[ 'location' ][ 'lat' ], _location[ 'location' ][ 'lng' ] );
+    if ( ! _location.containsKey( 'id' ) || _place.locality == null || place[ 0 ].locality != _place.locality ) {
+      _place = place[ 0 ];
 
-    notifyListeners();
+      final weatherLocationResponse = await http.get( '$apiRoot/search.json?query=${ _place.locality }+${ _place.postalCode }' );
+      List locationData = jsonDecode( weatherLocationResponse.body );
+      _location = locationData[ 0 ];
+
+      PrefService.setString( 'cached_location_data', jsonEncode( _location ) );
+
+      notifyListeners();
+    }
+
+    WeatherModel.load( _location[ 'id' ] );
+    UVModel.load( _location[ 'lat' ], _location[ 'lng' ] );
   }
 }
 
 class WeatherLocation {
   int id;
   String name = 'Searching...';
+  String countryCode;
 }
