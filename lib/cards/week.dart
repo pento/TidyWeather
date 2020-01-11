@@ -50,7 +50,10 @@ class _WeekCardState extends State<WeekCard> {
                     Expanded(
                         child: Text( dayName )
                     ),
-                    SvgPicture.asset( weatherIcon( day.code ) ),
+                    SvgPicture.asset(
+                      weatherIcon( day.code ),
+                      color: Theme.of( context ).textTheme.body1.color,
+                    ),
                     RichText(
                       text: TextSpan(
                         style: TextStyle(
