@@ -110,9 +110,10 @@ class WeatherDay {
 
     if ( hourlyTemperatureForecastData != null ) {
       hourlyTemperatureForecastData.forEach( ( hourlyTemperatureData ) {
-        WeatherForecastHourlyTemperature _hourlyTemperature = new WeatherForecastHourlyTemperature();
-        _hourlyTemperature.temperature = hourlyTemperatureData[ 'temperature' ].toDouble();
-        _hourlyTemperature.dateTime = DateTime.parse( hourlyTemperatureData[ 'dateTime' ] );
+        WeatherForecastHourlyTemperature _hourlyTemperature = new WeatherForecastHourlyTemperature(
+          hourlyTemperatureData[ 'temperature' ].toDouble(),
+          DateTime.parse( hourlyTemperatureData[ 'dateTime' ] ),
+        );
 
         forecast.temperature.hourlyTemperature.add( _hourlyTemperature );
       } );
@@ -168,6 +169,8 @@ class WeatherForecastTemperature {
 class WeatherForecastHourlyTemperature {
   double temperature;
   DateTime dateTime;
+
+  WeatherForecastHourlyTemperature( this.temperature, this.dateTime );
 }
 
 class WeatherForecastRainfall {

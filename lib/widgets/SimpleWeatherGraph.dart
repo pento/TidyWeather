@@ -24,8 +24,10 @@ class SimpleWeatherGraph extends StatelessWidget {
 
   List<WeatherForecastHourlyTemperature> _prepareEntryList( List<WeatherForecastHourlyTemperature> initialEntries ) {
     DateTime _now = DateTime.now();
-    WeatherForecastHourlyTemperature _nowForecast = new WeatherForecastHourlyTemperature();
-    _nowForecast.temperature = now.temperature;
+    WeatherForecastHourlyTemperature _nowForecast = new WeatherForecastHourlyTemperature(
+      now.temperature,
+      _now,
+    );
     List<WeatherForecastHourlyTemperature> _current = [ _nowForecast ];
 
     int count = 0;
@@ -78,13 +80,15 @@ class ChartPainter extends CustomPainter {
     _drawLines( canvas, borderLineValues.item1, borderLineValues.item2 );
   }
 
-  // Produces minimal and maximal value of horizontal line that will be displayed
   Tuple2<int, int> _getMinAndMaxValues( List<WeatherForecastHourlyTemperature> entries ) {
-    double maxWeight = entries.map( ( entry ) => entry.temperature ).reduce( max );
-    double minWeight = entries.map( ( entry ) => entry.temperature ).reduce( min );
+    double maxTemp = entries.map( ( entry ) => entry.temperature ).reduce( max );
+    double minTemp = entries.map( ( entry ) => entry.temperature ).reduce( min );
 
-    int maxValue = maxWeight.ceil() + 5;
-    int minValue = minWeight.floor() - 2;
+    int maxValue = maxTemp.floor();
+    int minValue = minTemp.floor();
+
+    maxValue += ( ( maxValue - minValue ) / 4 ).ceil();
+    minValue -= ( ( maxValue - minValue ) / 10 ).ceil();
 
     return new Tuple2( minValue, maxValue );
   }
