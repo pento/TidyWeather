@@ -78,7 +78,6 @@ class WeatherModel extends ChangeNotifier {
 
     final weatherResponse = await http.get( '$apiRoot/locations/$id/weather.json?forecasts=weather,rainfall,uv,temperature,wind,sunrisesunset&observational=true&regionPrecis=true' );
     _weather = jsonDecode( weatherResponse.body );
-    print( _weather[ 'regionPrecis' ].toString() );
 
     PrefService.setString( 'cached_weather_data', weatherResponse.body );
 
