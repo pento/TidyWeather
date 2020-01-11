@@ -6,7 +6,9 @@
         tools:replace="android:label"
         android:label="Tidy Weather"
         android:icon="@mipmap/ic_launcher">
-        <receiver android:name=".WeatherWidget">
+        <receiver
+            android:name=".WeatherWidget"
+            android:icon="@drawable/widget_preview">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
