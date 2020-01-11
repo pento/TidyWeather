@@ -87,7 +87,7 @@ class ChartPainter extends CustomPainter {
     int maxValue = maxTemp.floor();
     int minValue = minTemp.floor();
 
-    maxValue += ( ( maxValue - minValue ) / 4 ).ceil();
+    maxValue += 1 + ( ( maxValue - minValue ) / 5 ).ceil();
     minValue -= ( ( maxValue - minValue ) / 10 ).ceil();
 
     return new Tuple2( minValue, maxValue );
