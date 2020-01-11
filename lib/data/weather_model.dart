@@ -31,6 +31,10 @@ class WeatherModel extends ChangeNotifier {
           _weather[ 'forecasts' ][ 'temperature' ][ 'days' ][ 0 ][ 'entries' ],
           _weather[ 'forecasts' ][ 'rainfall' ][ 'days' ][ 0 ][ 'entries' ][ 0 ],
           _weather[ 'forecasts' ][ 'uv' ][ 'days' ][ 0 ],
+          _weather['forecasts'].containsKey( 'wind' ) ? _weather[ 'forecasts' ][ 'wind' ][ 'days' ][ 0 ] : null,
+          _weather['forecasts'].containsKey( 'sunrisesunset' ) ? _weather[ 'forecasts' ][ 'sunrisesunset' ][ 'days' ][ 0 ][ 'entries' ][ 0 ] : null,
+          _weather.containsKey( 'regionPrecis' ) ? _weather[ 'regionPrecis' ][ 'days' ][ 0 ][ 'entries' ][ 0 ] : null,
+          _weather.containsKey( 'regionPrecis' ) ? _weather[ 'regionPrecis' ][ 'name' ] : null,
           _weather[ 'observational' ][ 'observations' ],
       );
     }
@@ -48,6 +52,10 @@ class WeatherModel extends ChangeNotifier {
           _weather[ 'forecasts' ][ 'temperature' ][ 'days' ][ i ][ 'entries' ],
           _weather[ 'forecasts' ][ 'rainfall' ][ 'days' ][ i ][ 'entries' ][ 0 ],
           i < _weather[ 'forecasts' ][ 'uv' ][ 'days' ].length ? _weather[ 'forecasts' ][ 'uv' ][ 'days' ][ i ] : null,
+          _weather['forecasts'].containsKey( 'wind' ) ? _weather[ 'forecasts' ][ 'wind' ][ 'days' ][ i ] : null,
+          _weather['forecasts'].containsKey( 'sunrisesunset' ) ? _weather[ 'forecasts' ][ 'sunrisesunset' ][ 'days' ][ i ][ 'entries' ][ 0 ] : null,
+          _weather.containsKey( 'regionPrecis' ) ? _weather[ 'regionPrecis' ][ 'days' ][ i ][ 'entries' ][ 0 ] : null,
+          _weather.containsKey( 'regionPrecis' ) ? _weather[ 'regionPrecis' ][ 'name' ] : null,
         );
         _week.days.add( _day );
       }
@@ -68,8 +76,9 @@ class WeatherModel extends ChangeNotifier {
 
     String apiRoot = 'https://api.willyweather.com.au/v2/$apiKey';
 
-    final weatherResponse = await http.get( '$apiRoot/locations/$id/weather.json?forecasts=weather,rainfall,uv,temperature&observational=true' );
+    final weatherResponse = await http.get( '$apiRoot/locations/$id/weather.json?forecasts=weather,rainfall,uv,temperature,wind,sunrisesunset&observational=true&regionPrecis=true' );
     _weather = jsonDecode( weatherResponse.body );
+    print( _weather[ 'regionPrecis' ].toString() );
 
     PrefService.setString( 'cached_weather_data', weatherResponse.body );
 
@@ -98,7 +107,7 @@ class WeatherDay {
   WeatherObservations observations = new WeatherObservations();
   DateTime dateTime;
 
-  WeatherDay( [ Map temperatureForecastData,  List hourlyTemperatureForecastData, Map rainfallForecastData, Map uvForecastData, Map observationalData ] ) {
+  WeatherDay( [ Map temperatureForecastData, List hourlyTemperatureForecastData, Map rainfallForecastData, Map uvForecastData, Map windForecastData, Map sunForecastData, Map regionForecastData, String regionForecastName, Map observationalData ] ) {
     if ( temperatureForecastData != null ) {
       dateTime = DateTime.parse( temperatureForecastData[ 'dateTime' ] );
 
@@ -117,6 +126,11 @@ class WeatherDay {
 
         forecast.temperature.hourlyTemperature.add( _hourlyTemperature );
       } );
+    }
+
+    if ( rainfallForecastData != null ) {
+      forecast.rainfall.rangeCode = rainfallForecastData[ 'rangeCode' ];
+      forecast.rainfall.probability = rainfallForecastData[ 'probability' ];
     }
 
     if ( uvForecastData != null ) {
@@ -138,9 +152,30 @@ class WeatherDay {
       forecast.uv.end = DateTime.parse( uvForecastData[ 'alert' ][ 'endDateTime' ] );
     }
 
-    if ( rainfallForecastData != null ) {
-      forecast.rainfall.rangeCode = rainfallForecastData[ 'rangeCode' ];
-      forecast.rainfall.probability = rainfallForecastData[ 'probability' ];
+    if ( windForecastData != null ) {
+      int maxIndex;
+      double maxSpeed = -1;
+      for ( int i = 0; i < windForecastData[ 'entries' ].length; i++ ) {
+        if ( windForecastData[ 'entries' ][ i ][ 'speed' ] > maxSpeed ) {
+          maxSpeed = windForecastData[ 'entries' ][ i ][ 'speed' ].toDouble();
+          maxIndex = i;
+        }
+      }
+
+      forecast.windMax.dateTime = DateTime.parse( windForecastData[ 'entries' ][ maxIndex ][ 'dateTime' ] );
+      forecast.windMax.speed = windForecastData[ 'entries' ][ maxIndex ][ 'speed' ].toDouble();
+      forecast.windMax.direction = windForecastData[ 'entries' ][ maxIndex ][ 'direction' ];
+      forecast.windMax.directionText = windForecastData[ 'entries' ][ maxIndex ][ 'directionText' ];
+    }
+
+    if ( sunForecastData != null ) {
+      forecast.sun.sunrise = DateTime.parse( sunForecastData[ 'riseDateTime' ] );
+      forecast.sun.sunset = DateTime.parse( sunForecastData[ 'setDateTime' ] );
+    }
+
+    if ( regionForecastData != null && regionForecastName != null ) {
+      forecast.region.name = regionForecastName;
+      forecast.region.description = regionForecastData[ 'precis' ];
     }
 
     if ( observationalData != null ) {
@@ -156,6 +191,9 @@ class WeatherForecast {
   WeatherForecastTemperature temperature = new WeatherForecastTemperature();
   WeatherForecastRainfall rainfall = new WeatherForecastRainfall();
   WeatherForecastUV uv = new WeatherForecastUV();
+  WeatherForecastWind windMax = new WeatherForecastWind();
+  WeatherForecastSun sun = new WeatherForecastSun();
+  WeatherForecastRegion region = new WeatherForecastRegion();
 }
 
 class WeatherForecastTemperature {
@@ -184,6 +222,24 @@ class WeatherForecastUV {
   DateTime start;
   DateTime end;
 }
+
+class WeatherForecastWind {
+  DateTime dateTime;
+  double speed;
+  int direction;
+  String directionText;
+}
+
+class WeatherForecastSun {
+  DateTime sunrise;
+  DateTime sunset;
+}
+
+class WeatherForecastRegion {
+  String name;
+  String description;
+}
+
 
 class WeatherObservations {
   WeatherObservationsTemperature temperature = new WeatherObservationsTemperature();

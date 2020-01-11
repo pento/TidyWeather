@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tidyweather/data/location_model.dart';
 
+import '../data/location_model.dart';
 import '../data/weather_model.dart';
 import '../widgets/Day.dart';
 
-class TodayPage extends StatefulWidget {
-  static const String route = '/today';
+class WeekPage extends StatefulWidget {
+  static const String route = '/week';
 
   @override
-  _TodayPageState createState() => _TodayPageState();
+  _WeekPageState createState() => _WeekPageState();
 }
 
-class _TodayPageState extends State<TodayPage> {
+class _WeekPageState extends State<WeekPage> {
   @override
   Widget build(BuildContext context) {
     return Consumer<LocationModel>(
@@ -23,7 +23,15 @@ class _TodayPageState extends State<TodayPage> {
               appBar: AppBar(
                 title: Text( location.location.name ),
               ),
-              body: Day( weather.today ),
+              body: ListView.builder(
+                shrinkWrap: true,
+                itemCount: weather.week.days.length,
+                itemBuilder: ( BuildContext context, int index ) {
+                  return Card(
+                    child: Day( weather.week.days[ index ] ),
+                  );
+                },
+              ),
             );
           },
         );
