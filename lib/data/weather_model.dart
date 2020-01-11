@@ -54,8 +54,8 @@ class WeatherModel extends ChangeNotifier {
           i < _weather[ 'forecasts' ][ 'uv' ][ 'days' ].length ? _weather[ 'forecasts' ][ 'uv' ][ 'days' ][ i ] : null,
           _weather['forecasts'].containsKey( 'wind' ) ? _weather[ 'forecasts' ][ 'wind' ][ 'days' ][ i ] : null,
           _weather['forecasts'].containsKey( 'sunrisesunset' ) ? _weather[ 'forecasts' ][ 'sunrisesunset' ][ 'days' ][ i ][ 'entries' ][ 0 ] : null,
-          _weather.containsKey( 'regionPrecis' ) ? _weather[ 'regionPrecis' ][ 'days' ][ i ][ 'entries' ][ 0 ] : null,
-          _weather.containsKey( 'regionPrecis' ) ? _weather[ 'regionPrecis' ][ 'name' ] : null,
+          _weather.containsKey( 'regionPrecis' ) && i < _weather[ 'regionPrecis' ][ 'days' ].length ? _weather[ 'regionPrecis' ][ 'days' ][ i ][ 'entries' ][ 0 ] : null,
+          _weather.containsKey( 'regionPrecis' ) && i < _weather[ 'regionPrecis' ][ 'days' ].length ? _weather[ 'regionPrecis' ][ 'name' ] : null,
         );
         _week.days.add( _day );
       }
@@ -173,7 +173,7 @@ class WeatherDay {
     }
 
     if ( regionForecastData != null && regionForecastName != null ) {
-      forecast.region.name = regionForecastName;
+      forecast.region.name = '$regionForecastName area';
       forecast.region.description = regionForecastData[ 'precis' ];
     }
 
