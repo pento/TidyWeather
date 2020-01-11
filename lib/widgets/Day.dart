@@ -57,7 +57,7 @@ class Day extends StatelessWidget {
                         Text(
                           Jiffy( _day.dateTime ).format( 'do MMMM' ),
                           style: TextStyle(
-                            color: Color.fromARGB( 255, 0xDD, 0xDD, 0xDD ),
+                            color: Theme.of( context ).primaryColorLight,
                           ),
                         ),
                       ],
@@ -76,7 +76,7 @@ class Day extends StatelessWidget {
                                 TextSpan(
                                   text: '${ _day.forecast.temperature.min.toString() } ',
                                   style: TextStyle(
-                                    color: Color.fromARGB( 255, 0xDD, 0xDD, 0xDD ),
+                                    color: Theme.of( context ).primaryColorLight,
                                   ),
                                 ),
                                 TextSpan(
@@ -91,7 +91,7 @@ class Day extends StatelessWidget {
                           Text(
                             _day.forecast.temperature.description,
                             style: TextStyle(
-                              color: Color.fromARGB( 255, 0xDD, 0xDD, 0xDD ),
+                              color: Theme.of( context ).primaryColorLight,
                             ),
                           ),
                         ],
@@ -141,7 +141,7 @@ class Day extends StatelessWidget {
                           size: 32,
                         ),
                         Text(
-                          '${ _day.forecast.rainfall.rangeCode }mm'
+                          '${ _day.forecast.rainfall.rangeCode } mm'
                         ),
                         Text(
                           '${ _day.forecast.rainfall.probability }% chance',
@@ -170,7 +170,7 @@ class Day extends StatelessWidget {
                           size: 32,
                         ),
                         Text(
-                            '${ _day.forecast.windMax.speed }km/h'
+                            '${ _day.forecast.windMax.speed } km/h'
                         ),
                         Text(
                           'Max wind speed',

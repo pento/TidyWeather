@@ -60,7 +60,7 @@ class _TodayCardState extends State<TodayCard> {
                                 TextSpan(
                                   text: 'Feels like  ',
                                   style: TextStyle(
-                                    color: Color.fromARGB( 255, 0xDD, 0xDD, 0xDD ),
+                                    color: Theme.of( context ).primaryColorLight,
                                   ),
                                 ),
                                 TextSpan(
@@ -89,7 +89,7 @@ class _TodayCardState extends State<TodayCard> {
                                 TextSpan(
                                   text: '${ weather.today.forecast.temperature.min.toString() } ',
                                   style: TextStyle(
-                                    color: Color.fromARGB( 255, 0xDD, 0xDD, 0xDD ),
+                                    color: Theme.of( context ).primaryColorLight,
                                   ),
                                 ),
                                 TextSpan(
@@ -104,7 +104,7 @@ class _TodayCardState extends State<TodayCard> {
                           Text(
                             weather.today.forecast.temperature.description,
                             style: TextStyle(
-                              color: Color.fromARGB( 255, 0xDD, 0xDD, 0xDD ),
+                              color: Theme.of( context ).primaryColorLight,
                               fontSize: 16,
                             ),
                           ),
