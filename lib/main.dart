@@ -8,6 +8,7 @@ import './data/uv_model.dart';
 import './data/weather_model.dart';
 import './pages/home.dart';
 import './pages/settings.dart';
+import './pages/today.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -60,6 +61,7 @@ class MyApp extends StatelessWidget {
       home: HomePage(),
       routes: <String, WidgetBuilder>{
         SettingsPage.route: ( context ) => SettingsPage(),
+        TodayPage.route: ( context ) => TodayPage(),
       },
     );
   }
