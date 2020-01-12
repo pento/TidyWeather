@@ -2,8 +2,10 @@ import 'package:background_fetch/background_fetch.dart';
 import 'package:flutter/material.dart';
 import 'package:preferences/preference_service.dart';
 import 'package:provider/provider.dart';
+import 'package:tuple/tuple.dart';
 
 import './data/location_model.dart';
+import './data/preference_model.dart';
 import './data/uv_model.dart';
 import './data/weather_model.dart';
 import './pages/home.dart';
@@ -22,6 +24,7 @@ void main() async {
           ChangeNotifierProvider( create: ( context ) => LocationModel() ),
           ChangeNotifierProvider( create: ( context ) => UVModel() ),
           ChangeNotifierProvider( create: ( context ) => WeatherModel() ),
+          ChangeNotifierProvider( create: ( context ) => PreferenceModel() ),
         ],
         child: MyApp(),
       )
@@ -50,20 +53,22 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build( BuildContext context ) {
-    return MaterialApp(
-      title: "Tidy Weather",
-      theme: ThemeData(
-        brightness: Brightness.light,
-        splashColor: Colors.lightBlue,
-      ),
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
-      ),
-      home: HomePage(),
-      routes: <String, WidgetBuilder>{
-        SettingsPage.route: ( context ) => SettingsPage(),
-        TodayPage.route: ( context ) => TodayPage(),
-        WeekPage.route: ( context ) => WeekPage(),
+
+    return Selector<PreferenceModel, Tuple2<ThemeData, ThemeData>>(
+      selector: ( context, preferences ) => Tuple2( preferences.lightTheme( context ), preferences.darkTheme( context ) ),
+
+      builder: ( context, themes, child ) {
+        return MaterialApp(
+          title: "Tidy Weather",
+          theme: themes.item1,
+          darkTheme: themes.item2,
+          home: HomePage(),
+          routes: <String, WidgetBuilder>{
+            SettingsPage.route: ( context ) => SettingsPage(),
+            TodayPage.route: ( context ) => TodayPage(),
+            WeekPage.route: ( context ) => WeekPage(),
+          },
+        );
       },
     );
   }
