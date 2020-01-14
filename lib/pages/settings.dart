@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:preferences/preferences.dart';
+import 'package:tidyweather/widgets/LinkTextSpan.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import './home.dart';
@@ -66,12 +67,10 @@ class _SettingsPageState extends State<SettingsPage> {
                   style: textStyle,
                   text: 'Please ',
                 ),
-                TextSpan(
+                LinkTextSpan(
                   style: linkStyle,
                   text: 'signup for a WillyWeather API account',
-                    recognizer: TapGestureRecognizer()..onTap = () {
-                      launch( 'https://www.willyweather.com.au/api/register.html', forceSafariVC: false );
-                    }
+                  url: 'https://www.willyweather.com.au/api/register.html',
                 ),
                 TextSpan(
                   style: textStyle,

@@ -8,6 +8,7 @@ import './data/location_model.dart';
 import './data/preference_model.dart';
 import './data/uv_model.dart';
 import './data/weather_model.dart';
+import './pages/about.dart';
 import './pages/home.dart';
 import './pages/settings.dart';
 import './pages/today.dart';
@@ -64,6 +65,7 @@ class MyApp extends StatelessWidget {
           darkTheme: themes.item2,
           home: HomePage(),
           routes: <String, WidgetBuilder>{
+            AboutPage.route: ( context ) => AboutPage(),
             SettingsPage.route: ( context ) => SettingsPage(),
             TodayPage.route: ( context ) => TodayPage(),
             WeekPage.route: ( context ) => WeekPage(),

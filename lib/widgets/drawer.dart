@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../pages/about.dart';
 import '../pages/settings.dart';
 
 Drawer buildDrawer( BuildContext context, String currentRoute ) {
@@ -26,6 +27,15 @@ Drawer buildDrawer( BuildContext context, String currentRoute ) {
           onTap: () {
             Navigator.pop( context );
             Navigator.pushNamed( context, SettingsPage.route );
+          },
+        ),
+        Divider(),
+        ListTile(
+          title: Text( 'About Tidy Weather' ),
+          selected: currentRoute == AboutPage.route,
+          onTap: () {
+            Navigator.pop( context );
+            Navigator.pushNamed( context, AboutPage.route );
           },
         ),
       ],
