@@ -27,6 +27,10 @@ class _WeekPageState extends State<WeekPage> {
                 shrinkWrap: true,
                 itemCount: weather.week.days.length,
                 itemBuilder: ( BuildContext context, int index ) {
+                  if ( weather.week.days[ index ].dateTime.day == DateTime.now().day ) {
+                    return Container();
+                  }
+
                   return Card(
                     child: Day( weather.week.days[ index ] ),
                   );
