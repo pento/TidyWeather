@@ -1,8 +1,6 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:preferences/preferences.dart';
 import 'package:tidyweather/widgets/LinkTextSpan.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import './home.dart';
 import '../data/location_model.dart';
