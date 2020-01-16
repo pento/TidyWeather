@@ -182,6 +182,10 @@ class WeatherDay {
       observations.temperature.apparentTemperature = observationalData[ 'temperature' ][ 'apparentTemperature' ]?.toDouble();
 
       observations.rainfall.since9AMAmount = observationalData[ 'rainfall' ][ 'since9AMAmount' ].toDouble();
+
+      observations.wind.speed = observationalData[ 'wind' ][ 'speed' ].toDouble();
+      observations.wind.gustSpeed = observationalData[ 'wind' ][ 'gustSpeed' ].toDouble();
+      observations.wind.directionText = observationalData[ 'wind' ][ 'directionText' ];
     }
   }
 }
@@ -243,11 +247,18 @@ class WeatherForecastRegion {
 class WeatherObservations {
   WeatherObservationsTemperature temperature = new WeatherObservationsTemperature();
   WeatherObservationsRainfall rainfall = new WeatherObservationsRainfall();
+  WeatherObservationsWind wind = new WeatherObservationsWind();
 }
 
 class WeatherObservationsTemperature {
   double temperature;
   double apparentTemperature;
+}
+
+class WeatherObservationsWind {
+  double speed;
+  double gustSpeed;
+  String directionText;
 }
 
 class WeatherObservationsRainfall {

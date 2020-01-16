@@ -19,6 +19,8 @@ class _TodayDetailsCardState extends State<TodayDetailsCard> {
     return Card(
       child: Consumer<WeatherModel>(
         builder: ( context, weather, child ) {
+          final TextStyle textStyle = Theme.of( context ).textTheme.body2;
+
           return Column(
             children: <Widget>[
               Container(
@@ -58,7 +60,20 @@ class _TodayDetailsCardState extends State<TodayDetailsCard> {
                       return buildDetails(
                         icon: MdiIcons.weatherSunny,
                         iconColor: Colors.deepPurple,
-                        text: Text( '${ uv.data.description } - ${ uv.data.index }' ),
+                        text: RichText(
+                          text: TextSpan(
+                            children: <TextSpan>[
+                              TextSpan(
+                                style: textStyle.copyWith( color: convertUVtoColor( uv.data.index ) ),
+                                text: uv.data.description,
+                              ),
+                              TextSpan(
+                                style: textStyle,
+                                text: ' - ${ uv.data.index }',
+                              ),
+                            ],
+                          ),
+                        ),
                         subtext: Text( Jiffy( uv.data.utcDateTime ).fromNow() ),
                       );
                     }
@@ -66,8 +81,38 @@ class _TodayDetailsCardState extends State<TodayDetailsCard> {
                   buildDetails(
                     icon: MdiIcons.weatherSunnyAlert,
                     iconColor: Colors.deepPurple,
-                    text: Text( '${ weather.today.forecast.uv.description } - ${ weather.today.forecast.uv.max }' ),
+                    text: RichText(
+                      text: TextSpan(
+                        children: <TextSpan>[
+                          TextSpan(
+                            style: textStyle.copyWith( color: convertUVtoColor( weather.today.forecast.uv.max ) ),
+                            text: weather.today.forecast.uv.description,
+                          ),
+                          TextSpan(
+                            style: textStyle,
+                            text: ' - ${ weather.today.forecast.uv.max }',
+                          ),
+                        ],
+                      ),
+                    ),
                     subtext: Text( Jiffy( weather.today.forecast.uv.start ).format( 'h:mm' ) + ' - ' + Jiffy( weather.today.forecast.uv.end ).format( 'h:mm' ) ),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                children: <Widget>[
+                  buildDetails(
+                    icon: MdiIcons.fan,
+                    iconColor: Colors.lightGreen,
+                    text: Text( '${ weather.today.observations.wind.speed } km/h' ),
+                    subtext: Text( weather.today.observations.wind.directionText ),
+                  ),
+                  buildDetails(
+                    icon: MdiIcons.weatherWindy,
+                    iconColor: Colors.lightGreen,
+                    text: Text( '${ weather.today.observations.wind.gustSpeed } km/h' ),
+                    subtext: Text( 'Gust' ),
                   ),
                 ],
               ),
@@ -115,4 +160,18 @@ Expanded buildDetails( { icon, iconColor, text, subtext } ) {
       ),
     ),
   );
+}
+
+Color convertUVtoColor( double uv ) {
+  if ( uv <= 2 ) {
+    return Colors.lightGreen;
+  } else if ( uv <= 5 ) {
+    return Colors.yellow;
+  } else if ( uv <= 7 ) {
+    return Colors.orange;
+  } else if ( uv <= 10 ) {
+    return Colors.red;
+  }
+
+  return Colors.deepPurple;
 }
