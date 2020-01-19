@@ -30,15 +30,15 @@ class PreferenceModel extends ChangeNotifier with WidgetsBindingObserver {
 
   ThemeData lightTheme( BuildContext context ) {
     if ( _theme == 'sun' ) {
-      WeatherForecastSun sun = Provider.of<WeatherModel>( context, listen: false ).today.forecast.sun;
+      WeatherForecast forecast = Provider.of<WeatherModel>( context, listen: false ).today.forecast;
 
-      if ( sun.sunrise == null ) {
+      if ( forecast == null ) {
         return _lightTheme;
       }
 
       DateTime now = DateTime.now();
 
-      if ( now.isBefore( sun.sunrise ) || now.isAfter( sun.sunset ) ) {
+      if ( now.isBefore( forecast.sun.sunrise ) || now.isAfter( forecast.sun.sunset ) ) {
         return _darkTheme;
       }
     }
@@ -47,15 +47,15 @@ class PreferenceModel extends ChangeNotifier with WidgetsBindingObserver {
 
   ThemeData darkTheme( BuildContext context ) {
     if ( _theme == 'sun' ) {
-      WeatherForecastSun sun = Provider.of<WeatherModel>( context, listen: false ).today.forecast.sun;
+      WeatherForecast forecast = Provider.of<WeatherModel>( context, listen: false ).today.forecast;
 
-      if ( sun.sunrise == null ) {
+      if ( forecast == null ) {
         return _darkTheme;
       }
 
       DateTime now = DateTime.now();
 
-      if ( now.isAfter( sun.sunrise ) && now.isBefore( sun.sunset ) ) {
+      if ( now.isAfter( forecast.sun.sunrise ) && now.isBefore( forecast.sun.sunset ) ) {
         return _lightTheme;
       }
     }

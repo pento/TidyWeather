@@ -4,7 +4,6 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:provider/provider.dart';
 
 import '../data/weather_model.dart';
-import '../data/uv_model.dart';
 
 class TodayDetailsCard extends StatefulWidget {
 
@@ -55,28 +54,24 @@ class _TodayDetailsCardState extends State<TodayDetailsCard> {
               ),
               Row(
                 children: <Widget>[
-                  Consumer<UVModel>(
-                    builder: ( context, uv, child ) {
-                      return buildDetails(
-                        icon: MdiIcons.weatherSunny,
-                        iconColor: Colors.deepPurple,
-                        text: RichText(
-                          text: TextSpan(
-                            children: <TextSpan>[
-                              TextSpan(
-                                style: textStyle.copyWith( color: convertUVtoColor( uv.data.index ) ),
-                                text: uv.data.description,
-                              ),
-                              TextSpan(
-                                style: textStyle,
-                                text: ' - ${ uv.data.index }',
-                              ),
-                            ],
+                  buildDetails(
+                    icon: MdiIcons.weatherSunny,
+                    iconColor: Colors.deepPurple,
+                    text: RichText(
+                      text: TextSpan(
+                        children: <TextSpan>[
+                          TextSpan(
+                            style: textStyle.copyWith( color: convertUVtoColor( weather.today.observations.uv.index ) ),
+                            text: weather.today.observations.uv.description,
                           ),
-                        ),
-                        subtext: Text( Jiffy( uv.data.utcDateTime ).fromNow() ),
-                      );
-                    }
+                          TextSpan(
+                            style: textStyle,
+                            text: ' - ${ weather.today.observations.uv.index }',
+                          ),
+                        ],
+                      ),
+                    ),
+                    subtext: Text( Jiffy( weather.today.observations.uv.utcDateTime ).fromNow() ),
                   ),
                   buildDetails(
                     icon: MdiIcons.weatherSunnyAlert,

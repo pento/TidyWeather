@@ -18,7 +18,7 @@ class _GraphCardState extends State<GraphCard> {
     return Card(
       child: Consumer<WeatherModel>(
         builder: ( context, weather, child ) {
-          final List<WeatherForecastHourlyTemperature> data = weather.week.days[ 0 ].forecast.temperature.hourlyTemperature + weather.week.days[ 1 ].forecast.temperature.hourlyTemperature;
+          final List<WeatherForecastHourlyTemperature> data = weather.week.days[ 0 ].forecast.temperature + weather.week.days[ 1 ].forecast.temperature;
           return SizedBox(
             height: 250,
             child: SimpleWeatherGraph( weather.today.observations.temperature, data ),

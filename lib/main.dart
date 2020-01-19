@@ -6,7 +6,6 @@ import 'package:tuple/tuple.dart';
 
 import './data/location_model.dart';
 import './data/preference_model.dart';
-import './data/uv_model.dart';
 import './data/weather_model.dart';
 import './pages/about.dart';
 import './pages/home.dart';
@@ -23,7 +22,6 @@ void main() async {
       MultiProvider(
         providers: [
           ChangeNotifierProvider( create: ( context ) => LocationModel() ),
-          ChangeNotifierProvider( create: ( context ) => UVModel() ),
           ChangeNotifierProvider( create: ( context ) => WeatherModel() ),
           ChangeNotifierProvider( create: ( context ) => PreferenceModel() ),
         ],
@@ -79,8 +77,7 @@ class MyApp extends StatelessWidget {
 void backgroundFetchHeadlessTask() async {
   await PrefService.init( prefix: 'pref_' );
 
-  LocationModel();
-  UVModel();
+  LocationModel( background: true );
   WeatherModel( background: true );
 
   LocationModel.load().whenComplete( () { BackgroundFetch.finish(); } );

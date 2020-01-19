@@ -35,7 +35,7 @@ class Day extends StatelessWidget {
                 Row(
                   children: <Widget>[
                     SvgPicture.asset(
-                      weatherIcon( _day.forecast.temperature.code ),
+                      weatherIcon( _day.forecast.weather.code ),
                       color: Colors.white,
                       width: 32,
                     )
@@ -74,13 +74,13 @@ class Day extends StatelessWidget {
                               ),
                               children: <TextSpan>[
                                 TextSpan(
-                                  text: '${ _day.forecast.temperature.min.toString() } ',
+                                  text: '${ _day.forecast.weather.min.toString() } ',
                                   style: TextStyle(
                                     color: Theme.of( context ).primaryColorLight,
                                   ),
                                 ),
                                 TextSpan(
-                                  text: _day.forecast.temperature.max.toString(),
+                                  text: _day.forecast.weather.max.toString(),
                                   style: TextStyle(
                                     color: Colors.white,
                                   ),
@@ -89,7 +89,7 @@ class Day extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            _day.forecast.temperature.description,
+                            _day.forecast.weather.description,
                             style: TextStyle(
                               color: Theme.of( context ).primaryColorLight,
                             ),

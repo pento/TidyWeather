@@ -42,7 +42,7 @@ class _WeekCardState extends State<WeekCard> {
                   dayName = Jiffy( weather.week.days[ index ].dateTime ).format( 'EEEE' );
                 }
 
-                WeatherForecastTemperature day = weather.week.days[ index ].forecast.temperature;
+                WeatherForecastWeather day = weather.week.days[ index ].forecast.weather;
                 return Container(
                   margin: EdgeInsets.symmetric( vertical: 0, horizontal: 12 ),
                   padding: EdgeInsets.symmetric( vertical: 6, horizontal: 0 ),

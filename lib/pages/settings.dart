@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:preferences/preferences.dart';
-import 'package:tidyweather/widgets/LinkTextSpan.dart';
 
-import './home.dart';
-import '../data/location_model.dart';
 import '../data/preference_model.dart';
-import '../data/uv_model.dart';
-import '../data/weather_model.dart';
 
 class SettingsPage extends StatefulWidget {
   static const String route = '/settings';
@@ -19,18 +14,12 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
-    final ThemeData themeData = Theme.of( context );
-    final TextStyle textStyle = themeData.textTheme.body2;
-    final TextStyle linkStyle = themeData.textTheme.body2.copyWith( color: themeData.accentColor );
-
-    final firstLoad = ! Navigator.canPop( context );
-
     return Scaffold(
       appBar: AppBar(
         title: Text( 'Settings' ),
       ),
       body: PreferencePage( [
-        firstLoad ? Container() : Container(
+        Container(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -55,45 +44,6 @@ class _SettingsPageState extends State<SettingsPage> {
             ],
           ),
         ),
-        PreferenceTitle( 'API Settings' ),
-        Padding(
-          padding: const EdgeInsets.symmetric( horizontal: 16.0, vertical: 12.0 ),
-          child: RichText(
-            text: TextSpan(
-              children: <TextSpan>[
-                TextSpan(
-                  style: textStyle,
-                  text: 'Please ',
-                ),
-                LinkTextSpan(
-                  style: linkStyle,
-                  text: 'signup for a WillyWeather API account',
-                  url: 'https://www.willyweather.com.au/api/register.html',
-                ),
-                TextSpan(
-                  style: textStyle,
-                  text: ', and enter your API Key here.',
-                ),
-              ],
-            ),
-          ),
-        ),
-        TextFieldPreference( 'API Key', 'api_key' ),
-
-        firstLoad ?
-          RaisedButton(
-            onPressed: () {
-              LocationModel();
-              UVModel();
-              WeatherModel();
-
-              LocationModel.load();
-
-              Navigator.pushNamed( context, HomePage.route );
-            },
-            child: Text( 'Close Settings' ),
-          ) :
-          Container(),
       ] ),
     );
   }

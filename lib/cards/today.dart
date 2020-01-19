@@ -31,7 +31,7 @@ class _TodayCardState extends State<TodayCard> {
                 Row( // Big icon
                   children: <Widget>[
                     SvgPicture.asset(
-                      weatherIcon( weather.today.forecast.temperature.code ),
+                      weatherIcon( weather.today.forecast.weather.code ),
                       color: Colors.white,
                       width: 96,
                     )
@@ -87,13 +87,13 @@ class _TodayCardState extends State<TodayCard> {
                               ),
                               children: <TextSpan>[
                                 TextSpan(
-                                  text: '${ weather.today.forecast.temperature.min.toString() } ',
+                                  text: '${ weather.today.forecast.weather.min.toString() } ',
                                   style: TextStyle(
                                     color: Theme.of( context ).primaryColorLight,
                                   ),
                                 ),
                                 TextSpan(
-                                  text: weather.today.forecast.temperature.max.toString(),
+                                  text: weather.today.forecast.weather.max.toString(),
                                   style: TextStyle(
                                     color: Colors.white,
                                   ),
@@ -102,7 +102,7 @@ class _TodayCardState extends State<TodayCard> {
                             ),
                           ),
                           Text(
-                            weather.today.forecast.temperature.description,
+                            weather.today.forecast.weather.description,
                             style: TextStyle(
                               color: Theme.of( context ).primaryColorLight,
                               fontSize: 16,

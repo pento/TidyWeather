@@ -1,42 +1,22 @@
-import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:http/http.dart' as http;
-import 'package:preferences/preference_service.dart';
 
-import './uv_model.dart';
 import './weather_model.dart';
 
 class LocationModel extends ChangeNotifier {
-  Map _location = new Map();
   Placemark _place = new Placemark();
 
   static LocationModel _self;
 
-  WeatherLocation get location {
-    WeatherLocation _currentLocation = new WeatherLocation();
+  WeatherPlace get place  => new WeatherPlace( _place );
 
-    if ( _location.containsKey( 'id' ) ) {
-      _currentLocation.id = _location[ 'id' ];
-      _currentLocation.name = _location[ 'name' ];
-      _currentLocation.countryCode = _place.isoCountryCode;
-    }
-
-    return _currentLocation;
-  }
-
-  LocationModel() {
-    String locationCache = PrefService.getString( 'cached_location_data' );
-    if ( locationCache != null ) {
-      _location = jsonDecode( locationCache );
-    }
-
+  LocationModel( { background: false } ) {
     _self = this;
 
-    String apiKey = PrefService.getString( 'api_key' );
-    if ( apiKey != null || apiKey.isNotEmpty ) {
-      loadData();
+    if ( ! background ) {
+      this.loadData();
     }
   }
 
@@ -45,13 +25,6 @@ class LocationModel extends ChangeNotifier {
   }
 
   void loadData() async {
-    String apiKey = PrefService.getString( 'api_key' );
-    if ( apiKey == null || apiKey == '' ) {
-      return;
-    }
-
-    String apiRoot = 'https://api.willyweather.com.au/v2/$apiKey';
-
     Position position = await Geolocator().getCurrentPosition( desiredAccuracy: LocationAccuracy.high );
 
     List<Placemark> place = await Geolocator().placemarkFromPosition( position );
@@ -62,25 +35,59 @@ class LocationModel extends ChangeNotifier {
       return;
     }
 
-    if ( ! _location.containsKey( 'id' ) || _place.locality == null || place[ 0 ].locality != _place.locality ) {
+    if ( _place.locality == null || place[ 0 ].locality != _place.locality ) {
       _place = place[ 0 ];
-
-      final weatherLocationResponse = await http.get( '$apiRoot/search.json?query=${ _place.locality }+${ _place.postalCode }' );
-      List locationData = jsonDecode( weatherLocationResponse.body );
-      _location = locationData[ 0 ];
-
-      PrefService.setString( 'cached_location_data', jsonEncode( _location ) );
-
       notifyListeners();
     }
 
-    WeatherModel.load( _location[ 'id' ] );
-    UVModel.load( _location[ 'lat' ], _location[ 'lng' ] );
+    WeatherModel.load( _place.locality, _place.postalCode, uvLocation( position.latitude, position.longitude ) );
+  }
+
+  String uvLocation( double latitude, double longitude ) {
+    final locations = new Map();
+
+    // Source: https://api.willyweather.com.au/v2/{key}/search.json?query={location}&limit=1
+    locations[ 'adl' ] = [ -34.926, 138.6 ];
+    locations[ 'ali' ] = [ -23.7, 133.881 ];
+    locations[ 'bri' ] = [ -27.468, 153.028 ];
+    locations[ 'can' ] = [ -35.282, 149.129 ];
+    locations[ 'dar' ] = [ -12.461, 130.842 ];
+    locations[ 'emd' ] = [ -23.527, 148.161 ];
+    locations[ 'gco' ] = [ -28.005, 153.402 ];
+    locations[ 'kin' ] = [ -42.977, 147.308 ];
+    locations[ 'mcq' ] = [ -54.617, 158.9 ];
+    locations[ 'mel' ] = [ -37.814, 144.963 ];
+    locations[ 'new' ] = [ -32.924, 151.779 ];
+    locations[ 'per' ] = [ -31.955, 115.859 ];
+    locations[ 'syd' ] = [ -33.867, 151.207 ];
+    locations[ 'tow' ] = [ -19.258, 146.818 ];
+
+    double shortestDistance = 0;
+    String closestLocation = '';
+
+    locations.forEach( ( location, coordinates ) {
+      double latDiff = latitude - coordinates[ 0 ];
+      latDiff = latDiff.abs();
+
+      double longDiff = longitude - coordinates[ 1 ];
+      longDiff = longDiff.abs();
+
+      double distance = sqrt( latDiff * latDiff + longDiff * longDiff );
+
+      if ( closestLocation == '' || distance < shortestDistance ) {
+        shortestDistance = distance;
+        closestLocation = location;
+      }
+    } );
+
+    return closestLocation;
   }
 }
 
-class WeatherLocation {
-  int id;
-  String name = 'Searching...';
+class WeatherPlace {
   String countryCode;
+
+  WeatherPlace( Placemark _place ) {
+    countryCode = _place.isoCountryCode;
+  }
 }

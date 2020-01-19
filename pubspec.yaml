@@ -27,7 +27,6 @@ dependencies:
   http: ^0.12.0+3
   geolocator: ^5.1.5
   jiffy: ^2.1.2
-  xml2json: ^4.1.0
   flutter_map: any
   latlong: ^0.6.1
   provider: ^4.0.1

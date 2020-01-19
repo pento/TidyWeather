@@ -1,10 +1,8 @@
 
 import 'package:flutter/material.dart';
-import 'package:preferences/preference_service.dart';
 import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
 
-import './settings.dart';
 import '../cards/graph.dart';
 import '../cards/today.dart';
 import '../cards/today_details.dart';
@@ -24,16 +22,11 @@ class AppState extends State<HomePage> {
 
   @override
   Widget build( BuildContext context ) {
-    String apiKey = PrefService.getString( 'api_key' );
-    if ( apiKey == null || apiKey == '' ) {
-      return SettingsPage();
-    }
-
     return Selector2<LocationModel, WeatherModel, Tuple3<String, String, bool>>(
       selector: ( context, location, weather ) => Tuple3(
-        location.location.countryCode,
-        location.location.name,
-        weather.today.observations.temperature.temperature == null
+        location.place.countryCode,
+        weather.today.locationName,
+        weather.today.observations == null
       ),
       builder: ( context, data, child ) {
         if ( data.item1 != null && data.item1 != 'AU' ) {

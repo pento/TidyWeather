@@ -24,7 +24,7 @@ class SimpleWeatherGraph extends StatelessWidget {
 
   List<WeatherForecastHourlyTemperature> _prepareEntryList( List<WeatherForecastHourlyTemperature> initialEntries ) {
     DateTime _now = DateTime.now();
-    WeatherForecastHourlyTemperature _nowForecast = new WeatherForecastHourlyTemperature(
+    WeatherForecastHourlyTemperature _nowForecast = new WeatherForecastHourlyTemperature.fromValues(
       now.temperature,
       _now,
     );

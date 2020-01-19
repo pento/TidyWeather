@@ -15,68 +15,30 @@ class WeatherModel extends ChangeNotifier {
   WeatherModel( { bool background = false } ) {
     String weatherCache = PrefService.getString( 'cached_weather_data' );
     if ( weatherCache != null ) {
-      _weather = jsonDecode( weatherCache );
+      Map weatherData = jsonDecode( weatherCache );
+      if ( weatherData.containsKey( 'location' ) ) {
+        this._weather = weatherData;
+      }
     }
 
     _self = this;
     this.background = background;
   }
 
-  WeatherDay get today {
-    WeatherDay _weatherToday = new WeatherDay();
+  WeatherDay get today => new WeatherDay(
+    _weather[ 'location' ][ 'name' ],
+    _weather[ 'forecasts' ][ 0 ],
+    _weather[ 'observations' ],
+  );
 
-    if ( _weather.containsKey( 'forecasts' ) ) {
-      _weatherToday = new WeatherDay(
-          _weather[ 'forecasts' ][ 'weather' ][ 'days' ][ 0 ][ 'entries' ][ 0 ],
-          _weather[ 'forecasts' ][ 'temperature' ][ 'days' ][ 0 ][ 'entries' ],
-          _weather[ 'forecasts' ][ 'rainfall' ][ 'days' ][ 0 ][ 'entries' ][ 0 ],
-          _weather[ 'forecasts' ][ 'uv' ][ 'days' ][ 0 ],
-          _weather['forecasts'].containsKey( 'wind' ) ? _weather[ 'forecasts' ][ 'wind' ][ 'days' ][ 0 ] : null,
-          _weather['forecasts'].containsKey( 'sunrisesunset' ) ? _weather[ 'forecasts' ][ 'sunrisesunset' ][ 'days' ][ 0 ][ 'entries' ][ 0 ] : null,
-          _weather.containsKey( 'regionPrecis' ) ? _weather[ 'regionPrecis' ][ 'days' ][ 0 ][ 'entries' ][ 0 ] : null,
-          _weather.containsKey( 'regionPrecis' ) ? _weather[ 'regionPrecis' ][ 'name' ] : null,
-          _weather[ 'observational' ][ 'observations' ],
-      );
-    }
+  WeatherWeek get week => new WeatherWeek( _weather );
 
-    return _weatherToday;
+  static void load( String town, String postcode, String uvStation ) {
+    _self.loadData( town, postcode, uvStation );
   }
 
-  WeatherWeek get week {
-    WeatherWeek _week = new WeatherWeek();
-
-    if ( _weather.containsKey( 'forecasts' ) ) {
-      for ( var i  = 0; i < _weather[ 'forecasts' ][ 'weather' ][ 'days' ].length; i++ ) {
-        WeatherDay _day = new WeatherDay(
-          _weather[ 'forecasts' ][ 'weather' ][ 'days' ][ i ][ 'entries' ][ 0 ],
-          _weather[ 'forecasts' ][ 'temperature' ][ 'days' ][ i ][ 'entries' ],
-          _weather[ 'forecasts' ][ 'rainfall' ][ 'days' ][ i ][ 'entries' ][ 0 ],
-          i < _weather[ 'forecasts' ][ 'uv' ][ 'days' ].length ? _weather[ 'forecasts' ][ 'uv' ][ 'days' ][ i ] : null,
-          _weather['forecasts'].containsKey( 'wind' ) ? _weather[ 'forecasts' ][ 'wind' ][ 'days' ][ i ] : null,
-          _weather['forecasts'].containsKey( 'sunrisesunset' ) ? _weather[ 'forecasts' ][ 'sunrisesunset' ][ 'days' ][ i ][ 'entries' ][ 0 ] : null,
-          _weather.containsKey( 'regionPrecis' ) && i < _weather[ 'regionPrecis' ][ 'days' ].length ? _weather[ 'regionPrecis' ][ 'days' ][ i ][ 'entries' ][ 0 ] : null,
-          _weather.containsKey( 'regionPrecis' ) && i < _weather[ 'regionPrecis' ][ 'days' ].length ? _weather[ 'regionPrecis' ][ 'name' ] : null,
-        );
-        _week.days.add( _day );
-      }
-    }
-
-    return _week;
-  }
-
-  static void load( int id ) {
-    _self.loadData( id );
-  }
-
-  void loadData( int id ) async {
-    String apiKey = PrefService.getString( 'api_key' );
-    if ( apiKey == null || apiKey == '' ) {
-      return;
-    }
-
-    String apiRoot = 'https://api.willyweather.com.au/v2/$apiKey';
-
-    final weatherResponse = await http.get( '$apiRoot/locations/$id/weather.json?forecasts=weather,rainfall,uv,temperature,wind,sunrisesunset&observational=true&regionPrecis=true' );
+  void loadData( String town, String postcode, String uvStation ) async {
+    final weatherResponse = await http.get( 'https://api.tidyweather.com/api/weather?town=$town&postcode=$postcode&uvstation=$uvStation' );
     _weather = jsonDecode( weatherResponse.body );
 
     PrefService.setString( 'cached_weather_data', weatherResponse.body );
@@ -87,10 +49,10 @@ class WeatherModel extends ChangeNotifier {
       platform.invokeMethod(
         'updateWeatherData',
         {
-          'current': _weather[ 'observational' ][ 'observations' ][ 'temperature' ][ 'temperature' ].toString(),
-          'min': _weather[ 'forecasts' ][ 'weather' ][ 'days' ][ 0 ][ 'entries' ][ 0 ][ 'min' ].toString(),
-          'max': _weather[ 'forecasts' ][ 'weather' ][ 'days' ][ 0 ][ 'entries' ][ 0 ][ 'max' ].toString(),
-          'code': _weather[ 'forecasts' ][ 'weather' ][ 'days' ][ 0 ][ 'entries' ][ 0 ][ 'precisCode' ]
+          'current': _weather[ 'observations' ][ 'temperature' ][ 'temperature' ].toString(),
+          'min': _weather[ 'forecasts' ][ 0 ][ 'weather' ][ 'min' ].toString(),
+          'max': _weather[ 'forecasts' ][ 0 ][ 'weather' ][ 'max' ].toString(),
+          'code': _weather[ 'forecasts' ][ 0 ][ 'weather' ][ 'code' ],
         }
       );
     }
@@ -98,125 +60,93 @@ class WeatherModel extends ChangeNotifier {
 }
 
 class WeatherWeek {
-  List<WeatherDay> days = new List();
+  List<WeatherDay> days;
+
+  WeatherWeek( Map weather ) {
+    this.days = weather[ 'forecasts' ].map<WeatherDay>( ( dayWeather ) => new WeatherDay( weather[ 'location' ][ 'name' ], dayWeather ) ).toList();
+  }
 }
 
 class WeatherDay {
-  WeatherForecast forecast = new WeatherForecast();
-  WeatherObservations observations = new WeatherObservations();
+  String locationName;
   DateTime dateTime;
+  WeatherForecast forecast;
+  WeatherObservations observations;
 
-  WeatherDay( [ Map temperatureForecastData, List hourlyTemperatureForecastData, Map rainfallForecastData, Map uvForecastData, Map windForecastData, Map sunForecastData, Map regionForecastData, String regionForecastName, Map observationalData ] ) {
-    if ( temperatureForecastData != null ) {
-      dateTime = DateTime.parse( temperatureForecastData[ 'dateTime' ] );
 
-      forecast.temperature.min = temperatureForecastData[ 'min' ];
-      forecast.temperature.max = temperatureForecastData[ 'max' ];
-      forecast.temperature.code = temperatureForecastData[ 'precisCode' ];
-      forecast.temperature.description = temperatureForecastData[ 'precis' ] + '.';
+  WeatherDay( String location, Map forecast, [ Map observations ] ) {
+    this.locationName = location;
+
+    if ( forecast != null ) {
+      this.dateTime = DateTime.parse( forecast[ 'dateTime' ] );
+      this.forecast = new WeatherForecast( forecast );
     }
 
-    if ( hourlyTemperatureForecastData != null ) {
-      hourlyTemperatureForecastData.forEach( ( hourlyTemperatureData ) {
-        WeatherForecastHourlyTemperature _hourlyTemperature = new WeatherForecastHourlyTemperature(
-          hourlyTemperatureData[ 'temperature' ].toDouble(),
-          DateTime.parse( hourlyTemperatureData[ 'dateTime' ] ),
-        );
-
-        forecast.temperature.hourlyTemperature.add( _hourlyTemperature );
-      } );
-    }
-
-    if ( rainfallForecastData != null ) {
-      forecast.rainfall.rangeCode = rainfallForecastData[ 'rangeCode' ];
-      forecast.rainfall.probability = rainfallForecastData[ 'probability' ];
-    }
-
-    if ( uvForecastData != null ) {
-      forecast.uv.max = uvForecastData[ 'alert' ][ 'maxIndex' ].toDouble();
-
-      if ( forecast.uv.max < 3.0 ) {
-        forecast.uv.description = 'Low';
-      } else if ( forecast.uv.max < 6.0 ) {
-        forecast.uv.description = 'Moderate';
-      } else if ( forecast.uv.max < 8.0 ) {
-        forecast.uv.description = 'High';
-      } else if ( forecast.uv.max < 11.0 ) {
-        forecast.uv.description = 'Very High';
-      } else {
-        forecast.uv.description = 'Extreme';
-      }
-
-      forecast.uv.start = DateTime.parse( uvForecastData[ 'alert' ][ 'startDateTime' ] );
-      forecast.uv.end = DateTime.parse( uvForecastData[ 'alert' ][ 'endDateTime' ] );
-    }
-
-    if ( windForecastData != null ) {
-      int maxIndex;
-      double maxSpeed = -1;
-      for ( int i = 0; i < windForecastData[ 'entries' ].length; i++ ) {
-        if ( windForecastData[ 'entries' ][ i ][ 'speed' ] > maxSpeed ) {
-          maxSpeed = windForecastData[ 'entries' ][ i ][ 'speed' ].toDouble();
-          maxIndex = i;
-        }
-      }
-
-      forecast.windMax.dateTime = DateTime.parse( windForecastData[ 'entries' ][ maxIndex ][ 'dateTime' ] );
-      forecast.windMax.speed = windForecastData[ 'entries' ][ maxIndex ][ 'speed' ].toDouble();
-      forecast.windMax.direction = windForecastData[ 'entries' ][ maxIndex ][ 'direction' ];
-      forecast.windMax.directionText = windForecastData[ 'entries' ][ maxIndex ][ 'directionText' ];
-    }
-
-    if ( sunForecastData != null ) {
-      forecast.sun.sunrise = DateTime.parse( sunForecastData[ 'riseDateTime' ] );
-      forecast.sun.sunset = DateTime.parse( sunForecastData[ 'setDateTime' ] );
-    }
-
-    if ( regionForecastData != null && regionForecastName != null ) {
-      forecast.region.name = '$regionForecastName area';
-      forecast.region.description = regionForecastData[ 'precis' ];
-    }
-
-    if ( observationalData != null ) {
-      observations.temperature.temperature = observationalData[ 'temperature' ][ 'temperature' ].toDouble();
-      observations.temperature.apparentTemperature = observationalData[ 'temperature' ][ 'apparentTemperature' ]?.toDouble();
-
-      observations.rainfall.since9AMAmount = observationalData[ 'rainfall' ][ 'since9AMAmount' ].toDouble();
-
-      observations.wind.speed = observationalData[ 'wind' ][ 'speed' ].toDouble();
-      observations.wind.gustSpeed = observationalData[ 'wind' ][ 'gustSpeed' ].toDouble();
-      observations.wind.directionText = observationalData[ 'wind' ][ 'directionText' ];
+    if ( observations != null ) {
+      this.observations = new WeatherObservations( observations );
     }
   }
 }
 
 class WeatherForecast {
-  WeatherForecastTemperature temperature = new WeatherForecastTemperature();
-  WeatherForecastRainfall rainfall = new WeatherForecastRainfall();
-  WeatherForecastUV uv = new WeatherForecastUV();
-  WeatherForecastWind windMax = new WeatherForecastWind();
-  WeatherForecastSun sun = new WeatherForecastSun();
-  WeatherForecastRegion region = new WeatherForecastRegion();
+  WeatherForecastWeather weather;
+  List<WeatherForecastHourlyTemperature> temperature;
+  WeatherForecastRainfall rainfall;
+  WeatherForecastUV uv;
+  WeatherForecastWind windMax;
+  WeatherForecastSun sun;
+  WeatherForecastRegion region;
+
+  WeatherForecast( Map forecast ) {
+    this.weather = new WeatherForecastWeather( forecast[ 'weather' ] );
+    this.temperature = forecast[ 'temperature' ].map<WeatherForecastHourlyTemperature>( ( hourTemperature ) => new WeatherForecastHourlyTemperature( hourTemperature ) ).toList();
+    this.rainfall = new WeatherForecastRainfall( forecast[ 'rainfall' ] );
+    if ( forecast.containsKey( 'uv' ) ) {
+      this.uv = new WeatherForecastUV( forecast[ 'uv' ] );
+    }
+    this.windMax = new WeatherForecastWind( forecast[ 'windMax' ] );
+    this.sun = new WeatherForecastSun( forecast[ 'sun' ] );
+    if ( forecast.containsKey( 'region' ) ) {
+      this.region = new WeatherForecastRegion( forecast[ 'region' ] );
+    }
+  }
 }
 
-class WeatherForecastTemperature {
+class WeatherForecastWeather {
   int min;
   int max;
   String code;
   String description;
-  List<WeatherForecastHourlyTemperature> hourlyTemperature = new List();
+
+  WeatherForecastWeather( Map weather ) {
+    this.min = weather['min'];
+    this.max = weather['max'];
+    this.code = weather['code'];
+    this.description = weather['description'];
+  }
 }
 
 class WeatherForecastHourlyTemperature {
   double temperature;
   DateTime dateTime;
 
-  WeatherForecastHourlyTemperature( this.temperature, this.dateTime );
+  WeatherForecastHourlyTemperature( Map hourTemperature ) {
+    this.temperature = hourTemperature[ 'temperature' ].toDouble();
+    this.dateTime = DateTime.parse( hourTemperature[ 'dateTime' ] );
+  }
+
+  WeatherForecastHourlyTemperature.fromValues( this.temperature, this.dateTime );
 }
 
 class WeatherForecastRainfall {
   String rangeCode;
   int probability;
+
+  WeatherForecastRainfall( Map rainfall ) {
+    this.rangeCode = rainfall[ 'rangeCode' ];
+    this.probability = rainfall[ 'probability' ];
+
+  }
 }
 
 class WeatherForecastUV {
@@ -224,6 +154,13 @@ class WeatherForecastUV {
   String description;
   DateTime start;
   DateTime end;
+
+  WeatherForecastUV( Map uv ) {
+    this.max = uv[ 'max' ].toDouble();
+    this.description = uv[ 'description' ];
+    this.start = DateTime.parse( uv[ 'start' ] );
+    this.end = DateTime.parse( uv[ 'end' ] );
+  }
 }
 
 class WeatherForecastWind {
@@ -231,37 +168,90 @@ class WeatherForecastWind {
   double speed;
   int direction;
   String directionText;
+
+  WeatherForecastWind( Map wind ) {
+    this.dateTime = DateTime.parse( wind[ 'dateTime' ] );
+    this.speed = wind[ 'speed' ].toDouble();
+    this.direction = wind[ 'direction' ];
+    this.directionText = wind[ 'directionText' ];
+  }
 }
 
 class WeatherForecastSun {
   DateTime sunrise;
   DateTime sunset;
+
+  WeatherForecastSun( Map sun ) {
+    this.sunrise = DateTime.parse( sun[ 'sunrise' ] );
+    this.sunset = DateTime.parse( sun[ 'sunset' ] );
+  }
 }
 
 class WeatherForecastRegion {
   String name;
   String description;
+
+  WeatherForecastRegion( Map region ) {
+    this.name = region[ 'name' ];
+    this.description = region[ 'description' ];
+  }
 }
 
 
 class WeatherObservations {
-  WeatherObservationsTemperature temperature = new WeatherObservationsTemperature();
-  WeatherObservationsRainfall rainfall = new WeatherObservationsRainfall();
-  WeatherObservationsWind wind = new WeatherObservationsWind();
+  WeatherObservationsTemperature temperature;
+  WeatherObservationsRainfall rainfall;
+  WeatherObservationsWind wind;
+  WeatherObservationsUv uv;
+
+  WeatherObservations( Map observations ) {
+    this.temperature = new WeatherObservationsTemperature( observations[ 'temperature' ] );
+    this.rainfall = new WeatherObservationsRainfall( observations[ 'rainfall' ] );
+    this.wind = new WeatherObservationsWind( observations[ 'wind' ] );
+    this.uv = new WeatherObservationsUv( observations[ 'uv' ] );
+  }
 }
 
 class WeatherObservationsTemperature {
   double temperature;
   double apparentTemperature;
+
+  WeatherObservationsTemperature( Map temperature ) {
+    this.temperature = temperature[ 'temperature' ].toDouble();
+    this.apparentTemperature = temperature[ 'apparentTemperature' ].toDouble();
+  }
 }
 
 class WeatherObservationsWind {
   double speed;
   double gustSpeed;
   String directionText;
+
+  WeatherObservationsWind( Map wind ) {
+    this.speed = wind[ 'speed' ].toDouble();
+    this.gustSpeed = wind[ 'gustSpeed' ].toDouble();
+    this.directionText = wind[ 'directionText' ];
+  }
 }
 
 class WeatherObservationsRainfall {
   double since9AMAmount;
+
+  WeatherObservationsRainfall( Map rainfall ) {
+    this.since9AMAmount = rainfall[ 'since9AMAmount' ].toDouble();
+  }
 }
 
+class WeatherObservationsUv {
+  double index;
+  String description;
+  String name;
+  DateTime utcDateTime;
+
+  WeatherObservationsUv( Map uv ) {
+    this.index = double.parse( uv[ 'index' ] );
+    this.description = uv[ 'description' ];
+    this.name = uv[ 'name' ];
+    this.utcDateTime = DateTime.parse( uv[ 'utcDateTime' ] );
+  }
+}
