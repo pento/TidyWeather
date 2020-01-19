@@ -49,9 +49,9 @@ class WeatherModel extends ChangeNotifier {
       platform.invokeMethod(
         'updateWeatherData',
         {
-          'current': _weather[ 'observations' ][ 'temperature' ][ 'temperature' ].toString(),
-          'min': _weather[ 'forecasts' ][ 0 ][ 'weather' ][ 'min' ].toString(),
-          'max': _weather[ 'forecasts' ][ 0 ][ 'weather' ][ 'max' ].toString(),
+          'current': _weather[ 'observations' ][ 'temperature' ][ 'temperature' ]?.toString(),
+          'min': _weather[ 'forecasts' ][ 0 ][ 'weather' ][ 'min' ]?.toString(),
+          'max': _weather[ 'forecasts' ][ 0 ][ 'weather' ][ 'max' ]?.toString(),
           'code': _weather[ 'forecasts' ][ 0 ][ 'weather' ][ 'code' ],
         }
       );
@@ -131,7 +131,7 @@ class WeatherForecastHourlyTemperature {
   DateTime dateTime;
 
   WeatherForecastHourlyTemperature( Map hourTemperature ) {
-    this.temperature = hourTemperature[ 'temperature' ].toDouble();
+    this.temperature = hourTemperature[ 'temperature' ]?.toDouble();
     this.dateTime = DateTime.parse( hourTemperature[ 'dateTime' ] );
   }
 
@@ -156,7 +156,7 @@ class WeatherForecastUV {
   DateTime end;
 
   WeatherForecastUV( Map uv ) {
-    this.max = uv[ 'max' ].toDouble();
+    this.max = uv[ 'max' ]?.toDouble();
     this.description = uv[ 'description' ];
     this.start = DateTime.parse( uv[ 'start' ] );
     this.end = DateTime.parse( uv[ 'end' ] );
@@ -171,7 +171,7 @@ class WeatherForecastWind {
 
   WeatherForecastWind( Map wind ) {
     this.dateTime = DateTime.parse( wind[ 'dateTime' ] );
-    this.speed = wind[ 'speed' ].toDouble();
+    this.speed = wind[ 'speed' ]?.toDouble();
     this.direction = wind[ 'direction' ];
     this.directionText = wind[ 'directionText' ];
   }
@@ -217,8 +217,8 @@ class WeatherObservationsTemperature {
   double apparentTemperature;
 
   WeatherObservationsTemperature( Map temperature ) {
-    this.temperature = temperature[ 'temperature' ].toDouble();
-    this.apparentTemperature = temperature[ 'apparentTemperature' ].toDouble();
+    this.temperature = temperature[ 'temperature' ]?.toDouble();
+    this.apparentTemperature = temperature[ 'apparentTemperature' ]?.toDouble();
   }
 }
 
@@ -228,8 +228,8 @@ class WeatherObservationsWind {
   String directionText;
 
   WeatherObservationsWind( Map wind ) {
-    this.speed = wind[ 'speed' ].toDouble();
-    this.gustSpeed = wind[ 'gustSpeed' ].toDouble();
+    this.speed = wind[ 'speed' ]?.toDouble();
+    this.gustSpeed = wind[ 'gustSpeed' ]?.toDouble();
     this.directionText = wind[ 'directionText' ];
   }
 }
@@ -238,7 +238,7 @@ class WeatherObservationsRainfall {
   double since9AMAmount;
 
   WeatherObservationsRainfall( Map rainfall ) {
-    this.since9AMAmount = rainfall[ 'since9AMAmount' ].toDouble();
+    this.since9AMAmount = rainfall[ 'since9AMAmount' ]?.toDouble();
   }
 }
 

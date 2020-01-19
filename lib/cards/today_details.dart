@@ -106,7 +106,7 @@ class _TodayDetailsCardState extends State<TodayDetailsCard> {
                   buildDetails(
                     icon: MdiIcons.weatherWindy,
                     iconColor: Colors.lightGreen,
-                    text: Text( '${ weather.today.observations.wind.gustSpeed } km/h' ),
+                    text: weather.today.observations.wind.gustSpeed != null ? Text( '${ weather.today.observations.wind.gustSpeed } km/h' ) : Text( 'Unknown' ),
                     subtext: Text( 'Gust' ),
                   ),
                 ],
