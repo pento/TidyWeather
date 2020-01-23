@@ -161,11 +161,11 @@ Color convertUVtoColor( double uv ) {
   if ( uv <= 2 ) {
     return Colors.lightGreen;
   } else if ( uv <= 5 ) {
-    return Colors.yellow;
+    return Colors.yellow.shade800;
   } else if ( uv <= 7 ) {
-    return Colors.orange;
+    return Colors.orange.shade800;
   } else if ( uv <= 10 ) {
-    return Colors.red;
+    return Colors.red.shade800;
   }
 
   return Colors.deepPurple;
