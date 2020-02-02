@@ -12,13 +12,14 @@ class SimpleWeatherGraph extends StatelessWidget {
 
   final WeatherObservationsTemperature now;
   final List<WeatherForecastHourlyTemperature> forecast;
+  final List<WeatherForecastHourlyRainfall> rainfall;
 
-  SimpleWeatherGraph( this.now, this.forecast );
+  SimpleWeatherGraph( this.now, this.forecast, this.rainfall );
 
   @override
   Widget build( BuildContext context ) {
     return new CustomPaint(
-      painter: new ChartPainter( _prepareEntryList( forecast ), context ),
+      painter: new ChartPainter( _prepareEntryList( forecast ), rainfall, context ),
     );
   }
 
@@ -59,10 +60,12 @@ class SimpleWeatherGraph extends StatelessWidget {
 
 class ChartPainter extends CustomPainter {
   final List<WeatherForecastHourlyTemperature> entries;
+  final List<WeatherForecastHourlyRainfall> rainfall;
   final BuildContext context;
 
-  ChartPainter( this.entries, this.context );
+  ChartPainter( this.entries, this.rainfall, this.context );
 
+  double topPadding;
   double drawingHeight;
   double drawingWidth;
 
@@ -70,7 +73,8 @@ class ChartPainter extends CustomPainter {
 
   @override
   void paint( Canvas canvas, Size size ) {
-    drawingHeight = size.height - 50;
+    topPadding = 40;
+    drawingHeight = size.height - 50 - topPadding;
     drawingWidth = size.width;
 
     Tuple2<int, int> borderLineValues = _getMinAndMaxValues( entries );
@@ -78,6 +82,7 @@ class ChartPainter extends CustomPainter {
     _drawVerticalLines( canvas, size );
     _drawBottomLabels( canvas, size );
     _drawLines( canvas, borderLineValues.item1, borderLineValues.item2 );
+    _drawRainfall( canvas, size );
   }
 
   Tuple2<int, int> _getMinAndMaxValues( List<WeatherForecastHourlyTemperature> entries ) {
@@ -100,8 +105,8 @@ class ChartPainter extends CustomPainter {
     double offsetStep = drawingWidth / entries.length;
 
     canvas.drawLine(
-      new Offset( 0, drawingHeight ),
-      new Offset( size.width, drawingHeight ),
+      new Offset( 0, drawingHeight + topPadding ),
+      new Offset( size.width, drawingHeight + topPadding ),
       paint,
     );
 
@@ -121,7 +126,7 @@ class ChartPainter extends CustomPainter {
     );
   }
 
-  void _drawBottomLabels(Canvas canvas, Size size) {
+  void _drawBottomLabels( Canvas canvas, Size size ) {
     for ( int entries = SimpleWeatherGraph.NUMBER_OF_ENTRIES - 1; entries >= 0; entries-- ) {
       double offsetXbyEntry = drawingWidth / SimpleWeatherGraph.NUMBER_OF_ENTRIES;
       double offsetX = offsetXbyEntry * entries + offsetXbyEntry / 2;
@@ -130,7 +135,7 @@ class ChartPainter extends CustomPainter {
 
       canvas.drawParagraph(
         paragraph,
-        new Offset( offsetX - 25.0, 17.0 + drawingHeight ),
+        new Offset( offsetX - 25.0, 17.0 + drawingHeight + topPadding ),
       );
     }
   }
@@ -210,7 +215,6 @@ class ChartPainter extends CustomPainter {
     return paragraph;
   }
 
-
   Color convertTempToColor( double temp ) {
     MaterialColor _color;
 
@@ -253,7 +257,7 @@ class ChartPainter extends CustomPainter {
     double columnWidth = drawingWidth / SimpleWeatherGraph.NUMBER_OF_ENTRIES;
     double xOffset = entry * columnWidth + 0.5 * columnWidth;
     double relativeYposition = ( entries[ entry ].temperature - minLineValue ) / ( maxLineValue - minLineValue );
-    double yOffset = drawingHeight - relativeYposition * drawingHeight;
+    double yOffset = drawingHeight - relativeYposition * drawingHeight + topPadding;
 
     return new Offset( xOffset, yOffset );
   }
@@ -264,6 +268,89 @@ class ChartPainter extends CustomPainter {
     return new Offset( entryOffset.dx - 25, entryOffset.dy - 30 );
   }
 
+  void _drawRainfall( Canvas canvas, Size size ) {
+    double columnWidth = drawingWidth / SimpleWeatherGraph.NUMBER_OF_ENTRIES;
+    int entry = 0;
+
+    rainfall.forEach( ( rainfallData ) {
+      if ( rainfallData.dateTime.compareTo( entries [ 0 ].dateTime ) < 0 ) {
+        return;
+      }
+
+      if ( rainfallData.probability == 0 ) {
+        return;
+      }
+
+      Paint bubbleStyle = new Paint();
+      bubbleStyle.style = PaintingStyle.fill;
+      bubbleStyle.color = _convertRainfallToBubbleFillColor( rainfallData.probability );
+
+      double left = entry * columnWidth + 0.5 * columnWidth - 16;
+      double top = 12;
+      double right = entry * columnWidth + 0.5 * columnWidth + 16;
+      double bottom = 32;
+      Radius radius = Radius.circular( 10 );
+
+      canvas.drawRRect(
+        RRect.fromLTRBR( left, top, right, bottom, radius ),
+        bubbleStyle
+      );
+
+      bubbleStyle.style = PaintingStyle.stroke;
+      bubbleStyle.color = _convertRainfallToBubbleStrokeColor( rainfallData.probability );
+
+      canvas.drawRRect(
+        RRect.fromLTRBR( left, top, right, bottom, radius ),
+        bubbleStyle
+      );
+
+      canvas.drawParagraph(
+        _buildParagraphForRainfall( rainfallData.probability ),
+        new Offset( entry * columnWidth, 15.0 )
+      );
+
+      entry++;
+    } );
+  }
+
+  Color _convertRainfallToBubbleFillColor( int probability ) {
+    if ( probability == 5 ) {
+      return Colors.white;
+    }
+
+    int shade = ( probability / 20 ).ceil() * 100;
+
+    return Colors.blue[ shade ];
+  }
+
+  Color _convertRainfallToBubbleStrokeColor( int probability ) {
+    if ( probability == 5 ) {
+      return Colors.blue;
+    }
+
+    int shade = ( probability / 20 ).ceil() * 100 + 500;
+
+    return Colors.blue[ shade ];
+  }
+
+  ui.Paragraph _buildParagraphForRainfall( int probability ) {
+    String percentage = probability.toString() + '%';
+    Color color = Colors.white;
+    if ( probability < 40 ) {
+      color = Colors.black;
+    }
+
+    ui.ParagraphBuilder builder = new ui.ParagraphBuilder(
+        new ui.ParagraphStyle( fontSize: 12.0, textAlign: TextAlign.center ) )
+      ..pushStyle( new ui.TextStyle( color: color ) )
+      ..addText( percentage );
+
+
+    final ui.Paragraph paragraph = builder.build()
+      ..layout( new ui.ParagraphConstraints( width: 50.0 ) );
+
+    return paragraph;
+  }
   @override
   bool shouldRepaint( ChartPainter old ) => true;
 }

@@ -92,6 +92,7 @@ class WeatherForecast {
   WeatherForecastWeather weather;
   List<WeatherForecastHourlyTemperature> temperature;
   WeatherForecastRainfall rainfall;
+  List<WeatherForecastHourlyRainfall> hourlyRainfall;
   WeatherForecastUV uv;
   WeatherForecastWind windMax;
   WeatherForecastSun sun;
@@ -101,6 +102,11 @@ class WeatherForecast {
     this.weather = new WeatherForecastWeather( forecast[ 'weather' ] );
     this.temperature = forecast[ 'temperature' ].map<WeatherForecastHourlyTemperature>( ( hourTemperature ) => new WeatherForecastHourlyTemperature( hourTemperature ) ).toList();
     this.rainfall = new WeatherForecastRainfall( forecast[ 'rainfall' ] );
+    if ( forecast.containsKey( 'rainfallProbability' ) ) {
+      this.hourlyRainfall = forecast[ 'rainfallProbability' ]
+          .map<WeatherForecastHourlyRainfall>( ( hourRainfall ) => new WeatherForecastHourlyRainfall( hourRainfall ) )
+          .toList();
+    }
     if ( forecast.containsKey( 'uv' ) ) {
       this.uv = new WeatherForecastUV( forecast[ 'uv' ] );
     }
@@ -145,7 +151,16 @@ class WeatherForecastRainfall {
   WeatherForecastRainfall( Map rainfall ) {
     this.rangeCode = rainfall[ 'rangeCode' ];
     this.probability = rainfall[ 'probability' ];
+  }
+}
 
+class WeatherForecastHourlyRainfall {
+  DateTime dateTime;
+  int probability;
+
+  WeatherForecastHourlyRainfall( Map hourRainfall ) {
+    this.dateTime = DateTime.parse( hourRainfall[ 'dateTime' ] );
+    this.probability = hourRainfall[ 'probability' ];
   }
 }
 
@@ -196,7 +211,6 @@ class WeatherForecastRegion {
     this.description = region[ 'description' ];
   }
 }
-
 
 class WeatherObservations {
   WeatherObservationsTemperature temperature;
