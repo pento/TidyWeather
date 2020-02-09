@@ -296,6 +296,8 @@ class ChartPainter extends CustomPainter {
         bubbleStyle
       );
 
+      print( rainfallData.probability );
+
       bubbleStyle.style = PaintingStyle.stroke;
       bubbleStyle.color = _convertRainfallToBubbleStrokeColor( rainfallData.probability );
 
@@ -329,6 +331,10 @@ class ChartPainter extends CustomPainter {
     }
 
     int shade = ( probability / 20 ).ceil() * 100 + 500;
+
+    if ( shade > 900 ) {
+      shade = 900;
+    }
 
     return Colors.blue[ shade ];
   }

@@ -44,9 +44,9 @@ class MyApp extends StatelessWidget {
         requiresCharging: false,
         requiresStorageNotLow: false,
         requiresDeviceIdle: false,
-        requiredNetworkType: BackgroundFetchConfig.NETWORK_TYPE_ANY
-    ), () async {
-      LocationModel.load().whenComplete( () { BackgroundFetch.finish(); } );
+        requiredNetworkType: NetworkType.ANY,
+    ), ( String taskId ) async {
+      LocationModel.load().whenComplete( () { BackgroundFetch.finish( taskId ); } );
     } );
   }
 
@@ -74,11 +74,11 @@ class MyApp extends StatelessWidget {
   }
 }
 
-void backgroundFetchHeadlessTask() async {
+void backgroundFetchHeadlessTask( String taskId ) async {
   await PrefService.init( prefix: 'pref_' );
 
   LocationModel( background: true );
   WeatherModel( background: true );
 
-  LocationModel.load().whenComplete( () { BackgroundFetch.finish(); } );
+  LocationModel.load().whenComplete( () { BackgroundFetch.finish( taskId ); } );
 }

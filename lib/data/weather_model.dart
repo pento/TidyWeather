@@ -26,8 +26,8 @@ class WeatherModel extends ChangeNotifier {
   }
 
   WeatherDay get today => new WeatherDay(
-    _weather[ 'location' ][ 'name' ],
-    _weather[ 'forecasts' ][ 0 ],
+    _weather[ 'location' ],
+    _weather[ 'forecasts' ],
     _weather[ 'observations' ],
   );
 
@@ -45,7 +45,7 @@ class WeatherModel extends ChangeNotifier {
 
     notifyListeners();
 
-    if ( Platform.isAndroid && ! background ) {
+    if ( Platform.isAndroid ) {
       platform.invokeMethod(
         'updateWeatherData',
         {
@@ -63,23 +63,25 @@ class WeatherWeek {
   List<WeatherDay> days;
 
   WeatherWeek( Map weather ) {
-    this.days = weather[ 'forecasts' ].map<WeatherDay>( ( dayWeather ) => new WeatherDay( weather[ 'location' ][ 'name' ], dayWeather ) ).toList();
+    this.days = weather[ 'forecasts' ].map<WeatherDay>( ( dayWeather ) => new WeatherDay( weather[ 'location' ], [ dayWeather ] ) ).toList();
   }
 }
 
 class WeatherDay {
-  String locationName;
+  String locationName = 'Loading...';
   DateTime dateTime;
   WeatherForecast forecast;
   WeatherObservations observations;
 
 
-  WeatherDay( String location, Map forecast, [ Map observations ] ) {
-    this.locationName = location;
+  WeatherDay( Map location, List forecast, [ Map observations ] ) {
+    if ( location != null ) {
+      this.locationName = location['name'];
+    }
 
     if ( forecast != null ) {
-      this.dateTime = DateTime.parse( forecast[ 'dateTime' ] );
-      this.forecast = new WeatherForecast( forecast );
+      this.dateTime = DateTime.parse( forecast[ 0 ][ 'dateTime' ] );
+      this.forecast = new WeatherForecast( forecast[ 0 ] );
     }
 
     if ( observations != null ) {

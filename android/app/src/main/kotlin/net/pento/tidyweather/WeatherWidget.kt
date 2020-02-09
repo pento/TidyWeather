@@ -9,6 +9,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.util.Log
 import android.widget.RemoteViews
 
 /**
@@ -33,6 +34,7 @@ class WeatherWidget : AppWidgetProvider() {
 }
 
 internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
+    Log.d( "TidyWeather", "*********** Updating Widget " )
     val prefs = context.getSharedPreferences( "net.pento.tidyweather.prefs", 0 )
 
     val current = prefs.getString( "current", "-" )
@@ -97,27 +99,4 @@ internal fun weatherIcon( iconCode: String ): Int {
   }
 
   return -1
-}
-
-internal fun drawableToBitmap( drawable: Drawable ): Bitmap {
-    var bitmap: Bitmap
-
-    if ( drawable is BitmapDrawable ) {
-        var bitmapDrawable: BitmapDrawable = drawable
-        if ( bitmapDrawable.bitmap != null ) {
-            return bitmapDrawable.bitmap
-        }
-    }
-
-    if ( drawable.intrinsicWidth <= 0 || drawable.intrinsicHeight <= 0 ) {
-        bitmap = Bitmap.createBitmap( 1, 1, Bitmap.Config.ARGB_8888 )
-    } else {
-        bitmap = Bitmap.createBitmap( drawable.intrinsicWidth, drawable.intrinsicHeight, Bitmap.Config.ARGB_8888 )
-    }
-
-    var canvas = Canvas( bitmap )
-    drawable.setBounds( 0, 0, canvas.width, canvas.height )
-    drawable.draw( canvas )
-
-    return bitmap
 }

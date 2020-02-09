@@ -7,6 +7,7 @@ import './weather_model.dart';
 
 class LocationModel extends ChangeNotifier {
   Placemark _place = new Placemark();
+  Geolocator _geolocator = new Geolocator();
 
   static LocationModel _self;
 
@@ -27,7 +28,11 @@ class LocationModel extends ChangeNotifier {
   void loadData() async {
     Position position = await Geolocator().getCurrentPosition( desiredAccuracy: LocationAccuracy.high );
 
+    print( 'Location: ${position.latitude}, ${position.longitude}' );
+
     List<Placemark> place = await Geolocator().placemarkFromPosition( position );
+
+    print( 'Place: ${place[ 0 ].locality} ${place[ 0 ].postalCode} ${place[ 0 ].isoCountryCode}' );
 
     if ( place[ 0 ].isoCountryCode != 'AU' ) {
       _place = place[ 0 ];
