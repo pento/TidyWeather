@@ -7,7 +7,6 @@ import './weather_model.dart';
 
 class LocationModel extends ChangeNotifier {
   Placemark _place = new Placemark();
-  Geolocator _geolocator = new Geolocator();
 
   static LocationModel _self;
 

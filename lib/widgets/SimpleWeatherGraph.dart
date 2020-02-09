@@ -296,8 +296,6 @@ class ChartPainter extends CustomPainter {
         bubbleStyle
       );
 
-      print( rainfallData.probability );
-
       bubbleStyle.style = PaintingStyle.stroke;
       bubbleStyle.color = _convertRainfallToBubbleStrokeColor( rainfallData.probability );
 
