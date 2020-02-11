@@ -4,8 +4,10 @@
 
     <application
         tools:replace="android:label"
+        android:name=".Application"
         android:label="Tidy Weather"
         android:icon="@mipmap/ic_launcher">
+
         <receiver
             android:name=".WeatherWidget"
             android:icon="@drawable/widget_preview">
@@ -30,6 +32,7 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data
@@ -38,4 +41,6 @@
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 </manifest>

@@ -73,6 +73,10 @@ class ChartPainter extends CustomPainter {
 
   @override
   void paint( Canvas canvas, Size size ) {
+    if ( entries.length < SimpleWeatherGraph.NUMBER_OF_ENTRIES ) {
+      return;
+    }
+
     topPadding = 40;
     drawingHeight = size.height - 50 - topPadding;
     drawingWidth = size.width;
@@ -329,6 +333,10 @@ class ChartPainter extends CustomPainter {
     }
 
     int shade = ( probability / 20 ).ceil() * 100 + 500;
+
+    if ( shade > 900 ) {
+      shade = 900;
+    }
 
     return Colors.blue[ shade ];
   }
