@@ -32,11 +32,9 @@ packages:
   background_fetch:
     dependency: "direct main"
     description:
-      path: "."
-      ref: BGTaskScheduler
-      resolved-ref: "3cbf035b040ac026fc4c5fd6a0288a033a95681f"
-      url: "git://github.com/transistorsoft/flutter_background_fetch"
-    source: git
+      name: background_fetch
+      url: "https://pub.dartlang.org"
+    source: hosted
     version: "0.5.0"
   boolean_selector:
     dependency: transitive
