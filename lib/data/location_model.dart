@@ -25,11 +25,16 @@ class LocationModel extends ChangeNotifier {
   }
 
   void loadData() async {
-    Position position = await Geolocator().getCurrentPosition( desiredAccuracy: LocationAccuracy.high );
-
-    print( 'Location: ${position.latitude}, ${position.longitude}' );
-
-    List<Placemark> place = await Geolocator().placemarkFromPosition( position );
+    List<Placemark> place = await Geolocator()
+      .getCurrentPosition( desiredAccuracy: LocationAccuracy.high )
+      .then( ( Position position ) async {
+        print( 'Location: ${position.latitude}, ${position.longitude}' );
+        return await Geolocator().placemarkFromPosition( position );
+      } )
+      .timeout( new Duration( seconds: 10 ), onTimeout: () {
+        print( 'Retrieving location timed out.' );
+        return [ _place ];
+      } );
 
     print( 'Place: ${place[ 0 ].locality} ${place[ 0 ].postalCode} ${place[ 0 ].isoCountryCode}' );
 
@@ -44,7 +49,7 @@ class LocationModel extends ChangeNotifier {
       notifyListeners();
     }
 
-    WeatherModel.load( _place.locality, _place.postalCode, uvLocation( position.latitude, position.longitude ) );
+    WeatherModel.load( _place.locality, _place.postalCode, uvLocation( _place.position.latitude, _place.position.longitude ) );
   }
 
   String uvLocation( double latitude, double longitude ) {
