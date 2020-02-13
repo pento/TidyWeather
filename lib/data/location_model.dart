@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:preferences/preference_service.dart';
 
 import './weather_model.dart';
 
@@ -33,13 +34,24 @@ class LocationModel extends ChangeNotifier {
       } )
       .timeout( new Duration( seconds: 10 ), onTimeout: () {
         print( 'Retrieving location timed out.' );
-        return [ _place ];
+        return [
+          new Placemark(
+            locality: PrefService.getString( '_last_place_locality' ),
+            postalCode: PrefService.getString( '_last_place_postalCode' ),
+            isoCountryCode: PrefService.getString( '_last_place_isoCountryCode' ),
+            position: new Position(
+              longitude: PrefService.getDouble( '_last_place_position_longitude' ),
+              latitude: PrefService.getDouble( '_last_place_position_latitude' ),
+            ),
+          ),
+        ];
       } );
 
     print( 'Place: ${place[ 0 ].locality} ${place[ 0 ].postalCode} ${place[ 0 ].isoCountryCode}' );
 
     if ( place[ 0 ].isoCountryCode != 'AU' ) {
       _place = place[ 0 ];
+      storePlacemark( _place );
       notifyListeners();
       return;
     }
@@ -49,7 +61,18 @@ class LocationModel extends ChangeNotifier {
       notifyListeners();
     }
 
+    storePlacemark( _place );
+
     WeatherModel.load( _place.locality, _place.postalCode, uvLocation( _place.position.latitude, _place.position.longitude ) );
+  }
+
+  storePlacemark( Placemark place ) {
+    PrefService.setString( '_last_place_locality', place.locality );
+    PrefService.setString( '_last_place_postalCode', place.postalCode );
+    PrefService.setString( '_last_place_isoCountryCode', place.isoCountryCode );
+
+    PrefService.setDouble( '_last_place_position_longitude', place.position.longitude );
+    PrefService.setDouble( '_last_place_position_latitude', place.position.latitude );
   }
 
   String uvLocation( double latitude, double longitude ) {
