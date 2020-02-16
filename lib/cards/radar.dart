@@ -1,8 +1,8 @@
-import 'dart:math';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong/latlong.dart';
 import 'package:provider/provider.dart';
 
 import '../data/weather_model.dart';
@@ -15,19 +15,20 @@ class RadarCard extends StatefulWidget {
 }
 
 class _RadarCardState extends State<RadarCard> {
-  DrawableRoot _map;
+  Timer _timer;
+  int _seconds;
 
   @override
   void initState() {
     super.initState();
-    _loadMap();
-  }
 
-  _loadMap() async {
-    String svgString = await rootBundle.loadString( 'assets/images/map-australia.svg' );
-    DrawableRoot map = await svg.fromSvgString( svgString, svgString );
+    setState(() => _seconds = 0 );
 
-    setState( () => _map = map );
+    _timer = new Timer.periodic(
+      new Duration( seconds: 1 ),
+      ( Timer timer ) => setState( () => _seconds++ ),
+    );
+
   }
 
   @override
@@ -38,16 +39,34 @@ class _RadarCardState extends State<RadarCard> {
           if ( weather.today.radar.overlays.length == 0 ) {
             return Container();
           }
+
+          int overlay = _seconds != null ? _seconds % weather.today.radar.overlays.length : 0;
+
           return SizedBox(
             height: 400,
-            child: Stack(
-              fit: StackFit.passthrough,
-              children: <Widget>[
-                new CustomPaint(
-                  painter: new RadarPainter( context, weather, _map ),
+            child: new FlutterMap(
+              options: new MapOptions(
+                center: new LatLng( weather.today.radar.location.latitude, weather.today.radar.location.longitude ),
+                zoom: 7,
+                minZoom: 7,
+                maxZoom: 7,
+              ),
+              layers: [
+                new TileLayerOptions(
+                  urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                  subdomains: [ 'a', 'b', 'c' ],
                 ),
-                Image.network( weather.today.radar.overlays.last.url ),
-                Text( weather.today.radar.overlays.last.dateTime.toIso8601String() )
+                new OverlayImageLayerOptions(
+                  overlayImages: [
+                    new OverlayImage(
+                      bounds: new LatLngBounds(
+                        new LatLng( weather.today.radar.mapMin.latitude, weather.today.radar.mapMin.longitude ),
+                        new LatLng( weather.today.radar.mapMax.latitude, weather.today.radar.mapMax.longitude ),
+                      ),
+                      imageProvider: Image.network( weather.today.radar.overlays[ overlay ].url ).image,
+                    )
+                  ]
+                )
               ],
             ),
           );
@@ -55,50 +74,4 @@ class _RadarCardState extends State<RadarCard> {
       ),
     );
   }
-}
-
-class RadarPainter extends CustomPainter {
-  final BuildContext context;
-  final WeatherModel weather;
-  final DrawableRoot map;
-
-
-  RadarPainter( this.context, this.weather, this.map ) : super();
-
-  void paint( Canvas canvas, Size size ) async {
-    if ( map == null ) {
-      return;
-    }
-
-    // Ensure nothing paints outside of the canvas.
-    canvas.clipRect( Rect.fromLTWH( 0, 0, size.width, size.height ) );
-
-    canvas.transform( Transform.scale(scale: 1.5 ).transform.storage );
-
-    // Map is 111 to 156°E, and 2000 units wide.
-    // Map is 9 to 45°S, and 1842 units tall. It uses the Mercator projection.
-    double mapWidth = 2000;
-    double mapHeight = 1842;
-
-    double mapLngLeft = 112;
-    double mapLngRight = 157.4;
-    double mapLngDelta = mapLngRight - mapLngLeft;
-
-    double mapLatBottom = -45.5;
-    double mapLatBottomDegree = mapLatBottom * pi / 180;
-
-    double translateX = -1 * ( weather.today.radar.mapMin.longitude - mapLngLeft ) * ( mapWidth / mapLngDelta );
-
-    double lat = weather.today.radar.mapMax.latitude * pi / 180;
-    double worldMapWidth = ( ( mapWidth / mapLngDelta ) * 360 ) / ( 2 * pi );
-    double mapOffsetY = ( worldMapWidth / 2 * log( ( 1 + sin( mapLatBottomDegree ) ) / ( 1 - sin( mapLatBottomDegree ) ) ) );
-    double translateY = -1 * ( mapHeight - ( ( worldMapWidth / 2 * log( ( 1 + sin( lat ) ) / ( 1 - sin( lat ) ) ) ) - mapOffsetY ) );
-
-    canvas.translate( translateX, translateY );
-
-    map.draw( canvas, Rect.fromLTWH( 0, 0, size.width, size.height ) );
-  }
-
-  @override
-  bool shouldRepaint( RadarPainter old ) => true;
 }

@@ -123,23 +123,15 @@ class _AboutPageState extends State<AboutPage> {
                 style: textStyle,
                 children: <TextSpan>[
                   TextSpan(
-                    text: 'Map of Australia was created by ',
+                    text: 'Maps are © ',
                   ),
                   LinkTextSpan(
                     style: linkStyle,
-                    text: 'John Tann',
-                    url: 'https://en.wikipedia.org/wiki/User:John_Tann',
+                    text: 'OpenStreetMap',
+                    url: 'https://www.openstreetmap.org/',
                   ),
                   TextSpan(
-                    text: ', and released under the ',
-                  ),
-                  LinkTextSpan(
-                    style: linkStyle,
-                    text: 'CC BY 4.0',
-                    url: 'https://creativecommons.org/licenses/by/4.0/deed.en',
-                  ),
-                  TextSpan(
-                    text: ' license. Styling has been modified from the original.',
+                    text: ' contributors.',
                   ),
                 ],
               ),
