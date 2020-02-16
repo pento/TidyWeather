@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
 
 import '../cards/graph.dart';
+import '../cards/radar.dart';
 import '../cards/today.dart';
 import '../cards/today_details.dart';
 import '../cards/week.dart';
@@ -68,6 +69,7 @@ class AppState extends State<HomePage> {
                 WeekCard(),
                 GraphCard(),
                 TodayDetailsCard(),
+                RadarCard(),
               ],
             ),
           ),

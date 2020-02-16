@@ -29,6 +29,7 @@ class WeatherModel extends ChangeNotifier {
     _weather[ 'location' ],
     _weather[ 'forecasts' ],
     _weather[ 'observations' ],
+    _weather[ 'radar' ],
   );
 
   WeatherWeek get week => new WeatherWeek( _weather );
@@ -72,9 +73,10 @@ class WeatherDay {
   DateTime dateTime;
   WeatherForecast forecast;
   WeatherObservations observations;
+  WeatherRadar radar;
 
 
-  WeatherDay( Map location, List forecast, [ Map observations ] ) {
+  WeatherDay( Map location, List forecast, [ Map observations, Map radar ] ) {
     if ( location != null ) {
       this.locationName = location['name'];
     }
@@ -86,6 +88,10 @@ class WeatherDay {
 
     if ( observations != null ) {
       this.observations = new WeatherObservations( observations );
+    }
+
+    if ( radar != null ) {
+      this.radar = new WeatherRadar( radar );
     }
   }
 }
@@ -269,5 +275,46 @@ class WeatherObservationsUv {
     this.description = uv[ 'description' ];
     this.name = uv[ 'name' ];
     this.utcDateTime = DateTime.parse( uv[ 'utcDateTime' ] );
+  }
+}
+
+class WeatherRadar {
+  int interval;
+  String name;
+  WeatherRadarLocation mapMin;
+  WeatherRadarLocation mapMax;
+  WeatherRadarLocation location;
+  List<WeatherRadarImage> overlays;
+
+  WeatherRadar( Map radar ) {
+    this.interval = radar[ 'interval' ];
+    this.name = radar[ 'name' ];
+    this.mapMin = WeatherRadarLocation( radar[ 'bounds' ][ 'minLat' ], radar[ 'bounds' ][ 'minLng' ] );
+    this.mapMax = WeatherRadarLocation( radar[ 'bounds' ][ 'maxLat' ], radar[ 'bounds' ][ 'maxLng' ] );
+    this.location = WeatherRadarLocation( radar[ 'lat' ], radar['lng'] );
+
+    this.overlays = radar[ 'overlays' ]
+        .map<WeatherRadarImage>( ( radarImage ) => new WeatherRadarImage( radarImage, radar[ 'overlayPath' ] ) )
+        .toList();
+  }
+}
+
+class WeatherRadarLocation {
+  double latitude;
+  double longitude;
+
+  WeatherRadarLocation( latitude, longitude ) {
+    this.latitude = latitude.toDouble();
+    this.longitude = longitude.toDouble();
+  }
+}
+
+class WeatherRadarImage {
+  DateTime dateTime;
+  String url;
+
+  WeatherRadarImage( Map radarImage, path ) {
+    this.dateTime = DateTime.parse( radarImage[ 'dateTime' ] + 'Z' );
+    this.url = '$path${ radarImage[ 'name' ] }';
   }
 }

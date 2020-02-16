@@ -115,6 +115,27 @@ class _AboutPageState extends State<AboutPage> {
                 ],
               ),
             ),
+            Container(
+              height: 20,
+            ),
+            RichText(
+              text: TextSpan(
+                style: textStyle,
+                children: <TextSpan>[
+                  TextSpan(
+                    text: 'Maps are © ',
+                  ),
+                  LinkTextSpan(
+                    style: linkStyle,
+                    text: 'OpenStreetMap',
+                    url: 'https://www.openstreetmap.org/',
+                  ),
+                  TextSpan(
+                    text: ' contributors.',
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
