@@ -314,7 +314,7 @@ class WeatherRadarImage {
   String url;
 
   WeatherRadarImage( Map radarImage, path ) {
-    this.dateTime = DateTime.parse( radarImage[ 'dateTime' ] );
+    this.dateTime = DateTime.parse( radarImage[ 'dateTime' ] + 'Z' );
     this.url = '$path${ radarImage[ 'name' ] }';
   }
 }
