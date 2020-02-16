@@ -115,6 +115,35 @@ class _AboutPageState extends State<AboutPage> {
                 ],
               ),
             ),
+            Container(
+              height: 20,
+            ),
+            RichText(
+              text: TextSpan(
+                style: textStyle,
+                children: <TextSpan>[
+                  TextSpan(
+                    text: 'Map of Australia was created by ',
+                  ),
+                  LinkTextSpan(
+                    style: linkStyle,
+                    text: 'John Tann',
+                    url: 'https://en.wikipedia.org/wiki/User:John_Tann',
+                  ),
+                  TextSpan(
+                    text: ', and released under the ',
+                  ),
+                  LinkTextSpan(
+                    style: linkStyle,
+                    text: 'CC BY 4.0',
+                    url: 'https://creativecommons.org/licenses/by/4.0/deed.en',
+                  ),
+                  TextSpan(
+                    text: ' license. Styling has been modified from the original.',
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
