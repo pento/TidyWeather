@@ -33,6 +33,13 @@ class _RadarCardState extends State<RadarCard> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+
+    _timer.cancel();
+  }
+
+  @override
   Widget build( BuildContext context ) {
     return Card(
       child: Consumer<WeatherModel>(
