@@ -11,8 +11,9 @@ class WeatherModel extends ChangeNotifier {
   static WeatherModel _self;
   static const platform = const MethodChannel( 'net.pento.tidyweather/widget' );
   bool background;
+  BuildContext _context;
 
-  WeatherModel( { bool background = false } ) {
+  WeatherModel( { context, bool background = false } ) {
     String weatherCache = PrefService.getString( 'cached_weather_data' );
     if ( weatherCache != null ) {
       Map weatherData = jsonDecode( weatherCache );
@@ -23,6 +24,7 @@ class WeatherModel extends ChangeNotifier {
 
     _self = this;
     this.background = background;
+    this._context = context;
   }
 
   WeatherDay get today => new WeatherDay(
@@ -43,6 +45,13 @@ class WeatherModel extends ChangeNotifier {
     _weather = jsonDecode( weatherResponse.body );
 
     PrefService.setString( 'cached_weather_data', weatherResponse.body );
+
+    if ( _context != null ) {
+      today.radar.overlays.forEach( ( WeatherRadarImage image ) {
+        Image theImage = Image.network( image.url );
+        precacheImage( theImage.image, _context );
+      } );
+    }
 
     notifyListeners();
 

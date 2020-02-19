@@ -22,7 +22,7 @@ void main() async {
       MultiProvider(
         providers: [
           ChangeNotifierProvider( create: ( context ) => LocationModel() ),
-          ChangeNotifierProvider( create: ( context ) => WeatherModel() ),
+          ChangeNotifierProvider( create: ( context ) => WeatherModel( context: context ) ),
           ChangeNotifierProvider( create: ( context ) => PreferenceModel() ),
         ],
         child: MyApp(),
