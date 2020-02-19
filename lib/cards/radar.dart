@@ -48,7 +48,11 @@ class _RadarCardState extends State<RadarCard> {
             return Container();
           }
 
-          int overlay = _seconds != null ? _seconds % weather.today.radar.overlays.length : 0;
+          // Pause for a second on the last image.
+          int overlay = _seconds != null ? _seconds % ( weather.today.radar.overlays.length + 1 ) : 0;
+          if ( overlay >= weather.today.radar.overlays.length ) {
+            overlay = weather.today.radar.overlays.length - 1;
+          }
 
           return Column(
               children: <Widget>[
