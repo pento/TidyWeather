@@ -4,6 +4,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:provider/provider.dart';
 
 import '../data/weather_model.dart';
+import '../widgets/WeatherDetailsBlock.dart';
 
 class TodayDetailsCard extends StatefulWidget {
 
@@ -38,15 +39,17 @@ class _TodayDetailsCardState extends State<TodayDetailsCard> {
               Row(
                 mainAxisSize: MainAxisSize.max,
                 children: <Widget>[
-                  buildDetails(
+                  WeatherDetailsBlock(
                     icon: MdiIcons.beakerOutline,
                     iconColor: Colors.blue,
+                    title: Text( 'Rainfall since 9am' ),
                     text: Text( '${ weather.today.observations.rainfall.since9AMAmount }mm' ),
                     subtext: Text( 'Since 9am' ),
                   ),
-                  buildDetails(
+                  WeatherDetailsBlock(
                     icon: MdiIcons.water,
                     iconColor: Colors.blue,
+                    title: Text( "Rain forecast" ),
                     text: Text( '${ weather.today.forecast.rainfall.rangeCode }mm' ),
                     subtext: Text( '${ weather.today.forecast.rainfall.probability }% chance' ),
                   ),
@@ -54,9 +57,10 @@ class _TodayDetailsCardState extends State<TodayDetailsCard> {
               ),
               Row(
                 children: <Widget>[
-                  buildDetails(
+                  WeatherDetailsBlock(
                     icon: MdiIcons.weatherSunny,
                     iconColor: Colors.deepPurple,
+                    title: Text( 'Current UV index' ),
                     text: RichText(
                       text: TextSpan(
                         children: <TextSpan>[
@@ -73,9 +77,10 @@ class _TodayDetailsCardState extends State<TodayDetailsCard> {
                     ),
                     subtext: Text( Jiffy( weather.today.observations.uv.utcDateTime ).fromNow() ),
                   ),
-                  buildDetails(
+                  WeatherDetailsBlock(
                     icon: MdiIcons.weatherSunnyAlert,
                     iconColor: Colors.deepPurple,
+                    title: Text( "Today's UV max" ),
                     text: RichText(
                       text: TextSpan(
                         children: <TextSpan>[
@@ -97,15 +102,17 @@ class _TodayDetailsCardState extends State<TodayDetailsCard> {
               Row(
                 mainAxisSize: MainAxisSize.max,
                 children: <Widget>[
-                  buildDetails(
+                  WeatherDetailsBlock(
                     icon: MdiIcons.fan,
                     iconColor: Colors.lightGreen,
+                    title: Text( 'Current wind speed' ),
                     text: Text( '${ weather.today.observations.wind.speed } km/h' ),
                     subtext: Text( weather.today.observations.wind.directionText ),
                   ),
-                  buildDetails(
+                  WeatherDetailsBlock(
                     icon: MdiIcons.weatherWindy,
                     iconColor: Colors.lightGreen,
+                    title: Text( 'Current wind gust' ),
                     text: weather.today.observations.wind.gustSpeed != null ? Text( '${ weather.today.observations.wind.gustSpeed } km/h' ) : Text( 'Unknown' ),
                     subtext: Text( 'Gust' ),
                   ),
@@ -117,44 +124,6 @@ class _TodayDetailsCardState extends State<TodayDetailsCard> {
       ),
     );
   }
-}
-
-Expanded buildDetails( { icon, iconColor, text, subtext } ) {
-  return Expanded(
-    child: Container(
-      padding: EdgeInsets.symmetric( vertical: 5, horizontal: 12 ),
-      child: Row(
-        children: <Widget>[
-          Column(
-            children: <Widget>[
-              Container(
-                padding: EdgeInsets.all( 6 ),
-                decoration: BoxDecoration(
-                  color: iconColor,
-                  borderRadius: BorderRadius.circular( 20 ),
-                ),
-
-                child: Icon(
-                  icon,
-                  color: Colors.white,
-                ),
-              ),
-            ],
-          ),
-          Container(
-            padding: EdgeInsets.only( left: 10 ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                text,
-                subtext,
-              ],
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
 }
 
 Color convertUVtoColor( double uv ) {
