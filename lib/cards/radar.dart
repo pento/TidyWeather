@@ -69,7 +69,7 @@ class _RadarCardState extends State<RadarCard> {
                     ),
                     layers: [
                       new TileLayerOptions(
-                        urlTemplate: "https://api.mapbox.com/styles/v1/pento/ck6v9qqr80crx1jqv85poyhbm/tiles/{z}/{x}/{y}?access_token={accessToken}",
+                        urlTemplate: "https://api.mapbox.com/styles/v1/pento/ck6vbdjle0eai1isbmqf406r4/tiles/{z}/{x}/{y}?access_token={accessToken}",
                         additionalOptions: {
                           'accessToken': Config.item( 'mapbox_access_token' ),
                         },
