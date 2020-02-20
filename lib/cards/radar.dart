@@ -5,6 +5,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:latlong/latlong.dart';
 import 'package:provider/provider.dart';
+import 'package:tidyweather/data/config.dart';
 
 import '../data/weather_model.dart';
 
@@ -17,17 +18,17 @@ class RadarCard extends StatefulWidget {
 
 class _RadarCardState extends State<RadarCard> {
   Timer _timer;
-  int _seconds;
+  int _mapTicks;
 
   @override
   void initState() {
     super.initState();
 
-    setState(() => _seconds = 0 );
+    setState(() => _mapTicks = 0 );
 
     _timer = new Timer.periodic(
-      new Duration( seconds: 1 ),
-      ( Timer timer ) => setState( () => _seconds++ ),
+      new Duration( milliseconds: 500 ),
+      ( Timer timer ) => setState( () => _mapTicks++ ),
     );
 
   }
@@ -49,7 +50,7 @@ class _RadarCardState extends State<RadarCard> {
           }
 
           // Pause for a second on the last image.
-          int overlay = _seconds != null ? _seconds % ( weather.today.radar.overlays.length + 1 ) : 0;
+          int overlay = _mapTicks != null ? _mapTicks % ( weather.today.radar.overlays.length + 1 ) : 0;
           if ( overlay >= weather.today.radar.overlays.length ) {
             overlay = weather.today.radar.overlays.length - 1;
           }
@@ -61,14 +62,17 @@ class _RadarCardState extends State<RadarCard> {
                   child: new FlutterMap(
                     options: new MapOptions(
                       center: new LatLng( weather.today.radar.location.latitude, weather.today.radar.location.longitude ),
-                      zoom: 7,
-                      minZoom: 7,
-                      maxZoom: 7,
+                      zoom: 8,
+                      minZoom: 6,
+                      maxZoom: 9,
+                      interactive: false,
                     ),
                     layers: [
                       new TileLayerOptions(
-                        urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                        subdomains: [ 'a', 'b', 'c' ],
+                        urlTemplate: "https://api.mapbox.com/styles/v1/pento/ck6v9qqr80crx1jqv85poyhbm/tiles/{z}/{x}/{y}?access_token={accessToken}",
+                        additionalOptions: {
+                          'accessToken': Config.item( 'mapbox_access_token' ),
+                        },
                       ),
                       new OverlayImageLayerOptions(
                         overlayImages: [

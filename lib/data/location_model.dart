@@ -11,7 +11,7 @@ class LocationModel extends ChangeNotifier {
 
   static LocationModel _self;
 
-  WeatherPlace get place  => new WeatherPlace( _place );
+  WeatherPlace get place => new WeatherPlace( _place );
 
   LocationModel( { background: false } ) {
     _self = this;

@@ -4,6 +4,7 @@ import 'package:preferences/preference_service.dart';
 import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
 
+import './data/config.dart';
 import './data/location_model.dart';
 import './data/preference_model.dart';
 import './data/weather_model.dart';
@@ -17,6 +18,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await PrefService.init( prefix: 'pref_' );
+  await Config.load( 'config.json' );
 
   runApp(
       MultiProvider(
