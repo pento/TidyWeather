@@ -19,7 +19,8 @@ class _TodayDetailsCardState extends State<TodayDetailsCard> {
     return Card(
       child: Consumer<WeatherModel>(
         builder: ( context, weather, child ) {
-          final TextStyle textStyle = Theme.of( context ).textTheme.body2;
+          final TextStyle textStyle = Theme.of( context ).textTheme.body1;
+          final TextStyle lightTextStyle = Theme.of( context ).textTheme.caption;
 
           return Column(
             children: <Widget>[
@@ -115,6 +116,51 @@ class _TodayDetailsCardState extends State<TodayDetailsCard> {
                     title: Text( 'Current wind gust' ),
                     text: weather.today.observations.wind.gustSpeed != null ? Text( '${ weather.today.observations.wind.gustSpeed } km/h' ) : Text( 'Unknown' ),
                     subtext: Text( 'Gust' ),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                children: <Widget>[
+                  WeatherDetailsBlock(
+                    icon: MdiIcons.weatherSunny,
+                    iconColor: Colors.amber,
+                    title: Text( 'Sunrise/sunset' ),
+                    text: RichText(
+                      text: TextSpan(
+                        children: <TextSpan>[
+                          TextSpan(
+                            style: textStyle,
+                            text: Jiffy( weather.today.forecast.sun.sunrise ).format( 'H:mm ' )
+                          ),
+                          TextSpan(
+                            style: textStyle.copyWith( color: lightTextStyle.color ),
+                            text: Jiffy( weather.today.forecast.sun.firstLight ).format( 'H:mm' )
+                          )
+                        ],
+                      ),
+                    ),
+                    subtext: RichText(
+                      text: TextSpan(
+                        children: <TextSpan>[
+                          TextSpan(
+                              style: textStyle,
+                              text: Jiffy( weather.today.forecast.sun.sunset ).format( 'H:mm ' )
+                          ),
+                          TextSpan(
+                              style: textStyle.copyWith( color: lightTextStyle.color ),
+                              text: Jiffy( weather.today.forecast.sun.lastLight ).format( 'H:mm' )
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  WeatherDetailsBlock(
+                    icon: MdiIcons.waterOutline,
+                    iconColor: Colors.lightBlueAccent,
+                    title: Text( 'Relative humidity' ),
+                    text: Text( '${ weather.today.observations.humidity.percentage }%' ),
+                    subtext: Text( 'Humidity' ),
                   ),
                 ],
               ),

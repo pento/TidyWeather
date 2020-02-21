@@ -6,7 +6,7 @@ class WeatherDetailsBlock extends StatefulWidget {
   final Color iconColor;
   final Text title;
   final Widget text;
-  final Text subtext;
+  final Widget subtext;
 
   WeatherDetailsBlock( { this.icon, this.iconColor, this.title, this.text, this.subtext } );
 

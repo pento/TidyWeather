@@ -201,12 +201,16 @@ class WeatherForecastWind {
 }
 
 class WeatherForecastSun {
+  DateTime firstLight;
   DateTime sunrise;
   DateTime sunset;
+  DateTime lastLight;
 
   WeatherForecastSun( Map sun ) {
+    this.firstLight = DateTime.parse( sun[ 'firstLight' ] );
     this.sunrise = DateTime.parse( sun[ 'sunrise' ] );
     this.sunset = DateTime.parse( sun[ 'sunset' ] );
+    this.lastLight = DateTime.parse( sun[ 'lastLight' ] );
   }
 }
 
@@ -225,12 +229,14 @@ class WeatherObservations {
   WeatherObservationsRainfall rainfall;
   WeatherObservationsWind wind;
   WeatherObservationsUv uv;
+  WeatherObservationsHumidity humidity;
 
   WeatherObservations( Map observations ) {
     this.temperature = new WeatherObservationsTemperature( observations[ 'temperature' ] );
     this.rainfall = new WeatherObservationsRainfall( observations[ 'rainfall' ] );
     this.wind = new WeatherObservationsWind( observations[ 'wind' ] );
     this.uv = new WeatherObservationsUv( observations[ 'uv' ] );
+    this.humidity = new WeatherObservationsHumidity( observations[ 'humidity' ] );
   }
 }
 
@@ -275,6 +281,14 @@ class WeatherObservationsUv {
     this.description = uv[ 'description' ];
     this.name = uv[ 'name' ];
     this.utcDateTime = DateTime.parse( uv[ 'utcDateTime' ] );
+  }
+}
+
+class WeatherObservationsHumidity {
+  double percentage;
+
+  WeatherObservationsHumidity( Map humidity ) {
+    this.percentage = humidity[ 'percentage' ]?.toDouble();
   }
 }
 
