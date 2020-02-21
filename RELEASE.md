@@ -2,7 +2,7 @@
 
 ## Android
 
-Releasing a new version of the Android app requires the `~/key.jks` and `android/key.properties` files.
+Releasing a new version of the Android app requires the `config.json`, `~/key.jks`, and `android/key.properties` files.
 
 ### Building
 

@@ -5,6 +5,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:latlong/latlong.dart';
 import 'package:provider/provider.dart';
+import 'package:tidyweather/data/config.dart';
 
 import '../data/weather_model.dart';
 
@@ -17,19 +18,29 @@ class RadarCard extends StatefulWidget {
 
 class _RadarCardState extends State<RadarCard> {
   Timer _timer;
-  int _seconds;
+  int _mapTicks;
+  MapController _mapController;
 
   @override
   void initState() {
     super.initState();
 
-    setState(() => _seconds = 0 );
+    _mapController = new MapController();
+
+    setState(() => _mapTicks = 0 );
 
     _timer = new Timer.periodic(
-      new Duration( seconds: 1 ),
-      ( Timer timer ) => setState( () => _seconds++ ),
+      new Duration( milliseconds: 500 ),
+      ( Timer timer ) => setState( () => _mapTicks++ ),
     );
 
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    _timer.cancel();
   }
 
   @override
@@ -41,23 +52,33 @@ class _RadarCardState extends State<RadarCard> {
             return Container();
           }
 
-          int overlay = _seconds != null ? _seconds % weather.today.radar.overlays.length : 0;
+          // Pause for a second on the last image.
+          int overlay = _mapTicks != null ? _mapTicks % ( weather.today.radar.overlays.length + 1 ) : 0;
+          if ( overlay >= weather.today.radar.overlays.length ) {
+            overlay = weather.today.radar.overlays.length - 1;
+          }
+
+          LatLng center = new LatLng( weather.today.radar.location.latitude, weather.today.radar.location.longitude );
 
           return Column(
               children: <Widget>[
                 SizedBox(
                   height: 400,
                   child: new FlutterMap(
+                    mapController: _mapController,
                     options: new MapOptions(
-                      center: new LatLng( weather.today.radar.location.latitude, weather.today.radar.location.longitude ),
-                      zoom: 7,
+                      center: center,
+                      zoom: 8,
                       minZoom: 7,
-                      maxZoom: 7,
+                      maxZoom: 9,
+                      interactive: false,
                     ),
                     layers: [
                       new TileLayerOptions(
-                        urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                        subdomains: [ 'a', 'b', 'c' ],
+                        urlTemplate: "https://api.mapbox.com/styles/v1/pento/ck6vbdjle0eai1isbmqf406r4/tiles/{z}/{x}/{y}?access_token={accessToken}",
+                        additionalOptions: {
+                          'accessToken': Config.item( 'mapbox_access_token' ),
+                        },
                       ),
                       new OverlayImageLayerOptions(
                         overlayImages: [
@@ -72,6 +93,27 @@ class _RadarCardState extends State<RadarCard> {
                       ),
                     ],
                   ),
+                ),
+                ButtonBar(
+                  alignment: MainAxisAlignment.center,
+                  buttonPadding: EdgeInsets.all( 0 ),
+                  children: <Widget>[
+                    FlatButton(
+                      child: Text( '50km' ),
+                      color: _mapController.zoom == 9 ? Theme.of( context ).primaryColorLight.withOpacity( 0.4 ) : null,
+                      onPressed: () => _mapController.move( center, 9 ),
+                    ),
+                    FlatButton(
+                      child: Text( '100km' ),
+                      color: _mapController.zoom == 8 ? Theme.of( context ).primaryColorLight.withOpacity( 0.4 ) : null,
+                      onPressed: () => _mapController.move( center, 8 ),
+                    ),
+                    FlatButton(
+                      child: Text( '200km' ),
+                      color: _mapController.zoom == 7 ? Theme.of( context ).primaryColorLight.withOpacity( 0.4 ) : null,
+                      onPressed: () => _mapController.move( center, 7 ),
+                    ),
+                  ],
                 ),
                 Container(
                   height: 40,

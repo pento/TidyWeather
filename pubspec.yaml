@@ -41,4 +41,5 @@ flutter:
   uses-material-design: true
 
   assets:
+    - config.json
     - assets/icons/
