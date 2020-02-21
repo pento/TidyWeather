@@ -100,17 +100,17 @@ class _RadarCardState extends State<RadarCard> {
                   children: <Widget>[
                     FlatButton(
                       child: Text( '50km' ),
-                      color: _mapController.zoom == 9 ? Theme.of( context ).primaryColorLight.withOpacity( 0.4 ) : null,
+                      color: _mapController.ready && _mapController.zoom == 9 ? Theme.of( context ).primaryColorLight.withOpacity( 0.4 ) : null,
                       onPressed: () => _mapController.move( center, 9 ),
                     ),
                     FlatButton(
                       child: Text( '100km' ),
-                      color: _mapController.zoom == 8 ? Theme.of( context ).primaryColorLight.withOpacity( 0.4 ) : null,
+                      color: _mapController.ready && _mapController.zoom == 8 ? Theme.of( context ).primaryColorLight.withOpacity( 0.4 ) : null,
                       onPressed: () => _mapController.move( center, 8 ),
                     ),
                     FlatButton(
                       child: Text( '200km' ),
-                      color: _mapController.zoom == 7 ? Theme.of( context ).primaryColorLight.withOpacity( 0.4 ) : null,
+                      color: _mapController.ready && _mapController.zoom == 7 ? Theme.of( context ).primaryColorLight.withOpacity( 0.4 ) : null,
                       onPressed: () => _mapController.move( center, 7 ),
                     ),
                   ],
