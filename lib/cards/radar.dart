@@ -19,10 +19,13 @@ class RadarCard extends StatefulWidget {
 class _RadarCardState extends State<RadarCard> {
   Timer _timer;
   int _mapTicks;
+  MapController _mapController;
 
   @override
   void initState() {
     super.initState();
+
+    _mapController = new MapController();
 
     setState(() => _mapTicks = 0 );
 
@@ -55,15 +58,18 @@ class _RadarCardState extends State<RadarCard> {
             overlay = weather.today.radar.overlays.length - 1;
           }
 
+          LatLng center = new LatLng( weather.today.radar.location.latitude, weather.today.radar.location.longitude );
+
           return Column(
               children: <Widget>[
                 SizedBox(
                   height: 400,
                   child: new FlutterMap(
+                    mapController: _mapController,
                     options: new MapOptions(
-                      center: new LatLng( weather.today.radar.location.latitude, weather.today.radar.location.longitude ),
+                      center: center,
                       zoom: 8,
-                      minZoom: 6,
+                      minZoom: 7,
                       maxZoom: 9,
                       interactive: false,
                     ),
@@ -87,6 +93,27 @@ class _RadarCardState extends State<RadarCard> {
                       ),
                     ],
                   ),
+                ),
+                ButtonBar(
+                  alignment: MainAxisAlignment.center,
+                  buttonPadding: EdgeInsets.all( 0 ),
+                  children: <Widget>[
+                    FlatButton(
+                      child: Text( '50km' ),
+                      color: _mapController.zoom == 9 ? Theme.of( context ).primaryColorLight.withOpacity( 0.4 ) : null,
+                      onPressed: () => _mapController.move( center, 9 ),
+                    ),
+                    FlatButton(
+                      child: Text( '100km' ),
+                      color: _mapController.zoom == 8 ? Theme.of( context ).primaryColorLight.withOpacity( 0.4 ) : null,
+                      onPressed: () => _mapController.move( center, 8 ),
+                    ),
+                    FlatButton(
+                      child: Text( '200km' ),
+                      color: _mapController.zoom == 7 ? Theme.of( context ).primaryColorLight.withOpacity( 0.4 ) : null,
+                      onPressed: () => _mapController.move( center, 7 ),
+                    ),
+                  ],
                 ),
                 Container(
                   height: 40,
