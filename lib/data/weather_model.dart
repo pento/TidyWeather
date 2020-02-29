@@ -27,14 +27,26 @@ class WeatherModel extends ChangeNotifier {
     this._context = context;
   }
 
+  int todayIndex() {
+    DateTime now = DateTime.now();
+    return _weather[ 'forecasts' ].indexWhere( ( day ) {
+      DateTime thisDay = DateTime.parse( day[ 'dateTime' ] );
+      if ( thisDay.day == now.day && thisDay.month == now.month ) {
+        return true;
+      }
+
+      return false;
+    } );
+  }
+
   WeatherDay get today => new WeatherDay(
     _weather[ 'location' ],
-    _weather[ 'forecasts' ],
+    _weather[ 'forecasts' ][ todayIndex() ],
     _weather[ 'observations' ],
     _weather[ 'radar' ],
   );
 
-  WeatherWeek get week => new WeatherWeek( _weather );
+  WeatherWeek get week => new WeatherWeek( _weather, todayIndex() );
 
   static void load( String town, String postcode, String uvStation ) {
     _self.loadData( town, postcode, uvStation );
@@ -60,9 +72,9 @@ class WeatherModel extends ChangeNotifier {
         'updateWeatherData',
         {
           'current': _weather[ 'observations' ][ 'temperature' ][ 'temperature' ]?.toString(),
-          'min': _weather[ 'forecasts' ][ 0 ][ 'weather' ][ 'min' ]?.toString(),
-          'max': _weather[ 'forecasts' ][ 0 ][ 'weather' ][ 'max' ]?.toString(),
-          'code': _weather[ 'forecasts' ][ 0 ][ 'weather' ][ 'code' ],
+          'min': _weather[ 'forecasts' ][ todayIndex() ][ 'weather' ][ 'min' ]?.toString(),
+          'max': _weather[ 'forecasts' ][ todayIndex() ][ 'weather' ][ 'max' ]?.toString(),
+          'code': _weather[ 'forecasts' ][ todayIndex() ][ 'weather' ][ 'code' ],
         }
       );
     }
@@ -72,8 +84,9 @@ class WeatherModel extends ChangeNotifier {
 class WeatherWeek {
   List<WeatherDay> days;
 
-  WeatherWeek( Map weather ) {
-    this.days = weather[ 'forecasts' ].map<WeatherDay>( ( dayWeather ) => new WeatherDay( weather[ 'location' ], [ dayWeather ] ) ).toList();
+  WeatherWeek( Map weather, todayIndex ) {
+    DateTime now = DateTime.now();
+    this.days = weather[ 'forecasts' ].sublist( todayIndex ).map<WeatherDay>( ( dayWeather ) => new WeatherDay( weather[ 'location' ], dayWeather ) ).toList();
   }
 }
 
@@ -85,14 +98,14 @@ class WeatherDay {
   WeatherRadar radar;
 
 
-  WeatherDay( Map location, List forecast, [ Map observations, Map radar ] ) {
+  WeatherDay( Map location, Map forecast, [ Map observations, Map radar ] ) {
     if ( location != null ) {
       this.locationName = location['name'];
     }
 
     if ( forecast != null ) {
-      this.dateTime = DateTime.parse( forecast[ 0 ][ 'dateTime' ] );
-      this.forecast = new WeatherForecast( forecast[ 0 ] );
+      this.dateTime = DateTime.parse( forecast[ 'dateTime' ] );
+      this.forecast = new WeatherForecast( forecast );
     }
 
     if ( observations != null ) {
