@@ -1,1 +1,83 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="mdi-weather-partly-cloudy" width="24" height="24" viewBox="0 0 24 24"><path d="M12.74,5.47C15.1,6.5 16.35,9.03 15.92,11.46C17.19,12.56 18,14.19 18,16V16.17C18.31,16.06 18.65,16 19,16A3,3 0 0,1 22,19A3,3 0 0,1 19,22H6A4,4 0 0,1 2,18A4,4 0 0,1 6,14H6.27C5,12.45 4.6,10.24 5.5,8.26C6.72,5.5 9.97,4.24 12.74,5.47M11.93,7.3C10.16,6.5 8.09,7.31 7.31,9.07C6.85,10.09 6.93,11.22 7.41,12.13C8.5,10.83 10.16,10 12,10C12.7,10 13.38,10.12 14,10.34C13.94,9.06 13.18,7.86 11.93,7.3M13.55,3.64C13,3.4 12.45,3.23 11.88,3.12L14.37,1.82L15.27,4.71C14.76,4.29 14.19,3.93 13.55,3.64M6.09,4.44C5.6,4.79 5.17,5.19 4.8,5.63L4.91,2.82L7.87,3.5C7.25,3.71 6.65,4.03 6.09,4.44M18,9.71C17.91,9.12 17.78,8.55 17.59,8L19.97,9.5L17.92,11.73C18.03,11.08 18.05,10.4 18,9.71M3.04,11.3C3.11,11.9 3.24,12.47 3.43,13L1.06,11.5L3.1,9.28C3,9.93 2.97,10.61 3.04,11.3M19,18H16V16A4,4 0 0,0 12,12A4,4 0 0,0 8,16H6A2,2 0 0,0 4,18A2,2 0 0,0 6,20H19A1,1 0 0,0 20,19A1,1 0 0,0 19,18Z" /></svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   inkscape:version="1.0beta2 (2b71d25, 2019-12-03)"
+   sodipodi:docname="weather-partly-cloudy.svg"
+   viewBox="0 0 24 24"
+   height="24"
+   width="24"
+   id="mdi-weather-partly-cloudy"
+   version="1.1">
+  <metadata
+     id="metadata53">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs51" />
+  <sodipodi:namedview
+     inkscape:current-layer="layer1"
+     inkscape:window-maximized="0"
+     inkscape:window-y="183"
+     inkscape:window-x="2560"
+     inkscape:cy="12"
+     inkscape:cx="12"
+     inkscape:zoom="29"
+     showgrid="false"
+     id="namedview49"
+     inkscape:window-height="1395"
+     inkscape:window-width="1280"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0"
+     guidetolerance="10"
+     gridtolerance="10"
+     objecttolerance="10"
+     borderopacity="1"
+     inkscape:document-rotation="0"
+     bordercolor="#666666"
+     pagecolor="#ffffff" />
+  <g
+     inkscape:groupmode="layer"
+     id="g76"
+     inkscape:label="Sun"
+     style="display:inline">
+    <path
+       style="fill:#ffd54f;fill-opacity:1;stroke-width:0.85"
+       sodipodi:nodetypes="cccccccccccccccccccc"
+       inkscape:connector-curvature="0"
+       d="m 13.522862,4.1055 c -0.4675,-0.204 -0.935,-0.3485 -1.4195,-0.442 l 2.1165,-1.105 0.765,2.4565 c -0.4335,-0.357 -0.918,-0.663 -1.462,-0.9095 m -6.3409999,0.68 c -0.4165,0.2975 -0.782,0.6375 -1.0965,1.0115 l 0.0935,-2.3885 2.516,0.578 c -0.527,0.1785 -1.037,0.4505 -1.513,0.799 M 17.305362,9.265 c -0.0765,-0.5015 -0.187,-0.986 -0.3485,-1.4535 l 2.023,1.275 -1.7425,1.8955 c 0.0935,-0.5525 0.1105,-1.1305 0.068,-1.717 M 4.5893621,10.6165 c 0.0595,0.51 0.17,0.9945 0.3315,1.445 l -2.0145,-1.275 1.734,-1.887 c -0.085,0.5525 -0.1105,1.1305 -0.051,1.717"
+       id="path74" />
+    <ellipse
+       ry="4.6524405"
+       rx="4.4285264"
+       cy="9.9183111"
+       cx="10.862413"
+       id="path974"
+       style="fill:#ffd54f;fill-opacity:1;stroke-width:0.85" />
+  </g>
+  <g
+     style="display:inline"
+     inkscape:label="Cloud"
+     id="layer1"
+     inkscape:groupmode="layer">
+    <path
+       style="fill:#bdbdbd;fill-opacity:1;stroke-width:0.85"
+       sodipodi:nodetypes="sssscsssssscs"
+       inkscape:connector-curvature="0"
+       d="m 8.3038621,11.322 c 0.65888,-0.840674 2.3374999,-1.8105 3.9014999,-1.8105 0.595,0 1.231295,-0.0049 2.516,0.765 1.785642,1.070106 2.584,2.7965 2.584,4.335 v 0.1445 c 0.2635,-0.0935 0.5525,-0.1445 0.85,-0.1445 1.408326,0 2.55,1.141674 2.55,2.55 0,1.408326 -1.141674,2.55 -2.55,2.55 H 7.1053621 c -1.8777682,0 -3.4,-1.522232 -3.4,-3.4 0,-1.877768 1.5222318,-3.4 3.4,-3.4 h 0.2295 c 0.323,-0.529833 0.6213527,-1.145932 0.969,-1.5895 z"
+       id="path46" />
+  </g>
+</svg>
