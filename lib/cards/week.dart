@@ -58,7 +58,6 @@ class _WeekCardState extends State<WeekCard> {
                       ),
                       SvgPicture.asset(
                         weatherIcon( day.code ),
-                        color: Theme.of( context ).textTheme.body1.color,
                       ),
                       RichText(
                         text: TextSpan(

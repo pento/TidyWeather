@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    viewBox="0 0 24 24"
+    id="fog">
+    <g id="half">
+        <g id="pair">
+            <path
+                id="branch"
+                style="fill:#CFD8DC"
+                d="M 2,9
+                   H 8
+                   L 12,11
+                   L 12,13
+                   L 8,11
+                   H 1
+                   Z" />
+            <use transform="translate(0,24) scale(1,-1)" xlink:href="#branch" />
+        </g>
+        <use transform="rotate(60,12,12)" xlink:href="#pair" />
+        <use transform="rotate(-60,12,12)" xlink:href="#pair" />
+    </g>
+    <use transform="rotate(180,12,12)" xlink:href="#half" />
+</svg>

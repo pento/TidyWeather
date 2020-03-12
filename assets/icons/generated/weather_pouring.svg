@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24" version="1.1">
+    <g id="pouring">
+        <g transform="" style=""><g xmlns="http://www.w3.org/2000/svg" id="cloud">
+        <path style="fill:#BDBDBD" d="M 6,19                A 5,5 0 0,1 6,9                A 6,6 0 0,1 18.5,11                H 19                A 4,4 0 0,1 19,19                Z"/>
+    </g></g>
+        <path fill="#64B5F6" id="rain-streak" transform="rotate(20,9,17)" d="M 7,15                Q 7,14 8,14                Q 9,14 9,15                L 9,21                Q 9,22 8,22                Q 7,22 7,21                L 7,15                Z"/>
+        <path fill="#64B5F6" transform="rotate(20,12,17)" d="M 11,15                Q 11,14 12,14                Q 13,14 13,15                L 13,23                Q 13,24 12,24                Q 11,24 11,23                L 11,15                Z"/>
+        <use transform="translate(8,0)" xlink:href="#rain-streak"/>
+    </g>
+</svg>

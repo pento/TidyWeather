@@ -2,38 +2,38 @@
 String weatherIcon( String iconCode ) {
   Map iconCodes = new Map();
 
-  iconCodes[ 'chance-shower-cloud' ] = 'weather-rainy';
-  iconCodes[ 'chance-shower-fine' ] = 'weather-partly-rainy';
-  iconCodes[ 'chance-snow-cloud' ] = 'weather-snowy';
-  iconCodes[ 'chance-snow-fine' ] = 'weather-partly-snowy';
-  iconCodes[ 'chance-thunderstorm-cloud' ] = 'weather-lightning';
-  iconCodes[ 'chance-thunderstorm-fine' ] = 'weather-partly-lightning';
-  iconCodes[ 'chance-thunderstorm-showers' ] = 'weather-lightning-rainy';
-  iconCodes[ 'cloudy' ] = 'weather-cloudy';
-  iconCodes[ 'drizzle' ] = 'weather-rainy';
-  iconCodes[ 'dust' ] = 'weather-hazy';
-  iconCodes[ 'few-showers' ] = 'weather-rainy';
-  iconCodes[ 'fine' ] = 'weather-sunny';
-  iconCodes[ 'fog' ] = 'weather-fog';
-  iconCodes[ 'frost' ] = 'snowflake-variant';
-  iconCodes[ 'hail' ] = 'weather-hail';
-  iconCodes[ 'heavy-showers-rain' ] = 'weather-pouring';
-  iconCodes[ 'heavy-snow' ] = 'weather-snowy-heavy';
-  iconCodes[ 'high-cloud' ] = 'weather-partly-cloudy';
-  iconCodes[ 'light-snow' ] = 'weather-snowy';
-  iconCodes[ 'mostly-cloudy' ] = 'weather-cloudy';
-  iconCodes[ 'mostly-fine' ] = 'weather-partly-cloudy';
-  iconCodes[ 'overcast' ] = 'weather-cloudy';
-  iconCodes[ 'partly-cloudy' ] = 'weather-partly-cloudy';
-  iconCodes[ 'shower-or-two' ] = 'weather-partly-rainy';
-  iconCodes[ 'showers-rain' ] = 'weather-rainy';
-  iconCodes[ 'snow' ] = 'weather-snowy';
-  iconCodes[ 'snow-and-rain' ] = 'weather-snowy-rainy';
-  iconCodes[ 'thunderstorm' ] = 'weather-lightning';
-  iconCodes[ 'wind' ] = 'weather-windy';
+  iconCodes[ 'chance-shower-cloud' ] = 'weather_rainy';
+  iconCodes[ 'chance-shower-fine' ] = 'weather_partly_rainy';
+  iconCodes[ 'chance-snow-cloud' ] = 'weather_snowy';
+  iconCodes[ 'chance-snow-fine' ] = 'weather_partly_snowy';
+  iconCodes[ 'chance-thunderstorm-cloud' ] = 'weather_lightning';
+  iconCodes[ 'chance-thunderstorm-fine' ] = 'weather_partly_lightning';
+  iconCodes[ 'chance-thunderstorm-showers' ] = 'weather_lightning_rainy';
+  iconCodes[ 'cloudy' ] = 'weather_cloudy';
+  iconCodes[ 'drizzle' ] = 'weather_rainy';
+  iconCodes[ 'dust' ] = 'weather_hazy';
+  iconCodes[ 'few-showers' ] = 'weather_rainy';
+  iconCodes[ 'fine' ] = 'weather_sunny';
+  iconCodes[ 'fog' ] = 'weather_fog';
+  iconCodes[ 'frost' ] = 'snowflake_variant';
+  iconCodes[ 'hail' ] = 'weather_hail';
+  iconCodes[ 'heavy-showers-rain' ] = 'weather_pouring';
+  iconCodes[ 'heavy-snow' ] = 'weather_snowy_heavy';
+  iconCodes[ 'high-cloud' ] = 'weather_partly_cloudy';
+  iconCodes[ 'light-snow' ] = 'weather_snowy';
+  iconCodes[ 'mostly_cloudy' ] = 'weather_cloudy';
+  iconCodes[ 'mostly-fine' ] = 'weather_partly_cloudy';
+  iconCodes[ 'overcast' ] = 'weather_cloudy';
+  iconCodes[ 'partly-cloudy' ] = 'weather_partly_cloudy';
+  iconCodes[ 'shower-or-two' ] = 'weather_partly_rainy';
+  iconCodes[ 'showers-rain' ] = 'weather_rainy';
+  iconCodes[ 'snow' ] = 'weather_snowy';
+  iconCodes[ 'snow-and-rain' ] = 'weather_snowy_rainy';
+  iconCodes[ 'thunderstorm' ] = 'weather_lightning';
+  iconCodes[ 'wind' ] = 'weather_windy';
 
   if ( iconCodes.containsKey( iconCode ) ) {
-    return 'assets/icons/${ iconCodes[ iconCode ] }.svg';
+    return 'assets/icons/generated/${ iconCodes[ iconCode ] }.svg';
   }
 
   // A null icon code should be considered an intentional lookup failure.
