@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24" id="partly-snowy" version="1.1">
+    <g transform="scale(0.75)                    translate(2,0)                    rotate(20,10,10)" style=""><g xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="sun">
+        <circle style="fill:#ffd54f" id="sphere" cx="12" cy="12" r="5"/>
+
+        <path d="M 12,2                L 14.5,5.5                A 7,7 0 0,0 9.5,5.5                Z" id="sunbeam" fill="#ffd54f"/>
+
+        <use transform="rotate(60,12,12)" xlink:href="#sunbeam"/>
+        <use transform="rotate(120,12,12)" xlink:href="#sunbeam"/>
+        <use transform="rotate(180,12,12)" xlink:href="#sunbeam"/>
+        <use transform="rotate(240,12,12)" xlink:href="#sunbeam"/>
+        <use transform="rotate(300,12,12)" xlink:href="#sunbeam"/>
+    </g></g>
+    <g transform="scale(0.75)        translate(4,8)" style=""><g xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="snowy-rainy">
+		<g>
+			<g transform="" style=""><g xmlns="http://www.w3.org/2000/svg" id="cloud">
+        <path style="fill:#BDBDBD" d="M 6,19                A 5,5 0 0,1 6,9                A 6,6 0 0,1 18.5,11                H 19                A 4,4 0 0,1 19,19                Z"/>
+    </g></g>
+		</g>
+		<g transform="translate(-5,0)">
+			<g transform="" style=""><g xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="snowflake" transform="rotate(10,12,18)">
+        <path fill="#ffffff" id="snowflake_branch" d="M 11,14                A 1,1 0 0,1 13,14                V 22                A 1,1 0 0,1 11,22                Z"/>
+        <use transform="rotate(60,12,18)" xlink:href="#snowflake_branch"/>
+        <use transform="rotate(120,12,18)" xlink:href="#snowflake_branch"/>
+    </g></g>
+		</g>
+		<g transform="translate(5,0)">
+			<g transform="" style=""><g xmlns="http://www.w3.org/2000/svg" id="droplet">
+        <path style="fill:#64b5f6" d="M 12,15                L 14.5,19.5                A 2.7,2.7 0 1,1 9.5,19.5                Z"/>
+    </g></g>
+		</g>
+	</g></g>
+</svg>
