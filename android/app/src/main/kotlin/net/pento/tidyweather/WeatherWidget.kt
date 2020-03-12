@@ -77,7 +77,7 @@ internal fun weatherIcon( iconCode: String ): Int {
     iconCodes[ "few-showers" ] = R.drawable.weather_rainy
     iconCodes[ "fine" ] = R.drawable.weather_sunny
     iconCodes[ "fog" ] = R.drawable.weather_fog
-    iconCodes[ "frost" ] = R.drawable.snowflake_variant
+    iconCodes[ "frost" ] = R.drawable.weather_frost
     iconCodes[ "hail" ] = R.drawable.weather_hail
     iconCodes[ "heavy-showers-rain" ] = R.drawable.weather_pouring
     iconCodes[ "heavy-snow" ] = R.drawable.weather_snowy_heavy
