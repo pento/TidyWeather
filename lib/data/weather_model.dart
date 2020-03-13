@@ -41,7 +41,7 @@ class WeatherModel extends ChangeNotifier {
 
   WeatherDay get today => new WeatherDay(
     _weather[ 'location' ],
-    _weather[ 'forecasts' ][ todayIndex() ],
+    _weather[ 'forecasts' ] != null ? _weather[ 'forecasts' ][ todayIndex() ] : null,
     _weather[ 'observations' ],
     _weather[ 'radar' ],
   );
