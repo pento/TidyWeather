@@ -48,7 +48,7 @@ class _RadarCardState extends State<RadarCard> {
     return Card(
       child: Consumer<WeatherModel>(
         builder: ( context, weather, child ) {
-          if ( weather.today.radar.overlays.length == 0 ) {
+          if ( weather.today.radar == null || weather.today.radar.overlays.length == 0 ) {
             return Container();
           }
 
