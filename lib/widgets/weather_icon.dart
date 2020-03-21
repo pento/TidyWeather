@@ -21,7 +21,7 @@ String weatherIcon( String iconCode ) {
   iconCodes[ 'heavy-snow' ] = 'weather_snowy_heavy';
   iconCodes[ 'high-cloud' ] = 'weather_partly_cloudy';
   iconCodes[ 'light-snow' ] = 'weather_snowy';
-  iconCodes[ 'mostly_cloudy' ] = 'weather_cloudy';
+  iconCodes[ 'mostly-cloudy' ] = 'weather_cloudy';
   iconCodes[ 'mostly-fine' ] = 'weather_partly_cloudy';
   iconCodes[ 'overcast' ] = 'weather_cloudy';
   iconCodes[ 'partly-cloudy' ] = 'weather_partly_cloudy';
