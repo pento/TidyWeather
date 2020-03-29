@@ -39,12 +39,20 @@ class WeatherModel extends ChangeNotifier {
     } );
   }
 
-  WeatherDay get today => new WeatherDay(
-    _weather[ 'location' ],
-    _weather[ 'forecasts' ] != null ? _weather[ 'forecasts' ][ todayIndex() ] : null,
-    _weather[ 'observations' ],
-    _weather[ 'radar' ],
-  );
+  WeatherDay get today {
+    Map _weatherForecast;
+
+    if ( _weather[ 'forecasts' ] != null && todayIndex() >= 0 ) {
+      _weatherForecast = _weather[ 'forecasts' ][ todayIndex() ];
+    }
+
+    return new WeatherDay(
+      _weather[ 'location' ],
+      _weatherForecast,
+      _weather[ 'observations' ],
+      _weather[ 'radar' ],
+    );
+  }
 
   WeatherWeek get week => new WeatherWeek( _weather, todayIndex() );
 
@@ -85,7 +93,6 @@ class WeatherWeek {
   List<WeatherDay> days;
 
   WeatherWeek( Map weather, todayIndex ) {
-    DateTime now = DateTime.now();
     this.days = weather[ 'forecasts' ].sublist( todayIndex ).map<WeatherDay>( ( dayWeather ) => new WeatherDay( weather[ 'location' ], dayWeather ) ).toList();
   }
 }
