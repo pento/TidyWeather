@@ -87,7 +87,7 @@ class _RadarCardState extends State<RadarCard> {
                               new LatLng( weather.today.radar.mapMin.latitude, weather.today.radar.mapMin.longitude ),
                               new LatLng( weather.today.radar.mapMax.latitude, weather.today.radar.mapMax.longitude ),
                             ),
-                            imageProvider: Image.network( weather.today.radar.overlays[ overlay ].url ).image,
+                            imageProvider: NetworkImage( weather.today.radar.overlays[ overlay ].url ),
                           ),
                         ],
                       ),
