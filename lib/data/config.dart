@@ -15,10 +15,10 @@ class Config {
   }
 
   static item( String key ) {
-    if ( config.containsKey( key ) ) {
+    if ( config != null && config.containsKey( key ) ) {
       return config[ key ];
     }
 
-    return false;
+    return '';
   }
 }
