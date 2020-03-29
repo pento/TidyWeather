@@ -59,25 +59,26 @@ class _WeekCardState extends State<WeekCard> {
                       SvgPicture.asset(
                         weatherIcon( day.code ),
                       ),
-                      RichText(
-                        text: TextSpan(
+                      SizedBox(
+                        width: 30,
+                        child: Text(
+                          day.min.toString(),
+                          textAlign: TextAlign.right,
                           style: TextStyle(
                             fontWeight: FontWeight.w500,
+                            color: Colors.blue,
                           ),
-                          children: <TextSpan>[
-                            TextSpan(
-                              text: '    ${ day.min.toString() }    ',
-                              style: TextStyle(
-                                color: Colors.blue,
-                              ),
-                            ),
-                            TextSpan(
-                              text: day.max.toString(),
-                              style: TextStyle(
-                                color: Colors.red,
-                              ),
-                            ),
-                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        width: 30,
+                        child: Text(
+                          day.max.toString(),
+                          textAlign: TextAlign.right,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            color: Colors.red,
+                          ),
                         ),
                       ),
                     ],
