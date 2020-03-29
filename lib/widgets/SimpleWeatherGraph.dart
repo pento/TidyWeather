@@ -13,13 +13,14 @@ class SimpleWeatherGraph extends StatelessWidget {
   final WeatherObservationsTemperature now;
   final List<WeatherForecastHourlyTemperature> forecast;
   final List<WeatherForecastHourlyRainfall> rainfall;
+  final List<WeatherForecastHourlyWind> wind;
 
-  SimpleWeatherGraph( this.now, this.forecast, this.rainfall );
+  SimpleWeatherGraph( this.now, this.forecast, this.rainfall, this.wind );
 
   @override
   Widget build( BuildContext context ) {
     return new CustomPaint(
-      painter: new ChartPainter( _prepareEntryList( forecast ), rainfall, context ),
+      painter: new ChartPainter( _prepareEntryList( forecast ), rainfall, wind, context ),
     );
   }
 
@@ -61,9 +62,10 @@ class SimpleWeatherGraph extends StatelessWidget {
 class ChartPainter extends CustomPainter {
   final List<WeatherForecastHourlyTemperature> entries;
   final List<WeatherForecastHourlyRainfall> rainfall;
+  final List<WeatherForecastHourlyWind> wind;
   final BuildContext context;
 
-  ChartPainter( this.entries, this.rainfall, this.context );
+  ChartPainter( this.entries, this.rainfall, this.wind, this.context );
 
   double topPadding;
   double drawingHeight;
@@ -78,6 +80,11 @@ class ChartPainter extends CustomPainter {
     }
 
     topPadding = 40;
+
+    if ( wind != null ) {
+      topPadding += 40;
+    }
+
     drawingHeight = size.height - 50 - topPadding;
     drawingWidth = size.width;
 
@@ -87,6 +94,7 @@ class ChartPainter extends CustomPainter {
     _drawBottomLabels( canvas, size );
     _drawLines( canvas, borderLineValues.item1, borderLineValues.item2 );
     _drawRainfall( canvas, size );
+    _drawWind( canvas, size );
   }
 
   Tuple2<int, int> _getMinAndMaxValues( List<WeatherForecastHourlyTemperature> entries ) {
@@ -290,27 +298,87 @@ class ChartPainter extends CustomPainter {
       bubbleStyle.color = _convertRainfallToBubbleFillColor( rainfallData.probability );
 
       double left = entry * columnWidth + 0.5 * columnWidth - 16;
-      double top = 12;
+      double top = 42;
       double right = entry * columnWidth + 0.5 * columnWidth + 16;
-      double bottom = 32;
+      double bottom = 62;
       Radius radius = Radius.circular( 10 );
 
       canvas.drawRRect(
-        RRect.fromLTRBR( left, top, right, bottom, radius ),
-        bubbleStyle
+          RRect.fromLTRBR( left, top, right, bottom, radius ),
+          bubbleStyle
       );
 
       bubbleStyle.style = PaintingStyle.stroke;
       bubbleStyle.color = _convertRainfallToBubbleStrokeColor( rainfallData.probability );
 
       canvas.drawRRect(
-        RRect.fromLTRBR( left, top, right, bottom, radius ),
-        bubbleStyle
+          RRect.fromLTRBR( left, top, right, bottom, radius ),
+          bubbleStyle
       );
 
       canvas.drawParagraph(
-        _buildParagraphForRainfall( rainfallData.probability ),
-        new Offset( entry * columnWidth, 15.0 )
+          _buildParagraphForRainfall( rainfallData.probability ),
+          new Offset( entry * columnWidth, 45.0 )
+      );
+
+      entry++;
+    } );
+  }
+
+  void _drawWind( Canvas canvas, Size size ) {
+    double columnWidth = drawingWidth / SimpleWeatherGraph.NUMBER_OF_ENTRIES;
+    int entry = 0;
+
+    if ( wind == null ) {
+      return;
+    }
+
+    wind.forEach( ( wind ) {
+      if ( wind.dateTime.compareTo( entries [ 0 ].dateTime ) < 0 ) {
+        return;
+      }
+
+      if ( wind.speed == 0 ) {
+        return;
+      }
+
+      Paint arrowStyle = new Paint();
+      arrowStyle.color = Colors.lightGreen;
+      arrowStyle.strokeWidth = 2;
+
+      double centerX = entry * columnWidth + 0.2 * columnWidth;
+      double centerY = 18;
+      double radius = 7;
+
+      double endX = centerX + radius * cos( wind.direction * pi / 180 );
+      double endY = centerY + radius * sin( wind.direction * pi / 180 );
+
+      double startX = centerX + radius * cos( ( wind.direction + 180 ) * pi / 180 );
+      double startY = centerY + radius * sin( ( wind.direction + 180 ) * pi / 180 );
+
+      canvas.drawLine( Offset( startX, startY ), Offset( endX, endY ), arrowStyle );
+
+      double arrowSize = 2;
+
+      double dx = endX - startX;
+      double dy = endY - startY;
+
+      double unitDx = dx / radius;
+      double unitDy = dy / radius;
+
+      double p1x = endX - unitDx * arrowSize - unitDy * arrowSize;
+      double p1y = endY - unitDy * arrowSize + unitDx * arrowSize;
+
+      canvas.drawLine( Offset( p1x, p1y ), Offset( endX, endY ), arrowStyle );
+
+      double p2x = endX - unitDx * arrowSize + unitDy * arrowSize;
+      double p2y = endY - unitDy * arrowSize - unitDx * arrowSize;
+
+      canvas.drawLine( Offset( p2x, p2y ), Offset( endX, endY ), arrowStyle );
+
+      canvas.drawParagraph(
+          _buildParagraphForWind( wind.speed ),
+          new Offset( centerX, centerY - 5 )
       );
 
       entry++;
@@ -359,6 +427,20 @@ class ChartPainter extends CustomPainter {
 
     return paragraph;
   }
+
+  ui.Paragraph _buildParagraphForWind( double speed ) {
+    ui.ParagraphBuilder builder = new ui.ParagraphBuilder(
+        new ui.ParagraphStyle( fontSize: 12.0, textAlign: TextAlign.center ) )
+      ..pushStyle( new ui.TextStyle( color: Theme.of( context ).textTheme.body1.color ) )
+      ..addText( speed.toString() );
+
+
+    final ui.Paragraph paragraph = builder.build()
+      ..layout( new ui.ParagraphConstraints( width: 50.0 ) );
+
+    return paragraph;
+  }
+
   @override
   bool shouldRepaint( ChartPainter old ) => true;
 }
