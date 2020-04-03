@@ -66,7 +66,7 @@ class WeatherModel extends ChangeNotifier {
 
     PrefService.setString( 'cached_weather_data', weatherResponse.body );
 
-    if ( _context != null ) {
+    if ( _context != null && today.radar != null ) {
       today.radar.overlays.forEach( ( WeatherRadarImage image ) {
         Image theImage = Image.network( image.url );
         precacheImage( theImage.image, _context );
