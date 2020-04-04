@@ -302,11 +302,13 @@ class WeatherObservationsTemperature {
 class WeatherObservationsWind {
   double speed;
   double gustSpeed;
+  double direction;
   String directionText;
 
   WeatherObservationsWind( Map wind ) {
     this.speed = wind[ 'speed' ]?.toDouble();
     this.gustSpeed = wind[ 'gustSpeed' ]?.toDouble();
+    this.direction = wind[ 'direction' ]?.toDouble();
     this.directionText = wind[ 'directionText' ];
   }
 }
