@@ -1,5 +1,5 @@
 
-String weatherIcon( String iconCode ) {
+String weatherIcon( String iconCode, bool night ) {
   Map iconCodes = new Map();
 
   iconCodes[ 'chance-shower-cloud' ] = 'weather_rainy';
@@ -13,7 +13,7 @@ String weatherIcon( String iconCode ) {
   iconCodes[ 'drizzle' ] = 'weather_rainy';
   iconCodes[ 'dust' ] = 'weather_hazy';
   iconCodes[ 'few-showers' ] = 'weather_rainy';
-  iconCodes[ 'fine' ] = 'weather_sunny';
+  iconCodes[ 'fine' ] = 'weather_fine';
   iconCodes[ 'fog' ] = 'weather_fog';
   iconCodes[ 'frost' ] = 'snowflake_variant';
   iconCodes[ 'hail' ] = 'weather_hail';
@@ -33,7 +33,11 @@ String weatherIcon( String iconCode ) {
   iconCodes[ 'wind' ] = 'weather_windy';
 
   if ( iconCodes.containsKey( iconCode ) ) {
-    return 'assets/icons/generated/${ iconCodes[ iconCode ] }.svg';
+      if ( night && ( iconCode == 'fine' || iconCodes[ iconCode ].contains( 'partly' ) ) ) {
+        return 'assets/icons/generated/${ iconCodes[ iconCode ] }_night.svg';
+      } else {
+        return 'assets/icons/generated/${ iconCodes[ iconCode ] }.svg';
+      }
   }
 
   // A null icon code should be considered an intentional lookup failure.
