@@ -137,7 +137,6 @@ class ChartPainter extends CustomPainter {
     }
 
     topPadding = 40;
-
     drawingHeight = size.height - 50 - topPadding;
     drawingWidth = size.width;
 
@@ -145,8 +144,8 @@ class ChartPainter extends CustomPainter {
 
     _drawVerticalLines( canvas, size );
     _drawBottomLabels( canvas, size );
-    _drawRainfall( canvas, size );
     _drawLines( canvas, borderLineValues.item1, borderLineValues.item2 );
+    _drawRainfall( canvas, size );
   }
 
   Tuple2<int, int> _getMinAndMaxValues( List<Map> entries ) {
