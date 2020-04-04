@@ -130,6 +130,7 @@ class WeatherForecast {
   List<WeatherForecastHourlyTemperature> temperature;
   WeatherForecastRainfall rainfall;
   List<WeatherForecastHourlyRainfall> hourlyRainfall;
+  List<WeatherForecastHourlyWind> hourlyWind;
   WeatherForecastUV uv;
   WeatherForecastWind windMax;
   WeatherForecastSun sun;
@@ -142,6 +143,11 @@ class WeatherForecast {
     if ( forecast.containsKey( 'rainfallProbability' ) ) {
       this.hourlyRainfall = forecast[ 'rainfallProbability' ]
           .map<WeatherForecastHourlyRainfall>( ( hourRainfall ) => new WeatherForecastHourlyRainfall( hourRainfall ) )
+          .toList();
+    }
+    if ( forecast.containsKey( 'wind' ) ) {
+      this.hourlyWind = forecast[ 'wind' ]
+          .map<WeatherForecastHourlyWind>( ( hourlyWind ) => new WeatherForecastHourlyWind( hourlyWind ) )
           .toList();
     }
     if ( forecast.containsKey( 'uv' ) ) {
@@ -198,6 +204,20 @@ class WeatherForecastHourlyRainfall {
   WeatherForecastHourlyRainfall( Map hourRainfall ) {
     this.dateTime = DateTime.parse( hourRainfall[ 'dateTime' ] );
     this.probability = hourRainfall[ 'probability' ];
+  }
+}
+
+class WeatherForecastHourlyWind {
+  DateTime dateTime;
+  double speed;
+  double direction;
+  String directionText;
+
+  WeatherForecastHourlyWind( Map hourRainfall ) {
+    this.dateTime = DateTime.parse( hourRainfall[ 'dateTime' ] );
+    this.speed = hourRainfall[ 'speed' ].toDouble();
+    this.direction = hourRainfall[ 'direction' ].toDouble();
+    this.directionText = hourRainfall[ 'directionText' ];
   }
 }
 
@@ -282,11 +302,13 @@ class WeatherObservationsTemperature {
 class WeatherObservationsWind {
   double speed;
   double gustSpeed;
+  double direction;
   String directionText;
 
   WeatherObservationsWind( Map wind ) {
     this.speed = wind[ 'speed' ]?.toDouble();
     this.gustSpeed = wind[ 'gustSpeed' ]?.toDouble();
+    this.direction = wind[ 'direction' ]?.toDouble();
     this.directionText = wind[ 'directionText' ];
   }
 }
