@@ -109,7 +109,7 @@
                     9.25,4
                     12.5,4" />
 
-        <use transform="translate(8,8) scale(0.75)" xlink:href="#star" />
+        <use transform="translate(9,8) scale(0.75)" xlink:href="#star" />
 
         <path
             style="fill:#EEEEEE"

@@ -7,8 +7,7 @@
     version="1.1">
     <g
         transform="scale(0.75)
-                   translate(2,0)
-                   rotate(20,10,10)">
+                   translate(2,0)">
         <use xlink:href="primitives.svg#night" />
     </g>
     <g
