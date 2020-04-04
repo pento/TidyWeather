@@ -38,7 +38,7 @@ android {
 
     defaultConfig {
         applicationId "net.pento.tidyweather"
-        minSdkVersion 16
+        minSdkVersion 26
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
