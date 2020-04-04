@@ -57,7 +57,7 @@ class _WeekCardState extends State<WeekCard> {
                           child: Text( dayName )
                       ),
                       SvgPicture.asset(
-                        weatherIcon( day.code, day.night ),
+                        weatherIcon( day.code ),
                       ),
                       SizedBox(
                         width: 30,

@@ -5,12 +5,14 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
+import android.os.Build
 import android.util.Log
 import android.widget.RemoteViews
+import androidx.annotation.RequiresApi
+import java.time.Instant
+import java.time.Instant.now
+import java.util.*
+import kotlin.collections.HashMap
 
 /**
  * Implementation of App Widget functionality.
@@ -33,6 +35,7 @@ class WeatherWidget : AppWidgetProvider() {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
     Log.d( "TidyWeather", "*********** Updating Widget " )
     val prefs = context.getSharedPreferences( "net.pento.tidyweather.prefs", 0 )
@@ -41,7 +44,10 @@ internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManage
     val min = prefs.getString( "min", "" )
     val max = prefs.getString( "max", "" )
     val code = prefs.getString( "code", "" )
-    val night = prefs.getBoolean( "night", false )
+    val sunrise = prefs.getString( "sunrise", "" )
+    val sunset = prefs.getString( "sunset", "" )
+
+    val night = ( now().isAfter( Instant.parse( sunrise.replace( ' ', 'T' ) + 'Z' ) ) || now().isAfter(( Instant.parse( sunset.replace( ' ', 'T' ) + 'Z' ) ) ) )
 
     // Construct the RemoteViews object
     val views = RemoteViews( context.packageName, R.layout.weather_widget )

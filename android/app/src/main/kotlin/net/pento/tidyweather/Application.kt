@@ -42,13 +42,15 @@ class Application: FlutterApplication() {
             val min: String? = call.argument( "min" )
             val max: String? = call.argument( "max" )
             val code: String? = call.argument( "code" )
-            val night: Boolean? = call.argument( "night" )
+            val sunrise: String? = call.argument( "sunrise" )
+            val sunset: String? = call.argument( "sunset" )
 
             editor.putString( "current", current!!.toString() )
             editor.putString( "min", min!!.toString() )
             editor.putString( "max", max!!.toString() )
             editor.putString( "code", code!!.toString() )
-            editor.putBoolean( "night", night!! )
+            editor.putString( "sunrise", sunrise!!.toString() )
+            editor.putString( "sunset", sunset!!.toString() )
 
             editor.commit()
 

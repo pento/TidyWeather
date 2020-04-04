@@ -1,5 +1,7 @@
 
-String weatherIcon( String iconCode, bool night ) {
+import 'package:tidyweather/data/weather_model.dart';
+
+String weatherIcon( String iconCode, [ WeatherForecastSun sun ] ) {
   Map iconCodes = new Map();
 
   iconCodes[ 'chance-shower-cloud' ] = 'weather_rainy';
@@ -33,11 +35,13 @@ String weatherIcon( String iconCode, bool night ) {
   iconCodes[ 'wind' ] = 'weather_windy';
 
   if ( iconCodes.containsKey( iconCode ) ) {
-      if ( night && ( iconCode == 'fine' || iconCodes[ iconCode ].contains( 'partly' ) ) ) {
-        return 'assets/icons/generated/${ iconCodes[ iconCode ] }_night.svg';
-      } else {
-        return 'assets/icons/generated/${ iconCodes[ iconCode ] }.svg';
-      }
+    DateTime now = DateTime.now();
+
+    if ( sun != null && ( now.isBefore( sun.sunrise ) || now.isAfter( sun.sunset ) ) && ( iconCode == 'fine' || iconCodes[ iconCode ].contains( 'partly' ) ) ) {
+      return 'assets/icons/generated/${ iconCodes[ iconCode ] }_night.svg';
+    } else {
+      return 'assets/icons/generated/${ iconCodes[ iconCode ] }.svg';
+    }
   }
 
   // A null icon code should be considered an intentional lookup failure.

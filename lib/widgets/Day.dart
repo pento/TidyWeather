@@ -35,7 +35,7 @@ class Day extends StatelessWidget {
                 Row(
                   children: <Widget>[
                     SvgPicture.asset(
-                      weatherIcon( _day.forecast.weather.code, _day.forecast.weather.night ),
+                      weatherIcon( _day.forecast.weather.code ),
                       width: 32,
                     )
                   ],

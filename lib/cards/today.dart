@@ -31,7 +31,7 @@ class _TodayCardState extends State<TodayCard> {
                 Row( // Big icon
                   children: <Widget>[
                     SvgPicture.asset(
-                      weatherIcon( weather.today.forecast.weather.code, weather.today.forecast.weather.night ),
+                      weatherIcon( weather.today.forecast.weather.code, weather.today.forecast.sun ),
                       width: 96,
                     )
                   ],
