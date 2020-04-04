@@ -75,7 +75,7 @@ class _RadarCardState extends State<RadarCard> {
                     ),
                     layers: [
                       new TileLayerOptions(
-                        urlTemplate: "https://api.mapbox.com/styles/v1/pento/ck6vbdjle0eai1isbmqf406r4/tiles/{z}/{x}/{y}?access_token={accessToken}",
+                        urlTemplate: "https://api.mapbox.com/styles/v1/pento/ck8ljtx870q8z1iphvwes27kc/tiles/{z}/{x}/{y}?access_token={accessToken}",
                         additionalOptions: {
                           'accessToken': Config.item( 'mapbox_access_token' ),
                         },
@@ -90,6 +90,13 @@ class _RadarCardState extends State<RadarCard> {
                             imageProvider: NetworkImage( weather.today.radar.overlays[ overlay ].url ),
                           ),
                         ],
+                      ),
+                      new TileLayerOptions(
+                        urlTemplate: "https://api.mapbox.com/styles/v1/pento/ck8ljrs530q6r1isbk2in7gas/tiles/{z}/{x}/{y}?access_token={accessToken}",
+                        backgroundColor: Colors.transparent,
+                        additionalOptions: {
+                          'accessToken': Config.item( 'mapbox_access_token' ),
+                        },
                       ),
                     ],
                   ),
