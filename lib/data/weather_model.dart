@@ -83,6 +83,8 @@ class WeatherModel extends ChangeNotifier {
           'min': _weather[ 'forecasts' ][ todayIndex() ][ 'weather' ][ 'min' ]?.toString(),
           'max': _weather[ 'forecasts' ][ todayIndex() ][ 'weather' ][ 'max' ]?.toString(),
           'code': _weather[ 'forecasts' ][ todayIndex() ][ 'weather' ][ 'code' ],
+          'sunrise': _weather[ 'forecasts' ][ todayIndex() ][ 'sun' ][ 'sunrise' ],
+          'sunset': _weather[ 'forecasts' ][ todayIndex() ][ 'sun' ][ 'sunset' ],
         }
       );
     }
@@ -168,10 +170,10 @@ class WeatherForecastWeather {
   String description;
 
   WeatherForecastWeather( Map weather ) {
-    this.min = weather['min'];
-    this.max = weather['max'];
-    this.code = weather['code'];
-    this.description = weather['description'];
+    this.min = weather[ 'min' ];
+    this.max = weather[ 'max' ];
+    this.code = weather[ 'code' ];
+    this.description = weather[ 'description' ];
   }
 }
 

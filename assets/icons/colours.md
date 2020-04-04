@@ -6,3 +6,5 @@ Lightning: #FFC107
 Hail: #1976D2
 Haze: #FFCC80
 Frost: #CFD8DC
+Stars: #FFF9C4
+Moon: #EEEEEE
