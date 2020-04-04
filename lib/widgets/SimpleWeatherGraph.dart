@@ -44,6 +44,10 @@ class SimpleWeatherGraph extends StatelessWidget {
 
     Map _nowTemp = new Map();
 
+    if ( wind == null ) {
+      return new List<Map>();
+    }
+
     _nowTemp[ 'value' ] = now.wind.speed;
     _nowTemp[ 'direction' ] = now.wind.direction;
     _nowTemp[ 'dateTime' ] = _now;
@@ -376,7 +380,7 @@ class ChartPainter extends CustomPainter {
     int entry = 0;
 
     rainfall.forEach( ( rainfallData ) {
-      if ( rainfallData.dateTime.compareTo( entries [ 0 ][ 'dateTime' ] ) < 0 ) {
+      if ( rainfallData.dateTime.compareTo( entries[ 0 ][ 'dateTime' ] ) < 0 ) {
         return;
       }
 
