@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+	xmlns="http://www.w3.org/2000/svg"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	viewBox="0 0 24 24"
+	id="partly-cloudy"
+	version="1.1">
+	<use
+		transform="scale(0.75)
+				   translate(2,0)
+				   rotate(20,10,10)"
+		xlink:href="primitives.svg#night" />
+	<use
+		transform="scale(0.75)
+				   translate(4,8)"
+		xlink:href="primitives.svg#cloud" />
+</svg>
