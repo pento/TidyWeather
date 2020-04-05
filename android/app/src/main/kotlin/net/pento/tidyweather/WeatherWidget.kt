@@ -44,7 +44,7 @@ internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManage
 
     val now = LocalDateTime.now()
 
-    val night = ( now.isAfter( LocalDateTime.parse( sunrise?.replace( ' ', 'T' ) ) ) || now.isAfter( LocalDateTime.parse( sunset?.replace( ' ', 'T' ) ) ) )
+    val night = ( now.isBefore( LocalDateTime.parse( sunrise?.replace( ' ', 'T' ) ) ) || now.isAfter( LocalDateTime.parse( sunset?.replace( ' ', 'T' ) ) ) )
 
     // Construct the RemoteViews object
     val views = RemoteViews( context.packageName, R.layout.weather_widget )
