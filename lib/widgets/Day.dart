@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:tidyweather/widgets/weather_icon.dart';
 
 import '../data/weather_model.dart';
+import '../widgets/weather_icon.dart';
 
 class Day extends StatelessWidget {
   final WeatherDay _day;

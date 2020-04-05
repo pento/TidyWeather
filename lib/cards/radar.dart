@@ -5,8 +5,8 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:latlong/latlong.dart';
 import 'package:provider/provider.dart';
-import 'package:tidyweather/data/config.dart';
 
+import '../data/config.dart';
 import '../data/weather_model.dart';
 
 class RadarCard extends StatefulWidget {
@@ -88,11 +88,12 @@ class _RadarCardState extends State<RadarCard> {
                               new LatLng( weather.today.radar.mapMax.latitude, weather.today.radar.mapMax.longitude ),
                             ),
                             imageProvider: NetworkImage( weather.today.radar.overlays[ overlay ].url ),
+                            gaplessPlayback: true,
                           ),
                         ],
                       ),
                       new TileLayerOptions(
-                        urlTemplate: "https://api.mapbox.com/styles/v1/pento/ck8ljrs530q6r1isbk2in7gas/tiles/{z}/{x}/{y}?access_token={accessToken}",
+                        urlTemplate: "https://api.mapbox.com/styles/v1/pento/ck8mdbur70gb61ipjxtbqmbcp/tiles/{z}/{x}/{y}?access_token={accessToken}",
                         backgroundColor: Colors.transparent,
                         additionalOptions: {
                           'accessToken': Config.item( 'mapbox_access_token' ),

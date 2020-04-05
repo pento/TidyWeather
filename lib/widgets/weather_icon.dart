@@ -1,5 +1,4 @@
-
-import 'package:tidyweather/data/weather_model.dart';
+import '../data/weather_model.dart';
 
 String weatherIcon( String iconCode, [ WeatherForecastSun sun ] ) {
   Map iconCodes = new Map();
