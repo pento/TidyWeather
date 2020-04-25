@@ -381,10 +381,12 @@ class ChartPainter extends CustomPainter {
 
     rainfall.forEach( ( rainfallData ) {
       if ( rainfallData.dateTime.compareTo( entries[ 0 ][ 'dateTime' ] ) < 0 ) {
+        entry++;
         return;
       }
 
       if ( rainfallData.probability == 0 ) {
+        entry++;
         return;
       }
 
