@@ -27,7 +27,7 @@ class AppState extends State<HomePage> {
       selector: ( context, location, weather ) => Tuple3(
         location.place.countryCode,
         weather.today.locationName,
-        weather.today.observations == null
+        weather.today.observations == null || weather.today.forecast == null
       ),
       builder: ( context, data, child ) {
         if ( data.item1 != null && data.item1 != 'AU' ) {
