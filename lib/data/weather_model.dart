@@ -141,7 +141,9 @@ class WeatherForecast {
   WeatherForecast( Map forecast ) {
     this.weather = new WeatherForecastWeather( forecast[ 'weather' ] );
     this.temperature = forecast[ 'temperature' ].map<WeatherForecastHourlyTemperature>( ( hourTemperature ) => new WeatherForecastHourlyTemperature( hourTemperature ) ).toList();
-    this.rainfall = new WeatherForecastRainfall( forecast[ 'rainfall' ] );
+    if ( forecast.containsKey( 'rainfall' ) ) {
+      this.rainfall = new WeatherForecastRainfall( forecast[ 'rainfall' ] );
+    }
     if ( forecast.containsKey( 'rainfallProbability' ) ) {
       this.hourlyRainfall = forecast[ 'rainfallProbability' ]
           .map<WeatherForecastHourlyRainfall>( ( hourRainfall ) => new WeatherForecastHourlyRainfall( hourRainfall ) )

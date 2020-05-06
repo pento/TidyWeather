@@ -121,7 +121,7 @@ class Day extends StatelessWidget {
             padding: EdgeInsets.only( top: 20 ),
             child: Row(
               children: <Widget>[
-                Expanded(
+                _day.forecast.rainfall != null ? Expanded(
                   child: Container(
                     height: 100,
                     decoration: BoxDecoration(
@@ -149,7 +149,7 @@ class Day extends StatelessWidget {
                       ],
                     ),
                   ),
-                ),
+                ): Container(),
                 Expanded(
                   child: Container(
                     height: 100,

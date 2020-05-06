@@ -25,6 +25,10 @@ class _WeekCardState extends State<WeekCard> {
       child: Card(
         child: Consumer<WeatherModel>(
           builder: ( context, weather, child ) {
+            if ( weather.week.days.length < 2 ) {
+              return Container();
+            }
+
             return ListView.builder(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),

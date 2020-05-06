@@ -29,11 +29,11 @@ class _GraphCardState extends State<GraphCard> {
         children: [
           Consumer<WeatherModel>(
             builder: ( context, weather, child ) {
-              final List<WeatherForecastHourlyTemperature> temperatureData = weather.week.days[ 0 ].forecast.temperature + weather.week.days[ 1 ].forecast.temperature;
-              final List<WeatherForecastHourlyRainfall> rainfallData = weather.week.days[ 0 ].forecast.hourlyRainfall + weather.week.days[ 1 ].forecast.hourlyRainfall;
+              final List<WeatherForecastHourlyTemperature> temperatureData = weather.week.days[ 0 ].forecast.temperature + weather.week.days[ 1 ]?.forecast?.temperature;
+              final List<WeatherForecastHourlyRainfall> rainfallData = weather.week.days[ 0 ].forecast.hourlyRainfall + weather.week.days[ 1 ]?.forecast?.hourlyRainfall;
               List<WeatherForecastHourlyWind> windData;
-              if ( weather.week.days[ 0 ].forecast.hourlyWind != null && weather.week.days[ 1 ].forecast.hourlyWind != null ) {
-                windData = weather.week.days[ 0 ].forecast.hourlyWind + weather.week.days[ 1 ].forecast.hourlyWind;
+              if ( weather.week.days[ 0 ].forecast.hourlyWind != null && weather.week.days[ 1 ]?.forecast?.hourlyWind != null ) {
+                windData = weather.week.days[ 0 ].forecast.hourlyWind + weather.week.days[ 1 ]?.forecast?.hourlyWind;
               }
               return SizedBox(
                 height: 250,
