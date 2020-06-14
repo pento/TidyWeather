@@ -11,6 +11,8 @@ class LocationModel extends ChangeNotifier {
 
   static LocationModel _self;
 
+  bool _requestingPermission = false;
+
   WeatherPlace get place => new WeatherPlace( _place );
 
   LocationModel( { background: false } ) {
@@ -26,6 +28,18 @@ class LocationModel extends ChangeNotifier {
   }
 
   void loadData() async {
+    GeolocationStatus permissionStatus = await Geolocator().checkGeolocationPermissionStatus();
+    if ( permissionStatus != GeolocationStatus.granted ) {
+      if ( _requestingPermission == true ) {
+        print( 'Waiting for permission...' );
+        await Future.delayed( Duration( seconds: 10 ), _self.loadData );
+        return;
+      }
+
+      print( 'Falling through to request permission.' );
+      _requestingPermission = true;
+    }
+
     List<Placemark> place = await Geolocator()
       .getCurrentPosition( desiredAccuracy: LocationAccuracy.high )
       .then( ( Position position ) async {
