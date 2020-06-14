@@ -24,8 +24,8 @@ class _WeatherDetailsBlockState extends State<WeatherDetailsBlock> {
   Widget build( BuildContext context ) {
     return  Expanded(
       child: GestureDetector(
-        onLongPress: _onLongPress,
-        onTap: _onTap,
+        onLongPress: _toggleCard,
+        onTap: _toggleCard,
         child: FlipCard(
             key: _cardKey,
             direction: FlipDirection.VERTICAL,
@@ -95,16 +95,10 @@ class _WeatherDetailsBlockState extends State<WeatherDetailsBlock> {
     );
   }
 
-  void _onLongPress() {
+  void _toggleCard() {
     setState( () {
       _isFlipped = ! _isFlipped;
     } );
     _cardKey.currentState.toggleCard();
-  }
-
-  void _onTap() {
-    if ( _isFlipped ) {
-      _onLongPress();
-    }
   }
 }
