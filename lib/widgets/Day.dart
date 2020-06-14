@@ -5,6 +5,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 
 import '../data/weather_model.dart';
 import '../widgets/weather_icon.dart';
+import '../widgets/weatherColour.dart';
 
 class Day extends StatelessWidget {
   final WeatherDay _day;
@@ -28,7 +29,7 @@ class Day extends StatelessWidget {
       child: Column(
         children: <Widget>[
           Container(
-            color: Theme.of( context ).splashColor,
+            color: weatherColor( context, _day.forecast.weather.code ),
             padding: EdgeInsets.all( 8 ),
             child: Column(
               children: <Widget>[
@@ -108,7 +109,7 @@ class Day extends StatelessWidget {
               children: <Widget>[
                 Text(
                   _day.forecast.region.name,
-                  style: Theme.of( context ).textTheme.subtitle,
+                  style: Theme.of( context ).textTheme.subtitle2,
                 ),
                 Container(
                   height: 10,

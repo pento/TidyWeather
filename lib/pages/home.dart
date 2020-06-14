@@ -11,6 +11,7 @@ import '../cards/week.dart';
 import '../data/location_model.dart';
 import '../data/weather_model.dart';
 import '../widgets/drawer.dart';
+import '../widgets/weatherColour.dart';
 
 class HomePage extends StatefulWidget {
   static const String route = '/';
@@ -20,14 +21,23 @@ class HomePage extends StatefulWidget {
 }
 
 class AppState extends State<HomePage> {
+  double _scrollPixels;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _scrollPixels = 0;
+  }
+
 
   @override
   Widget build( BuildContext context ) {
-    return Selector2<LocationModel, WeatherModel, Tuple3<String, String, bool>>(
+    return Selector2<LocationModel, WeatherModel, Tuple3<String, String, WeatherDay>>(
       selector: ( context, location, weather ) => Tuple3(
         location.place.countryCode,
         weather.today.locationName,
-        weather.today.observations == null || weather.today.forecast == null
+        weather.today,
       ),
       builder: ( context, data, child ) {
         if ( data.item1 != null && data.item1 != 'AU' ) {
@@ -44,7 +54,7 @@ class AppState extends State<HomePage> {
 
         }
 
-        if ( data.item3 ) {
+        if ( data.item3.observations == null || data.item3.forecast == null ) {
           return Scaffold(
             appBar: AppBar(
               title: Text( data.item2 ),
@@ -56,21 +66,46 @@ class AppState extends State<HomePage> {
           );
         }
 
+        double opacity;
+        if ( _scrollPixels >= 200 ) {
+          opacity = 1;
+        } else {
+          opacity = _scrollPixels / 200;
+        }
+
+        Color appBarColour;
+        if ( Theme.of( context ).brightness == Brightness.dark ) {
+          appBarColour = Theme.of( context ).primaryColor;
+        } else {
+          appBarColour = weatherColor( context, data.item3.forecast.weather.code );
+        }
+
         return Scaffold(
           appBar: AppBar(
             title: Text( data.item2 ),
+            backgroundColor: appBarColour.withOpacity( opacity ),
+            elevation: 0,
           ),
           drawer: buildDrawer( context, HomePage.route ),
+          extendBodyBehindAppBar: true,
           body: RefreshIndicator(
             onRefresh: LocationModel.load,
-            child: ListView(
-              children: <Widget>[
-                TodayCard(),
-                WeekCard(),
-                GraphCard(),
-                TodayDetailsCard(),
-                RadarCard(),
-              ],
+            child: NotificationListener<ScrollNotification>(
+              child: ListView(
+                padding: EdgeInsets.zero,
+                primary: true,
+                children: <Widget>[
+                  TodayCard(),
+                  WeekCard(),
+                  GraphCard(),
+                  TodayDetailsCard(),
+                  RadarCard(),
+                ],
+              ),
+              onNotification: ( ScrollNotification scrollInfo ) {
+                setState( () => _scrollPixels = scrollInfo.metrics.pixels );
+                return false;
+              },
             ),
           ),
         );

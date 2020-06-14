@@ -10,7 +10,7 @@ Drawer buildDrawer( BuildContext context, String currentRoute ) {
       children: <Widget>[
         DrawerHeader(
           decoration: BoxDecoration(
-            color: Colors.blue,
+            color: Theme.of( context ).primaryColor,
           ),
           child: Text(
             "Tidy Weather",

@@ -31,6 +31,7 @@ class _WeekCardState extends State<WeekCard> {
 
             return ListView.builder(
               shrinkWrap: true,
+              padding: EdgeInsets.zero,
               physics: NeverScrollableScrollPhysics(),
               itemCount: weather.week.days.length,
               itemBuilder: ( BuildContext context, int index ) {
