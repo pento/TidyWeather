@@ -14,8 +14,8 @@ class _AboutPageState extends State<AboutPage> {
   @override
   Widget build(BuildContext context) {
     final ThemeData themeData = Theme.of( context );
-    final TextStyle textStyle = themeData.textTheme.body2;
-    final TextStyle linkStyle = themeData.textTheme.body2.copyWith( color: themeData.accentColor );
+    final TextStyle textStyle = themeData.textTheme.bodyText1;
+    final TextStyle linkStyle = themeData.textTheme.bodyText1.copyWith( color: themeData.accentColor );
 
     return Scaffold(
       appBar: AppBar(

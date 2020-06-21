@@ -19,7 +19,7 @@ class _TodayDetailsCardState extends State<TodayDetailsCard> {
     return Card(
       child: Consumer<WeatherModel>(
         builder: ( context, weather, child ) {
-          final TextStyle textStyle = Theme.of( context ).textTheme.body1;
+          final TextStyle textStyle = Theme.of( context ).textTheme.bodyText2;
           final TextStyle lightTextStyle = Theme.of( context ).textTheme.caption;
 
           return Column(

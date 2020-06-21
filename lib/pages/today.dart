@@ -19,7 +19,10 @@ class _TodayPageState extends State<TodayPage> {
         return Scaffold(
           appBar: AppBar(
             title: Text( weather.today.locationName ),
+            backgroundColor: Colors.transparent,
+            elevation: 0,
           ),
+          extendBodyBehindAppBar: true,
           body: Day( weather.today ),
         );
       },

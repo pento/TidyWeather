@@ -4,7 +4,8 @@ import 'package:provider/provider.dart';
 
 import '../data/weather_model.dart';
 import '../pages/today.dart';
-import '../widgets/weather_icon.dart';
+import '../widgets/weatherIcon.dart';
+import '../widgets/weatherGradient.dart';
 
 class TodayCard extends StatefulWidget {
 
@@ -21,12 +22,14 @@ class _TodayCardState extends State<TodayCard> {
         Navigator.pushNamed( context, TodayPage.route );
       },
 
-      child: Container(
-        color: Theme.of( context ).splashColor,
-        padding: EdgeInsets.all( 8 ),
-        child: Consumer<WeatherModel>(
-          builder: ( context, weather, child ) {
-            return Column(
+      child: Consumer<WeatherModel>(
+        builder: ( context, weather, child ) {
+          return Container(
+            decoration: BoxDecoration(
+              gradient: weatherGradient( context, weather.today.forecast.weather.code ),
+            ),
+            padding: EdgeInsets.fromLTRB( 8, 88, 8, 8 ),
+            child: Column(
               children: <Widget>[
                 Row( // Big icon
                   children: <Widget>[
@@ -113,9 +116,9 @@ class _TodayCardState extends State<TodayCard> {
                   ],
                 ),
               ],
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }

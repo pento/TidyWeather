@@ -205,7 +205,7 @@ class ChartPainter extends CustomPainter {
   ui.Paragraph _buildParagraphForBottomLabel( int entry ) {
     ui.ParagraphBuilder builder = new ui.ParagraphBuilder(
         new ui.ParagraphStyle( fontSize: 14.0, textAlign: TextAlign.center ) )
-      ..pushStyle( new ui.TextStyle( color: Theme.of( context ).textTheme.body1.color ) );
+      ..pushStyle( new ui.TextStyle( color: Theme.of( context ).textTheme.bodyText2.color ) );
 
     if ( entry == 0 ) {
       builder.addText( 'Now' );

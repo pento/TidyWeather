@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../data/weather_model.dart';
 import '../pages/week.dart';
-import '../widgets/weather_icon.dart';
+import '../widgets/weatherIcon.dart';
 
 class WeekCard extends StatefulWidget {
 
@@ -31,6 +31,7 @@ class _WeekCardState extends State<WeekCard> {
 
             return ListView.builder(
               shrinkWrap: true,
+              padding: EdgeInsets.zero,
               physics: NeverScrollableScrollPhysics(),
               itemCount: weather.week.days.length,
               itemBuilder: ( BuildContext context, int index ) {
