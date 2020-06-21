@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 LinearGradient weatherGradient( BuildContext context, String weatherCode, [ double opacityFactor = 1.0 ] ) {
   return LinearGradient(
-    colors: weatherColors( context, weatherCode, opacityFactor ),
+    colors: weatherColours( context, weatherCode, opacityFactor ),
     begin: Alignment.centerLeft,
     end: Alignment( 0.5, 0 ),
   );
@@ -19,7 +19,7 @@ final Map<String, Color> _weatherGroupColours = {
 
 };
 
-final Map<String, Color> _weatherColorsMap = {
+final Map<String, Color> _weatherColoursMap = {
   'chance-shower-cloud': _weatherGroupColours[ 'cloud-rain' ],
   'chance-shower-fine': _weatherGroupColours[ 'rain-fine' ],
   'chance-snow-cloud': _weatherGroupColours[ 'rain-fine' ],
@@ -51,37 +51,39 @@ final Map<String, Color> _weatherColorsMap = {
   'wind': _weatherGroupColours[ 'fine' ],
 };
 
-List<Color> weatherColors( BuildContext context, String weatherCode, [ double opacityFactor = 1.0 ] ) {
-  Color weatherColor;
+List<Color> weatherColours( BuildContext context, String weatherCode, [ double opacityFactor = 1.0 ] ) {
+  Color weatherColour;
+  Color blendColour = Colors.white;
   double lightOpacity = 0.9;
   double darkOpacity;
 
   ThemeData currentTheme = Theme.of( context );
   if ( currentTheme.brightness == Brightness.dark ) {
-    weatherColor = currentTheme.splashColor;
+    weatherColour = currentTheme.splashColor;
     lightOpacity = 0.3;
-  } else if ( _weatherColorsMap.containsKey( weatherCode ) ) {
-    weatherColor = _weatherColorsMap[ weatherCode ];
+    blendColour = Colors.black;
+  } else if ( _weatherColoursMap.containsKey( weatherCode ) ) {
+    weatherColour = _weatherColoursMap[ weatherCode ];
   } else {
     // A null weather code should be considered an intentional lookup failure.
     if ( weatherCode != null ) {
       print( 'Unknown weather code: $weatherCode' );
     }
 
-    weatherColor = currentTheme.splashColor;
+    weatherColour = currentTheme.splashColor;
   }
 
-  darkOpacity = weatherColor.opacity;
+  darkOpacity = weatherColour.opacity;
 
   return [
     Color.lerp(
       Colors.transparent,
-      Color.alphaBlend( weatherColor.withOpacity( lightOpacity ), Colors.white ),
+      Color.alphaBlend( weatherColour.withOpacity( lightOpacity ), blendColour ),
       opacityFactor,
     ),
     Color.lerp(
       Colors.transparent,
-      Color.alphaBlend( weatherColor.withOpacity( darkOpacity ), Colors.white ),
+      Color.alphaBlend( weatherColour.withOpacity( darkOpacity ), blendColour ),
       opacityFactor,
     ),
   ];
