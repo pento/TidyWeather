@@ -73,14 +73,6 @@ class AppState extends State<HomePage> {
           opacity = _scrollPixels / 200;
         }
 
-        LinearGradient foo = LinearGradient(
-          colors: [ Color.lerp( Colors.transparent, Colors.red, 0.9 * opacity ), Color.lerp( Colors.transparent, Colors.red, opacity ) ],
-          begin: Alignment.centerLeft,
-          end: Alignment( 0.5, 0 ),
-        );
-
-        ThemeData _modifiedTheme = Theme.of( context ).copyWith( appBarTheme: AppBarTheme( color: Colors.transparent ) );
-
         Scaffold _scaffold = Scaffold(
           appBar: GradientAppBar(
             title: Text( data.item2 ),
@@ -110,6 +102,8 @@ class AppState extends State<HomePage> {
             ),
           ),
         );
+
+        ThemeData _modifiedTheme = Theme.of( context ).copyWith( appBarTheme: AppBarTheme( color: Colors.transparent ) );
 
         return Theme(
           data: _modifiedTheme,

@@ -16,8 +16,17 @@ class Day extends StatelessWidget {
   Widget build( BuildContext context ) {
 
     String dayName;
+    EdgeInsets padding = EdgeInsets.fromLTRB( 8 , 8, 8, 8 );
+    Color background = Theme.of( context ).splashColor;
+    BoxDecoration decoration;
     if ( _day.dateTime.day == DateTime.now().day ) {
       dayName = 'Today';
+
+      padding = EdgeInsets.fromLTRB( 8 , 88, 8, 8 );
+      background = null;
+      decoration = BoxDecoration(
+        gradient: weatherGradient( context, _day.forecast.weather.code ),
+      );
     } else if ( _day.dateTime.day == DateTime.now().add( new Duration( days: 1 ) ).day ) {
       dayName = 'Tomorrow';
     }
@@ -29,8 +38,9 @@ class Day extends StatelessWidget {
       child: Column(
         children: <Widget>[
           Container(
-            color: Theme.of( context ).splashColor,
-            padding: EdgeInsets.all( 8 ),
+            color: background,
+            decoration: decoration,
+            padding: padding,
             child: Column(
               children: <Widget>[
                 Row(
