@@ -11,10 +11,12 @@ class PreferenceModel extends ChangeNotifier with WidgetsBindingObserver {
   ThemeData _lightTheme = ThemeData(
     brightness: Brightness.light,
     splashColor: Colors.lightBlue,
+    primaryColorLight: Colors.grey.shade300,
   );
 
   ThemeData _darkTheme = ThemeData(
     brightness: Brightness.dark,
+    primaryColorLight: Colors.grey.shade400,
   );
 
   PreferenceModel() {

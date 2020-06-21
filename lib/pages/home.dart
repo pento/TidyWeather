@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:gradient_app_bar/gradient_app_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
 
@@ -11,7 +12,7 @@ import '../cards/week.dart';
 import '../data/location_model.dart';
 import '../data/weather_model.dart';
 import '../widgets/drawer.dart';
-import '../widgets/weatherColour.dart';
+import '../widgets/weatherGradient.dart';
 
 class HomePage extends StatefulWidget {
   static const String route = '/';
@@ -29,7 +30,6 @@ class AppState extends State<HomePage> {
 
     _scrollPixels = 0;
   }
-
 
   @override
   Widget build( BuildContext context ) {
@@ -73,17 +73,18 @@ class AppState extends State<HomePage> {
           opacity = _scrollPixels / 200;
         }
 
-        Color appBarColour;
-        if ( Theme.of( context ).brightness == Brightness.dark ) {
-          appBarColour = Theme.of( context ).primaryColor;
-        } else {
-          appBarColour = weatherColor( context, data.item3.forecast.weather.code );
-        }
+        LinearGradient foo = LinearGradient(
+          colors: [ Color.lerp( Colors.transparent, Colors.red, 0.9 * opacity ), Color.lerp( Colors.transparent, Colors.red, opacity ) ],
+          begin: Alignment.centerLeft,
+          end: Alignment( 0.5, 0 ),
+        );
 
-        return Scaffold(
-          appBar: AppBar(
+        ThemeData _modifiedTheme = Theme.of( context ).copyWith( appBarTheme: AppBarTheme( color: Colors.transparent ) );
+
+        Scaffold _scaffold = Scaffold(
+          appBar: GradientAppBar(
             title: Text( data.item2 ),
-            backgroundColor: appBarColour.withOpacity( opacity ),
+            gradient: weatherGradient( context, data.item3.forecast.weather.code, opacity ),
             elevation: 0,
           ),
           drawer: buildDrawer( context, HomePage.route ),
@@ -108,6 +109,11 @@ class AppState extends State<HomePage> {
               },
             ),
           ),
+        );
+
+        return Theme(
+          data: _modifiedTheme,
+          child: _scaffold,
         );
       },
     );

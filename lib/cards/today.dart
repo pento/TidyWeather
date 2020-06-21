@@ -4,8 +4,8 @@ import 'package:provider/provider.dart';
 
 import '../data/weather_model.dart';
 import '../pages/today.dart';
-import '../widgets/weather_icon.dart';
-import '../widgets/weatherColour.dart';
+import '../widgets/weatherIcon.dart';
+import '../widgets/weatherGradient.dart';
 
 class TodayCard extends StatefulWidget {
 
@@ -25,7 +25,9 @@ class _TodayCardState extends State<TodayCard> {
       child: Consumer<WeatherModel>(
         builder: ( context, weather, child ) {
           return Container(
-            color: weatherColor( context, weather.today.forecast.weather.code ),
+            decoration: BoxDecoration(
+              gradient: weatherGradient( context, weather.today.forecast.weather.code ),
+            ),
             padding: EdgeInsets.fromLTRB( 8, 88, 8, 8 ),
             child: Column(
               children: <Widget>[

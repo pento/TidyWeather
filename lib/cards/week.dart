@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../data/weather_model.dart';
 import '../pages/week.dart';
-import '../widgets/weather_icon.dart';
+import '../widgets/weatherIcon.dart';
 
 class WeekCard extends StatefulWidget {
 

@@ -4,8 +4,8 @@ import 'package:jiffy/jiffy.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 import '../data/weather_model.dart';
-import '../widgets/weather_icon.dart';
-import '../widgets/weatherColour.dart';
+import '../widgets/weatherIcon.dart';
+import '../widgets/weatherGradient.dart';
 
 class Day extends StatelessWidget {
   final WeatherDay _day;
@@ -29,7 +29,7 @@ class Day extends StatelessWidget {
       child: Column(
         children: <Widget>[
           Container(
-            color: weatherColor( context, _day.forecast.weather.code ),
+            color: Theme.of( context ).splashColor,
             padding: EdgeInsets.all( 8 ),
             child: Column(
               children: <Widget>[

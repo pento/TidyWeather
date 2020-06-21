@@ -47,12 +47,12 @@ class _GraphCardState extends State<GraphCard> {
             children: <Widget>[
               FlatButton(
                 child: Text( 'Temperature (℃)' ),
-                color: _display == 'temperature' ? Theme.of( context ).primaryColorLight.withOpacity( 0.4 ) : null,
+                color: _display == 'temperature' ? Theme.of( context ).backgroundColor.withOpacity( 0.2 ) : null,
                 onPressed: () => setState(() => _display = 'temperature' ),
               ),
               FlatButton(
                 child: Text( 'Wind (km/h)' ),
-                color: _display == 'wind' ? Theme.of( context ).primaryColorLight.withOpacity( 0.4 ) : null,
+                color: _display == 'wind' ? Theme.of( context ).backgroundColor.withOpacity( 0.2 ) : null,
                 onPressed: () => setState(() => _display = 'wind' ),
               ),
             ],
