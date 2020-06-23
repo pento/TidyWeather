@@ -20,7 +20,7 @@ Generate an APK set:
 
 ```
 cd build/app/outputs/bundle/release
-bundletool build-apks --bundle=./app-release.aab --output=./app-release.apks --ks=~/key.jks "--ks-pass=pass:<key-store-password>" --ks-key-alias=key
+bundletool build-apks --bundle=./app-release.aab --output=./app-release.apks --ks=~/key.jks --ks-key-alias=key "--ks-pass=pass:<key-store-password>"
 ```
 
 Find the device ID for the device you want to install it to:
