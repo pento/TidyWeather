@@ -1,6 +1,5 @@
 
 import 'package:flutter/material.dart';
-import 'package:gradient_app_bar/gradient_app_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
 
@@ -12,7 +11,7 @@ import '../cards/week.dart';
 import '../data/location_model.dart';
 import '../data/weather_model.dart';
 import '../widgets/drawer.dart';
-import '../widgets/weatherGradient.dart';
+import '../widgets/FadingAppBarScaffold.dart';
 
 class HomePage extends StatefulWidget {
   static const String route = '/';
@@ -22,13 +21,13 @@ class HomePage extends StatefulWidget {
 }
 
 class AppState extends State<HomePage> {
-  double _scrollPixels;
+  ScrollController _scrollController;
 
   @override
   void initState() {
     super.initState();
+    _scrollController = ScrollController();
 
-    _scrollPixels = 0;
   }
 
   @override
@@ -66,27 +65,19 @@ class AppState extends State<HomePage> {
           );
         }
 
-        double opacity;
-        if ( _scrollPixels >= 200 ) {
-          opacity = 1;
-        } else {
-          opacity = _scrollPixels / 200;
-        }
+        ThemeData _modifiedTheme = Theme.of( context ).copyWith( appBarTheme: AppBarTheme( color: Colors.transparent ) );
 
-        Scaffold _scaffold = Scaffold(
-          appBar: GradientAppBar(
-            title: Text( data.item2 ),
-            gradient: weatherGradient( context, data.item3.forecast.weather.code, opacity ),
-            elevation: 0,
-          ),
-          drawer: buildDrawer( context, HomePage.route ),
-          extendBodyBehindAppBar: true,
-          body: RefreshIndicator(
-            onRefresh: LocationModel.load,
-            child: NotificationListener<ScrollNotification>(
+        return Theme(
+          data: _modifiedTheme,
+          child: FadingAppBarScaffold(
+            controller: _scrollController,
+            title: data.item2,
+            weatherCode: data.item3.forecast.weather.code,
+            body: RefreshIndicator(
+              onRefresh: LocationModel.load,
               child: ListView(
                 padding: EdgeInsets.zero,
-                primary: true,
+                controller: _scrollController,
                 children: <Widget>[
                   TodayCard(),
                   WeekCard(),
@@ -95,22 +86,10 @@ class AppState extends State<HomePage> {
                   RadarCard(),
                 ],
               ),
-              onNotification: ( ScrollNotification scrollInfo ) {
-                setState( () => _scrollPixels = scrollInfo.metrics.pixels );
-                return false;
-              },
             ),
           ),
-        );
-
-        ThemeData _modifiedTheme = Theme.of( context ).copyWith( appBarTheme: AppBarTheme( color: Colors.transparent ) );
-
-        return Theme(
-          data: _modifiedTheme,
-          child: _scaffold,
         );
       },
     );
   }
 }
-
