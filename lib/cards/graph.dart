@@ -45,14 +45,24 @@ class _GraphCardState extends State<GraphCard> {
             alignment: MainAxisAlignment.center,
             layoutBehavior: ButtonBarLayoutBehavior.constrained,
             children: <Widget>[
-              FlatButton(
-                child: Text( 'Temperature (℃)' ),
-                color: _display == 'temperature' ? Theme.of( context ).backgroundColor.withOpacity( 0.2 ) : null,
-                onPressed: () => setState(() => _display = 'temperature' ),
+              TextButton(
+                child: Text('Temperature (℃)'),
+                style: TextButton.styleFrom(
+                  backgroundColor: _display == 'temperature' ? Theme
+                    .of(context)
+                    .backgroundColor
+                    .withOpacity(0.2) : null
+                ),
+                onPressed: () => setState(() => _display = 'temperature'),
               ),
-              FlatButton(
+              TextButton(
                 child: Text( 'Wind (km/h)' ),
-                color: _display == 'wind' ? Theme.of( context ).backgroundColor.withOpacity( 0.2 ) : null,
+                style: TextButton.styleFrom(
+                    backgroundColor: _display == 'wind' ? Theme
+                        .of(context)
+                        .backgroundColor
+                        .withOpacity(0.2) : null
+                ),
                 onPressed: () => setState(() => _display = 'wind' ),
               ),
             ],

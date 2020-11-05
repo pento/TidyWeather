@@ -16,13 +16,13 @@ class Day extends StatelessWidget {
   Widget build( BuildContext context ) {
 
     String dayName;
-    EdgeInsets padding = EdgeInsets.fromLTRB( 8 , 8, 8, 8 );
+    EdgeInsets padding = EdgeInsets.fromLTRB( 8, 8, 8, 8 );
     Color background = Theme.of( context ).splashColor;
     BoxDecoration decoration;
     if ( _day.dateTime.day == DateTime.now().day ) {
       dayName = 'Today';
 
-      padding = EdgeInsets.fromLTRB( 8 , 88, 8, 8 );
+      padding = EdgeInsets.fromLTRB( 8, 88, 8, 8 );
       background = null;
       decoration = BoxDecoration(
         gradient: weatherGradient( context, _day.forecast.weather.code ),

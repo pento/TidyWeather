@@ -106,19 +106,34 @@ class _RadarCardState extends State<RadarCard> {
                   alignment: MainAxisAlignment.center,
                   buttonPadding: EdgeInsets.all( 0 ),
                   children: <Widget>[
-                    FlatButton(
+                    TextButton(
                       child: Text( '50km' ),
-                      color: _mapController.ready && _mapController.zoom == 9 ? Theme.of( context ).backgroundColor.withOpacity( 0.2 ) : null,
+                      style: TextButton.styleFrom(
+                          backgroundColor: _mapController.ready && _mapController.zoom == 9 ? Theme
+                              .of(context)
+                              .backgroundColor
+                              .withOpacity(0.2) : null
+                      ),
                       onPressed: () => _mapController.move( center, 9 ),
                     ),
-                    FlatButton(
+                    TextButton(
                       child: Text( '100km' ),
-                      color: _mapController.ready && _mapController.zoom == 8 ? Theme.of( context ).backgroundColor.withOpacity( 0.2 ) : null,
+                      style: TextButton.styleFrom(
+                          backgroundColor: _mapController.ready && _mapController.zoom == 8 ? Theme
+                              .of(context)
+                              .backgroundColor
+                              .withOpacity(0.2) : null
+                      ),
                       onPressed: () => _mapController.move( center, 8 ),
                     ),
-                    FlatButton(
+                    TextButton(
                       child: Text( '200km' ),
-                      color: _mapController.ready && _mapController.zoom == 7 ? Theme.of( context ).backgroundColor.withOpacity( 0.2 ) : null,
+                      style: TextButton.styleFrom(
+                          backgroundColor: _mapController.ready && _mapController.zoom == 7 ? Theme
+                              .of(context)
+                              .backgroundColor
+                              .withOpacity(0.2) : null
+                      ),
                       onPressed: () => _mapController.move( center, 7 ),
                     ),
                   ],

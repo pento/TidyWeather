@@ -1,26 +1,29 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:preferences/preference_service.dart';
 
 import './weather_model.dart';
 
 class LocationModel extends ChangeNotifier {
+  bool _background;
   Placemark _place = new Placemark();
+  LocationPermission _permissionStatus;
 
   static LocationModel _self;
 
-  bool _requestingPermission = false;
-
   WeatherPlace get place => new WeatherPlace( _place );
 
-  LocationModel( { background: false } ) {
+  LocationPermission get permissionStatus => _permissionStatus;
+
+  LocationModel( { bool background: false } ) {
     _self = this;
 
-    if ( ! background ) {
-      this.loadData();
-    }
+    _background = background;
+
+    this.loadData();
   }
 
   static Future<void> load() {
@@ -28,44 +31,58 @@ class LocationModel extends ChangeNotifier {
   }
 
   void loadData() async {
-    GeolocationStatus permissionStatus = await Geolocator().checkGeolocationPermissionStatus();
-    if ( permissionStatus != GeolocationStatus.granted ) {
-      if ( _requestingPermission == true ) {
-        print( 'Waiting for permission...' );
-        await Future.delayed( Duration( seconds: 10 ), _self.loadData );
-        return;
-      }
+    _permissionStatus = await Geolocator.checkPermission();
 
-      print( 'Falling through to request permission.' );
-      _requestingPermission = true;
+    // If we don't have permission, there's nothing else we can do.
+    if ( _permissionStatus == LocationPermission.deniedForever || _permissionStatus == LocationPermission.denied ) {
+      print( "We don't have permission to get the location: $_permissionStatus" );
+      notifyListeners();
+      return;
     }
 
-    List<Placemark> place = await Geolocator()
+    // We can't get the location if we only have foreground permission.
+    if ( _background && _permissionStatus != LocationPermission.always ) {
+      print( "We don't have permission to get the location in the background." );
+      notifyListeners();
+      return;
+    }
+
+    Position currentPosition;
+
+    List<Placemark> place = await Geolocator
       .getCurrentPosition( desiredAccuracy: LocationAccuracy.high )
       .then( ( Position position ) async {
+        currentPosition = position;
         print( 'Location: ${position.latitude}, ${position.longitude}' );
-        return await Geolocator().placemarkFromPosition( position );
+        return await placemarkFromCoordinates( position.latitude, position.longitude );
       } )
       .timeout( new Duration( seconds: 10 ), onTimeout: () {
         print( 'Retrieving location timed out.' );
+        currentPosition = new Position(
+          longitude: PrefService.getDouble( '_last_place_position_longitude' ),
+          latitude: PrefService.getDouble( '_last_place_position_latitude' ),
+        );
+
         return [
           new Placemark(
             locality: PrefService.getString( '_last_place_locality' ),
             postalCode: PrefService.getString( '_last_place_postalCode' ),
             isoCountryCode: PrefService.getString( '_last_place_isoCountryCode' ),
-            position: new Position(
-              longitude: PrefService.getDouble( '_last_place_position_longitude' ),
-              latitude: PrefService.getDouble( '_last_place_position_latitude' ),
-            ),
           ),
         ];
       } );
+
+    if ( place[ 0 ].isoCountryCode == null ) {
+      print( 'No position found.' );
+      notifyListeners();
+      return;
+    }
 
     print( 'Place: ${place[ 0 ].locality} ${place[ 0 ].postalCode} ${place[ 0 ].isoCountryCode}' );
 
     if ( place[ 0 ].isoCountryCode != 'AU' ) {
       _place = place[ 0 ];
-      storePlacemark( _place );
+      storePlacemark( _place, currentPosition );
       notifyListeners();
       return;
     }
@@ -75,18 +92,18 @@ class LocationModel extends ChangeNotifier {
       notifyListeners();
     }
 
-    storePlacemark( _place );
+    storePlacemark( _place, currentPosition );
 
-    WeatherModel.load( _place.locality, _place.postalCode, uvLocation( _place.position.latitude, _place.position.longitude ) );
+    WeatherModel.load( _place.locality, _place.postalCode, uvLocation( currentPosition.latitude, currentPosition.longitude ) );
   }
 
-  storePlacemark( Placemark place ) {
+  storePlacemark( Placemark place, Position position ) {
     PrefService.setString( '_last_place_locality', place.locality );
     PrefService.setString( '_last_place_postalCode', place.postalCode );
     PrefService.setString( '_last_place_isoCountryCode', place.isoCountryCode );
 
-    PrefService.setDouble( '_last_place_position_longitude', place.position.longitude );
-    PrefService.setDouble( '_last_place_position_latitude', place.position.latitude );
+    PrefService.setDouble( '_last_place_position_longitude', position.longitude );
+    PrefService.setDouble( '_last_place_position_latitude', position.latitude );
   }
 
   String uvLocation( double latitude, double longitude ) {
