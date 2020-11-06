@@ -2,23 +2,32 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart' show rootBundle;
 
-class Config {
-  static Map<String, dynamic> config;
+class Config{
+  static final Config _instance = Config._internal();
+  static Map<String, dynamic> _config;
 
-  static load( configPath ) async {
-    rootBundle.loadStructuredData(
-      configPath,
-      ( jsonStr ) async {
-        config = jsonDecode( jsonStr );
-      },
-    );
-  }
+  /// Constructor.
+  factory Config() => _instance;
 
-  static item( String key ) {
-    if ( config != null && config.containsKey( key ) ) {
-      return config[ key ];
+  Config._internal();
+
+  /// Loads the config values found in [configPath].
+  Future<void> load( String configPath ) async =>
+      rootBundle.loadStructuredData(
+        configPath,
+        ( String jsonStr ) async {
+          // ignore: avoid_as
+          _config = json.decode( jsonStr ) as Map<String, dynamic>;
+        },
+      );
+
+  /// Grab the value for a given config [key].
+  String item( String key ) {
+    if ( _config != null && _config.containsKey( key ) ) {
+      return _config[ key ].toString();
     }
 
     return '';
   }
+
 }

@@ -4,129 +4,194 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:pedantic/pedantic.dart';
 import 'package:preferences/preference_service.dart';
 
+/// Contains the weather data model.
 class WeatherModel extends ChangeNotifier {
-  Map _weather = new Map();
+  Map<String, dynamic> _weather;
   static WeatherModel _self;
-  static const platform = const MethodChannel( 'net.pento.tidyweather/widget' );
-  bool background;
+  static const MethodChannel _platform = MethodChannel( 'net.pento.tidyweather/widget' );
   BuildContext _context;
 
-  WeatherModel( { context, bool background = false } ) {
-    String weatherCache = PrefService.getString( 'cached_weather_data' );
+  /// Construct a WeatherModel.
+  WeatherModel( { BuildContext context } ) {
+    final String weatherCache = PrefService.getString( 'cached_weather_data' );
     if ( weatherCache != null ) {
-      Map weatherData = jsonDecode( weatherCache );
-      if ( weatherData.containsKey( 'location' ) ) {
-        this._weather = weatherData;
+      final Map<String, dynamic> data =
+        // ignore: avoid_as
+        jsonDecode( weatherCache ) as Map<String, dynamic>;
+
+      if ( data.containsKey( 'location' ) ) {
+        _weather = data;
       }
     }
 
     _self = this;
-    this.background = background;
-    this._context = context;
+    _context = context;
   }
 
+  /// Find the index of today in _weather[ 'forecasts' ].
+  /// Returns -1 if today couldn't be found.
   int todayIndex() {
-    DateTime now = DateTime.now();
-    return _weather[ 'forecasts' ].indexWhere( ( day ) {
-      DateTime thisDay = DateTime.parse( day[ 'dateTime' ] );
-      if ( thisDay.day == now.day && thisDay.month == now.month ) {
-        return true;
-      }
+    final DateTime now = DateTime.now();
 
-      return false;
-    } );
+    return _weather
+      .cast<String, List<dynamic>>()[ 'forecasts' ]
+      .cast<Map<String, dynamic>>()
+      .indexWhere( ( Map<String, dynamic> day ) {
+        final DateTime thisDay = DateTime.parse( day[ 'dateTime' ].toString() );
+        if ( thisDay.day == now.day && thisDay.month == now.month ) {
+          return true;
+        }
+
+        return false;
+      } );
   }
 
-  WeatherDay get today {
-    Map _weatherForecast;
+  /// The weather for today.
+  WeatherDay get today => WeatherDay.fromJson( _weather, todayIndex() );
 
-    if ( _weather[ 'forecasts' ] != null && todayIndex() >= 0 ) {
-      _weatherForecast = _weather[ 'forecasts' ][ todayIndex() ];
-    }
+  /// Get the forecast for the coming week.
+  WeatherWeek get week => WeatherWeek.fromJson( _weather, todayIndex() );
 
-    return new WeatherDay(
-      _weather[ 'location' ],
-      _weatherForecast,
-      _weather[ 'observations' ],
-      _weather[ 'radar' ],
-    );
-  }
-
-  WeatherWeek get week => new WeatherWeek( _weather, todayIndex() );
-
+  /// Provide a static method for loading the data for the given location.
   static void load( String town, String postcode, String uvStation ) {
     _self.loadData( town, postcode, uvStation );
   }
 
-  void loadData( String town, String postcode, String uvStation ) async {
-    final weatherResponse = await http.get( 'https://api.tidyweather.com/api/weather?town=$town&postcode=$postcode&uvstation=$uvStation' );
-    _weather = jsonDecode( weatherResponse.body );
+  /// Load the data for the given location.
+  Future<void> loadData(
+      String town,
+      String postcode,
+      String uvStation
+  ) async {
+    final http.Response weatherResponse = await http.get( 'https://api.tidyweather.com/api/weather?town=$town&postcode=$postcode&uvstation=$uvStation' );
+    final dynamic data = jsonDecode( weatherResponse.body );
+    if ( data is Map<String, dynamic> ) {
+      _weather = data;
+    }
 
     PrefService.setString( 'cached_weather_data', weatherResponse.body );
 
     if ( _context != null && today.radar != null ) {
-      today.radar.overlays.forEach( ( WeatherRadarImage image ) {
-        Image theImage = Image.network( image.url );
-        precacheImage( theImage.image, _context );
-      } );
+      for( final WeatherRadarImage image in today.radar.overlays ) {
+        final Image theImage = Image.network( image.url );
+        unawaited( precacheImage( theImage.image, _context ) );
+      }
     }
 
     notifyListeners();
 
     if ( Platform.isAndroid ) {
-      platform.invokeMethod(
-        'updateWeatherData',
-        {
-          'current': _weather[ 'observations' ][ 'temperature' ][ 'temperature' ]?.toString(),
-          'min': _weather[ 'forecasts' ][ todayIndex() ][ 'weather' ][ 'min' ]?.toString(),
-          'max': _weather[ 'forecasts' ][ todayIndex() ][ 'weather' ][ 'max' ]?.toString(),
-          'code': _weather[ 'forecasts' ][ todayIndex() ][ 'weather' ][ 'code' ],
-          'sunrise': _weather[ 'forecasts' ][ todayIndex() ][ 'sun' ][ 'sunrise' ],
-          'sunset': _weather[ 'forecasts' ][ todayIndex() ][ 'sun' ][ 'sunset' ],
-        }
+      unawaited(
+        _platform.invokeMethod(
+          'updateWeatherData',
+          <String, String>{
+            'current': today.observations.temperature.temperature.toString(),
+            'min': today.forecast.weather.min.toString(),
+            'max': today.forecast.weather.max.toString(),
+            'code': today.forecast.weather.code,
+            'sunrise': today.forecast.sun.sunrise.toIso8601String(),
+            'sunset': today.forecast.sun.sunset.toIso8601String(),
+          }
+        )
       );
     }
   }
 }
 
+/// Data model for a week of weather.
 class WeatherWeek {
+  /// A list of the days in this week.
   List<WeatherDay> days;
 
-  WeatherWeek( Map weather, todayIndex ) {
-    this.days = weather[ 'forecasts' ].sublist( todayIndex ).map<WeatherDay>( ( dayWeather ) => new WeatherDay( weather[ 'location' ], dayWeather ) ).toList();
+  /// Constructor.
+  WeatherWeek( { this.days } );
+
+  /// JSON Factory.
+  factory WeatherWeek.fromJson( Map<String, dynamic> weather, int todayIndex ) {
+    final List<WeatherDay> _days = <WeatherDay>[];
+    final List<dynamic> _forecasts = weather
+      .cast<String, List<dynamic>>()[ 'forecasts' ];
+
+    for( int day = todayIndex; day < _forecasts.length; day++ ) {
+      _days.add( WeatherDay.fromJson( weather, day ) );
+    }
+
+    return WeatherWeek( days: _days );
   }
 }
 
+/// Data model for a single day of weather.
 class WeatherDay {
+  /// The name of the location where this weather is for.
   String locationName = 'Loading...';
+  /// The date of the forecast.
   DateTime dateTime;
+  /// The forecast data.
   WeatherForecast forecast;
+  /// The observational data.
   WeatherObservations observations;
+  /// The relevant radar images.
   WeatherRadar radar;
 
+  /// Constructor.
+  WeatherDay( {
+    this.locationName,
+    this.dateTime,
+    this.forecast,
+    this.observations,
+    this.radar
+  } );
 
-  WeatherDay( Map location, Map forecast, [ Map observations, Map radar ] ) {
-    if ( location != null ) {
-      this.locationName = location['name'];
+  /// JSON factory.
+  factory WeatherDay.fromJson( Map<String, dynamic> weather, int day ) {
+    if ( weather['location']['name'] == null ) {
+      return WeatherDay();
     }
 
-    if ( forecast != null ) {
-      this.dateTime = DateTime.parse( forecast[ 'dateTime' ] );
-      this.forecast = new WeatherForecast( forecast );
+    final String _locationName = weather['location']['name'].toString();
+    DateTime _dateTime;
+    WeatherForecast _forecast;
+    WeatherObservations _observations;
+    WeatherRadar _radar;
+
+    final List<dynamic> _forecasts = weather
+        .cast<String, List<dynamic>>()[ 'forecasts' ];
+
+    if (  _forecasts != null && _forecasts.elementAt( day ) != null ) {
+      final Map<String, dynamic> _dayData =
+        _forecasts.cast<Map<String, dynamic>>()[ day ];
+
+      _dateTime = DateTime.parse( _dayData[ 'dateTime' ]?.toString() );
+
+      _forecast = WeatherForecast( _dayData );
     }
 
-    if ( observations != null ) {
-      this.observations = new WeatherObservations( observations );
+    if ( weather['observations'] != null ) {
+      _observations = WeatherObservations(
+        weather.cast<String, Map<String, dynamic>>()['observations']
+      );
     }
 
-    if ( radar != null ) {
-      this.radar = new WeatherRadar( radar );
+    if ( weather['radar'] != null ) {
+      _radar = WeatherRadar(
+        weather.cast<String, Map<String, dynamic>>()['radar']
+      );
     }
+
+    return WeatherDay(
+      locationName: _locationName,
+      dateTime: _dateTime,
+      forecast: _forecast,
+      observations: _observations,
+      radar: _radar,
+    );
   }
 }
 
+/// Data model for a day of weather forecasting.
 class WeatherForecast {
   WeatherForecastWeather weather;
   List<WeatherForecastHourlyTemperature> temperature;
@@ -138,29 +203,34 @@ class WeatherForecast {
   WeatherForecastSun sun;
   WeatherForecastRegion region;
 
-  WeatherForecast( Map forecast ) {
-    this.weather = new WeatherForecastWeather( forecast[ 'weather' ] );
-    this.temperature = forecast[ 'temperature' ].map<WeatherForecastHourlyTemperature>( ( hourTemperature ) => new WeatherForecastHourlyTemperature( hourTemperature ) ).toList();
+  /// Constructor.
+  WeatherForecast( Map<String, dynamic> forecast ) {
+    weather = WeatherForecastWeather(
+      forecast.cast<String, Map<String, dynamic>>()[ 'weather' ]
+    );
+
+    temperature = forecast[ 'temperature' ].map<WeatherForecastHourlyTemperature>(
+            ( hourTemperature ) => WeatherForecastHourlyTemperature( hourTemperature ) ).toList();
     if ( forecast.containsKey( 'rainfall' ) ) {
-      this.rainfall = new WeatherForecastRainfall( forecast[ 'rainfall' ] );
+      rainfall = WeatherForecastRainfall( forecast[ 'rainfall' ] );
     }
     if ( forecast.containsKey( 'rainfallProbability' ) ) {
-      this.hourlyRainfall = forecast[ 'rainfallProbability' ]
-          .map<WeatherForecastHourlyRainfall>( ( hourRainfall ) => new WeatherForecastHourlyRainfall( hourRainfall ) )
+      hourlyRainfall = forecast[ 'rainfallProbability' ]
+          .map<WeatherForecastHourlyRainfall>( ( hourRainfall ) => WeatherForecastHourlyRainfall( hourRainfall ) )
           .toList();
     }
     if ( forecast.containsKey( 'wind' ) ) {
-      this.hourlyWind = forecast[ 'wind' ]
-          .map<WeatherForecastHourlyWind>( ( hourlyWind ) => new WeatherForecastHourlyWind( hourlyWind ) )
+      hourlyWind = forecast[ 'wind' ]
+          .map<WeatherForecastHourlyWind>( ( hourlyWind ) => WeatherForecastHourlyWind( hourlyWind ) )
           .toList();
     }
     if ( forecast.containsKey( 'uv' ) ) {
-      this.uv = new WeatherForecastUV( forecast[ 'uv' ] );
+      uv = WeatherForecastUV( forecast[ 'uv' ] );
     }
-    this.windMax = new WeatherForecastWind( forecast[ 'windMax' ] );
-    this.sun = new WeatherForecastSun( forecast[ 'sun' ] );
+    windMax = WeatherForecastWind( forecast[ 'windMax' ] );
+    sun = WeatherForecastSun( forecast[ 'sun' ] );
     if ( forecast.containsKey( 'region' ) ) {
-      this.region = new WeatherForecastRegion( forecast[ 'region' ] );
+      region = WeatherForecastRegion( forecast[ 'region' ] );
     }
   }
 }
@@ -171,11 +241,11 @@ class WeatherForecastWeather {
   String code;
   String description;
 
-  WeatherForecastWeather( Map weather ) {
-    this.min = weather[ 'min' ];
-    this.max = weather[ 'max' ];
-    this.code = weather[ 'code' ];
-    this.description = weather[ 'description' ];
+  WeatherForecastWeather( Map<String, dynamic> weather ) {
+    min = int.parse( weather[ 'min' ].toString() );
+    max = int.parse( weather[ 'max' ].toString() );
+    code = weather[ 'code' ].toString();
+    description = weather[ 'description' ].toString();
   }
 }
 

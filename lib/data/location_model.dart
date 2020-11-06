@@ -97,45 +97,48 @@ class LocationModel extends ChangeNotifier {
     WeatherModel.load( _place.locality, _place.postalCode, uvLocation( currentPosition.latitude, currentPosition.longitude ) );
   }
 
-  storePlacemark( Placemark place, Position position ) {
+  void storePlacemark( Placemark place, Position position ) {
     PrefService.setString( '_last_place_locality', place.locality );
     PrefService.setString( '_last_place_postalCode', place.postalCode );
     PrefService.setString( '_last_place_isoCountryCode', place.isoCountryCode );
 
-    PrefService.setDouble( '_last_place_position_longitude', position.longitude );
+    PrefService.setDouble(
+        '_last_place_position_longitude',
+        position.longitude
+    );
     PrefService.setDouble( '_last_place_position_latitude', position.latitude );
   }
 
   String uvLocation( double latitude, double longitude ) {
-    final locations = new Map();
+    Map<String, List<double>> locations;
 
     // Source: https://api.willyweather.com.au/v2/{key}/search.json?query={location}&limit=1
-    locations[ 'adl' ] = [ -34.926, 138.6 ];
-    locations[ 'ali' ] = [ -23.7, 133.881 ];
-    locations[ 'bri' ] = [ -27.468, 153.028 ];
-    locations[ 'can' ] = [ -35.282, 149.129 ];
-    locations[ 'dar' ] = [ -12.461, 130.842 ];
-    locations[ 'emd' ] = [ -23.527, 148.161 ];
-    locations[ 'gco' ] = [ -28.005, 153.402 ];
-    locations[ 'kin' ] = [ -42.977, 147.308 ];
-    locations[ 'mcq' ] = [ -54.617, 158.9 ];
-    locations[ 'mel' ] = [ -37.814, 144.963 ];
-    locations[ 'new' ] = [ -32.924, 151.779 ];
-    locations[ 'per' ] = [ -31.955, 115.859 ];
-    locations[ 'syd' ] = [ -33.867, 151.207 ];
-    locations[ 'tow' ] = [ -19.258, 146.818 ];
+    locations[ 'adl' ] = <double>[ -34.926, 138.6 ];
+    locations[ 'ali' ] = <double>[ -23.7, 133.881 ];
+    locations[ 'bri' ] = <double>[ -27.468, 153.028 ];
+    locations[ 'can' ] = <double>[ -35.282, 149.129 ];
+    locations[ 'dar' ] = <double>[ -12.461, 130.842 ];
+    locations[ 'emd' ] = <double>[ -23.527, 148.161 ];
+    locations[ 'gco' ] = <double>[ -28.005, 153.402 ];
+    locations[ 'kin' ] = <double>[ -42.977, 147.308 ];
+    locations[ 'mcq' ] = <double>[ -54.617, 158.9 ];
+    locations[ 'mel' ] = <double>[ -37.814, 144.963 ];
+    locations[ 'new' ] = <double>[ -32.924, 151.779 ];
+    locations[ 'per' ] = <double>[ -31.955, 115.859 ];
+    locations[ 'syd' ] = <double>[ -33.867, 151.207 ];
+    locations[ 'tow' ] = <double>[ -19.258, 146.818 ];
 
     double shortestDistance = 0;
     String closestLocation = '';
 
-    locations.forEach( ( location, coordinates ) {
+    locations.forEach( ( String location, List<double> coordinates ) {
       double latDiff = latitude - coordinates[ 0 ];
       latDiff = latDiff.abs();
 
       double longDiff = longitude - coordinates[ 1 ];
       longDiff = longDiff.abs();
 
-      double distance = sqrt( latDiff * latDiff + longDiff * longDiff );
+      final double distance = sqrt( latDiff * latDiff + longDiff * longDiff );
 
       if ( closestLocation == '' || distance < shortestDistance ) {
         shortestDistance = distance;

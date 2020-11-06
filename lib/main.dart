@@ -18,7 +18,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await PrefService.init( prefix: 'pref_' );
-  await Config.load( 'config.json' );
+  await Config().load( 'config.json' );
 
   runApp(
       MultiProvider(
@@ -80,7 +80,7 @@ void backgroundFetchHeadlessTask( String taskId ) async {
   await PrefService.init( prefix: 'pref_' );
 
   LocationModel( background: true );
-  WeatherModel( background: true );
+  WeatherModel();
 
   LocationModel.load().whenComplete( () { BackgroundFetch.finish( taskId ); } );
 }

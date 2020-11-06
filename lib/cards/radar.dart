@@ -77,7 +77,7 @@ class _RadarCardState extends State<RadarCard> {
                       new TileLayerOptions(
                         urlTemplate: "https://api.mapbox.com/styles/v1/pento/ck8ljtx870q8z1iphvwes27kc/tiles/{z}/{x}/{y}?access_token={accessToken}",
                         additionalOptions: {
-                          'accessToken': Config.item( 'mapbox_access_token' ),
+                          'accessToken': Config().item( 'mapbox_access_token' ),
                         },
                       ),
                       new OverlayImageLayerOptions(
@@ -96,7 +96,7 @@ class _RadarCardState extends State<RadarCard> {
                         urlTemplate: "https://api.mapbox.com/styles/v1/pento/ck8mdbur70gb61ipjxtbqmbcp/tiles/{z}/{x}/{y}?access_token={accessToken}",
                         backgroundColor: Colors.transparent,
                         additionalOptions: {
-                          'accessToken': Config.item( 'mapbox_access_token' ),
+                          'accessToken': Config().item( 'mapbox_access_token' ),
                         },
                       ),
                     ],
