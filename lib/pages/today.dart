@@ -15,15 +15,15 @@ class _TodayPageState extends State<TodayPage> {
   @override
   Widget build(BuildContext context) {
     return Consumer<WeatherModel>(
-      builder: ( context, weather, child ) {
+      builder: (context, weather, child) {
         return Scaffold(
           appBar: AppBar(
-            title: Text( weather.today.locationName ),
+            title: Text(weather.today.locationName),
             backgroundColor: Colors.transparent,
             elevation: 0,
           ),
           extendBodyBehindAppBar: true,
-          body: Day( weather.today ),
+          body: Day(weather.today),
         );
       },
     );

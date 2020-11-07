@@ -15,21 +15,21 @@ class _WeekPageState extends State<WeekPage> {
   @override
   Widget build(BuildContext context) {
     return Consumer<WeatherModel>(
-      builder: ( context, weather, child ) {
+      builder: (context, weather, child) {
         return Scaffold(
           appBar: AppBar(
-            title: Text( weather.today.locationName ),
+            title: Text(weather.today.locationName),
           ),
           body: ListView.builder(
             shrinkWrap: true,
             itemCount: weather.week.days.length,
-            itemBuilder: ( BuildContext context, int index ) {
-              if ( weather.week.days[ index ].dateTime.day == DateTime.now().day ) {
+            itemBuilder: (BuildContext context, int index) {
+              if (weather.week.days[index].dateTime.day == DateTime.now().day) {
                 return Container();
               }
 
               return Card(
-                child: Day( weather.week.days[ index ] ),
+                child: Day(weather.week.days[index]),
               );
             },
           ),

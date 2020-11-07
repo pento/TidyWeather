@@ -8,21 +8,20 @@ class WeatherDetailsBlock extends StatefulWidget {
   final Widget text;
   final Widget subtext;
 
-  WeatherDetailsBlock( { this.icon, this.iconColor, this.title, this.text, this.subtext } );
-
+  WeatherDetailsBlock(
+      {this.icon, this.iconColor, this.title, this.text, this.subtext});
 
   @override
   _WeatherDetailsBlockState createState() => _WeatherDetailsBlockState();
 }
 
 class _WeatherDetailsBlockState extends State<WeatherDetailsBlock> {
-
   GlobalKey<FlipCardState> _cardKey = GlobalKey<FlipCardState>();
   bool _isFlipped = false;
 
   @override
-  Widget build( BuildContext context ) {
-    return  Expanded(
+  Widget build(BuildContext context) {
+    return Expanded(
       child: GestureDetector(
         onLongPress: _toggleCard,
         onTap: _toggleCard,
@@ -31,18 +30,17 @@ class _WeatherDetailsBlockState extends State<WeatherDetailsBlock> {
             direction: FlipDirection.VERTICAL,
             flipOnTouch: false,
             front: Container(
-              padding: EdgeInsets.symmetric( vertical: 5, horizontal: 12 ),
+              padding: EdgeInsets.symmetric(vertical: 5, horizontal: 12),
               child: Row(
                 children: <Widget>[
                   Column(
                     children: <Widget>[
                       Container(
-                        padding: EdgeInsets.all( 6 ),
+                        padding: EdgeInsets.all(6),
                         decoration: BoxDecoration(
                           color: widget.iconColor,
-                          borderRadius: BorderRadius.circular( 20 ),
+                          borderRadius: BorderRadius.circular(20),
                         ),
-
                         child: Icon(
                           widget.icon,
                           color: Colors.white,
@@ -51,7 +49,7 @@ class _WeatherDetailsBlockState extends State<WeatherDetailsBlock> {
                     ],
                   ),
                   Container(
-                    padding: EdgeInsets.only( left: 10 ),
+                    padding: EdgeInsets.only(left: 10),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
@@ -64,18 +62,17 @@ class _WeatherDetailsBlockState extends State<WeatherDetailsBlock> {
               ),
             ),
             back: Container(
-              padding: EdgeInsets.symmetric( vertical: 5, horizontal: 12 ),
+              padding: EdgeInsets.symmetric(vertical: 5, horizontal: 12),
               child: Row(
                 children: <Widget>[
                   Column(
                     children: <Widget>[
                       Container(
-                        padding: EdgeInsets.all( 6 ),
+                        padding: EdgeInsets.all(6),
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular( 20 ),
+                          borderRadius: BorderRadius.circular(20),
                         ),
-
                         child: Icon(
                           widget.icon,
                           color: widget.iconColor,
@@ -84,21 +81,20 @@ class _WeatherDetailsBlockState extends State<WeatherDetailsBlock> {
                     ],
                   ),
                   Container(
-                    padding: EdgeInsets.only( left: 10 ),
+                    padding: EdgeInsets.only(left: 10),
                     child: widget.title,
                   ),
                 ],
               ),
-            )
-        ),
+            )),
       ),
     );
   }
 
   void _toggleCard() {
-    setState( () {
-      _isFlipped = ! _isFlipped;
-    } );
+    setState(() {
+      _isFlipped = !_isFlipped;
+    });
     _cardKey.currentState.toggleCard();
   }
 }

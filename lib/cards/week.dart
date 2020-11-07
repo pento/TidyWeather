@@ -8,10 +8,8 @@ import '../pages/week.dart';
 import '../widgets/weatherIcon.dart';
 
 class WeekCard extends StatefulWidget {
-
   @override
   _WeekCardState createState() => _WeekCardState();
-
 }
 
 class _WeekCardState extends State<WeekCard> {
@@ -19,13 +17,12 @@ class _WeekCardState extends State<WeekCard> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed( context, WeekPage.route );
+        Navigator.pushNamed(context, WeekPage.route);
       },
-
       child: Card(
         child: Consumer<WeatherModel>(
-          builder: ( context, weather, child ) {
-            if ( weather.week.days.length < 2 ) {
+          builder: (context, weather, child) {
+            if (weather.week.days.length < 2) {
               return Container();
             }
 
@@ -34,35 +31,39 @@ class _WeekCardState extends State<WeekCard> {
               padding: EdgeInsets.zero,
               physics: NeverScrollableScrollPhysics(),
               itemCount: weather.week.days.length,
-              itemBuilder: ( BuildContext context, int index ) {
-                if ( weather.week.days[ index ].dateTime.day == DateTime.now().day ) {
+              itemBuilder: (BuildContext context, int index) {
+                if (weather.week.days[index].dateTime.day ==
+                    DateTime.now().day) {
                   return Container();
                 }
 
                 String dayName;
-                if ( weather.week.days[ index ].dateTime.day == DateTime.now().add( new Duration( days: 1 ) ).day ) {
+                if (weather.week.days[index].dateTime.day ==
+                    DateTime.now().add(new Duration(days: 1)).day) {
                   dayName = 'Tomorrow';
-                }
-                else {
-                  dayName = Jiffy( weather.week.days[ index ].dateTime ).format( 'EEEE' );
+                } else {
+                  dayName =
+                      Jiffy(weather.week.days[index].dateTime).format('EEEE');
                 }
 
-                WeatherForecastWeather day = weather.week.days[ index ].forecast.weather;
+                WeatherForecastWeather day =
+                    weather.week.days[index].forecast.weather;
                 return Container(
-                  margin: EdgeInsets.symmetric( vertical: 0, horizontal: 12 ),
-                  padding: EdgeInsets.symmetric( vertical: 6, horizontal: 0 ),
+                  margin: EdgeInsets.symmetric(vertical: 0, horizontal: 12),
+                  padding: EdgeInsets.symmetric(vertical: 6, horizontal: 0),
                   decoration: BoxDecoration(
                     border: Border(
-                      bottom: index == weather.week.days.length - 1 ? BorderSide( width: 0 ) : BorderSide( color: Color.fromARGB( 0xFF, 0xCC, 0xCC, 0xCC )),
+                      bottom: index == weather.week.days.length - 1
+                          ? BorderSide(width: 0)
+                          : BorderSide(
+                              color: Color.fromARGB(0xFF, 0xCC, 0xCC, 0xCC)),
                     ),
                   ),
                   child: Row(
                     children: <Widget>[
-                      Expanded(
-                          child: Text( dayName )
-                      ),
+                      Expanded(child: Text(dayName)),
                       SvgPicture.asset(
-                        weatherIcon( day.code ),
+                        weatherIcon(day.code),
                       ),
                       SizedBox(
                         width: 30,

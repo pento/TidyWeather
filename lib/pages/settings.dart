@@ -8,7 +8,6 @@ class SettingsPage extends StatefulWidget {
 
   @override
   _SettingsPageState createState() => _SettingsPageState();
-
 }
 
 class _SettingsPageState extends State<SettingsPage> {
@@ -16,21 +15,21 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text( 'Settings' ),
+        title: Text('Settings'),
       ),
-      body: PreferencePage( [
+      body: PreferencePage([
         Container(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              PreferenceTitle( 'Theme' ),
+              PreferenceTitle('Theme'),
               RadioPreference(
                 'System theme',
                 'system',
                 'ui_theme',
                 isDefault: true,
                 onSelect: () {
-                  PreferenceModel.updateTheme( 'system' );
+                  PreferenceModel.updateTheme('system');
                 },
               ),
               RadioPreference(
@@ -38,13 +37,13 @@ class _SettingsPageState extends State<SettingsPage> {
                 'sun',
                 'ui_theme',
                 onSelect: () {
-                  PreferenceModel.updateTheme( 'sun' );
+                  PreferenceModel.updateTheme('sun');
                 },
               ),
             ],
           ),
         ),
-      ] ),
+      ]),
     );
   }
 }

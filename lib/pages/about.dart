@@ -7,22 +7,22 @@ class AboutPage extends StatefulWidget {
 
   @override
   _AboutPageState createState() => _AboutPageState();
-
 }
 
 class _AboutPageState extends State<AboutPage> {
   @override
   Widget build(BuildContext context) {
-    final ThemeData themeData = Theme.of( context );
+    final ThemeData themeData = Theme.of(context);
     final TextStyle textStyle = themeData.textTheme.bodyText1;
-    final TextStyle linkStyle = themeData.textTheme.bodyText1.copyWith( color: themeData.accentColor );
+    final TextStyle linkStyle =
+        themeData.textTheme.bodyText1.copyWith(color: themeData.accentColor);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text( 'About Tidy Weather' ),
+        title: Text('About Tidy Weather'),
       ),
       body: Container(
-        padding: const EdgeInsets.symmetric( horizontal: 16.0, vertical: 12.0 ),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -52,7 +52,8 @@ class _AboutPageState extends State<AboutPage> {
                 style: textStyle,
                 children: <TextSpan>[
                   TextSpan(
-                    text: 'This is an Open Source application, you can view the source code, report bugs, and contribute fixes in the ',
+                    text:
+                        'This is an Open Source application, you can view the source code, report bugs, and contribute fixes in the ',
                   ),
                   LinkTextSpan(
                     style: linkStyle,
@@ -78,7 +79,8 @@ class _AboutPageState extends State<AboutPage> {
                   LinkTextSpan(
                     style: linkStyle,
                     text: 'Bureau of Meteorology',
-                    url: 'http://www.bom.gov.au/data-access/3rd-party-attribution.shtml',
+                    url:
+                        'http://www.bom.gov.au/data-access/3rd-party-attribution.shtml',
                   ),
                   TextSpan(
                     text: ', via ',
@@ -107,7 +109,8 @@ class _AboutPageState extends State<AboutPage> {
                   LinkTextSpan(
                     style: linkStyle,
                     text: 'Disclaimer',
-                    url: 'https://www.arpansa.gov.au/our-services/monitoring/ultraviolet-radiation-monitoring/ultraviolet-radation-data-information',
+                    url:
+                        'https://www.arpansa.gov.au/our-services/monitoring/ultraviolet-radiation-monitoring/ultraviolet-radation-data-information',
                   ),
                   TextSpan(
                     text: '.',

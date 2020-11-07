@@ -17,58 +17,58 @@ import './pages/week.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await PrefService.init( prefix: 'pref_' );
-  await Config().load( 'config.json' );
+  await PrefService.init(prefix: 'pref_');
+  await Config().load('config.json');
 
-  runApp(
-      MultiProvider(
-        providers: [
-          ChangeNotifierProvider( create: ( context ) => LocationModel() ),
-          ChangeNotifierProvider( create: ( context ) => WeatherModel( context: context ) ),
-          ChangeNotifierProvider( create: ( context ) => PreferenceModel() ),
-        ],
-        child: MyApp(),
-      )
-  );
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(create: (context) => LocationModel()),
+      ChangeNotifierProvider(
+          create: (context) => WeatherModel(context: context)),
+      ChangeNotifierProvider(create: (context) => PreferenceModel()),
+    ],
+    child: MyApp(),
+  ));
 
-  BackgroundFetch.registerHeadlessTask( backgroundFetchHeadlessTask );
+  BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
 }
 
 class MyApp extends StatelessWidget {
-
   MyApp() {
-    BackgroundFetch.configure( BackgroundFetchConfig(
-        minimumFetchInterval: 30,
-        stopOnTerminate: false,
-        enableHeadless: true,
-        startOnBoot: true,
-        requiresBatteryNotLow: false,
-        requiresCharging: false,
-        requiresStorageNotLow: false,
-        requiresDeviceIdle: false,
-        requiredNetworkType: NetworkType.ANY,
-    ), ( String taskId ) async {
-      LocationModel.load().whenComplete( () { BackgroundFetch.finish( taskId ); } );
-    } );
+    BackgroundFetch.configure(
+        BackgroundFetchConfig(
+          minimumFetchInterval: 30,
+          stopOnTerminate: false,
+          enableHeadless: true,
+          startOnBoot: true,
+          requiresBatteryNotLow: false,
+          requiresCharging: false,
+          requiresStorageNotLow: false,
+          requiresDeviceIdle: false,
+          requiredNetworkType: NetworkType.ANY,
+        ), (String taskId) async {
+      LocationModel.load().whenComplete(() {
+        BackgroundFetch.finish(taskId);
+      });
+    });
   }
 
   @override
-  Widget build( BuildContext context ) {
-
+  Widget build(BuildContext context) {
     return Selector<PreferenceModel, Tuple2<ThemeData, ThemeData>>(
-      selector: ( context, preferences ) => Tuple2( preferences.lightTheme( context ), preferences.darkTheme( context ) ),
-
-      builder: ( context, themes, child ) {
+      selector: (context, preferences) => Tuple2(
+          preferences.lightTheme(context), preferences.darkTheme(context)),
+      builder: (context, themes, child) {
         return MaterialApp(
           title: "Tidy Weather",
           theme: themes.item1,
           darkTheme: themes.item2,
           home: HomePage(),
           routes: <String, WidgetBuilder>{
-            AboutPage.route: ( context ) => AboutPage(),
-            SettingsPage.route: ( context ) => SettingsPage(),
-            TodayPage.route: ( context ) => TodayPage(),
-            WeekPage.route: ( context ) => WeekPage(),
+            AboutPage.route: (context) => AboutPage(),
+            SettingsPage.route: (context) => SettingsPage(),
+            TodayPage.route: (context) => TodayPage(),
+            WeekPage.route: (context) => WeekPage(),
           },
         );
       },
@@ -76,11 +76,13 @@ class MyApp extends StatelessWidget {
   }
 }
 
-void backgroundFetchHeadlessTask( String taskId ) async {
-  await PrefService.init( prefix: 'pref_' );
+void backgroundFetchHeadlessTask(String taskId) async {
+  await PrefService.init(prefix: 'pref_');
 
-  LocationModel( background: true );
+  LocationModel(background: true);
   WeatherModel();
 
-  LocationModel.load().whenComplete( () { BackgroundFetch.finish( taskId ); } );
+  LocationModel.load().whenComplete(() {
+    BackgroundFetch.finish(taskId);
+  });
 }
