@@ -166,7 +166,7 @@ class WeatherDay {
 
       _dateTime = DateTime.parse( _dayData[ 'dateTime' ]?.toString() );
 
-      _forecast = WeatherForecast( _dayData );
+      _forecast = WeatherForecast.fromJson( _dayData );
     }
 
     if ( weather['observations'] != null ) {
@@ -204,34 +204,94 @@ class WeatherForecast {
   WeatherForecastRegion region;
 
   /// Constructor.
-  WeatherForecast( Map<String, dynamic> forecast ) {
-    weather = WeatherForecastWeather(
+  WeatherForecast( {
+    this.weather,
+    this.temperature,
+    this.rainfall,
+    this.hourlyRainfall,
+    this.hourlyWind,
+    this.uv,
+    this.windMax,
+    this.sun,
+    this.region,
+  } );
+
+  /// JSON factory.
+  factory WeatherForecast.fromJson( Map<String, dynamic> forecast ) {
+    final WeatherForecastWeather _weather = WeatherForecastWeather.fromJson(
       forecast.cast<String, Map<String, dynamic>>()[ 'weather' ]
     );
 
-    temperature = forecast[ 'temperature' ].map<WeatherForecastHourlyTemperature>(
-            ( hourTemperature ) => WeatherForecastHourlyTemperature( hourTemperature ) ).toList();
+    final List<WeatherForecastHourlyTemperature> _temperature = forecast
+        .cast<String, List<dynamic>>()[ 'temperature' ]
+        .cast<Map<String, dynamic>>()
+        .map<WeatherForecastHourlyTemperature>(
+          ( Map<String, dynamic> hourTemperature ) =>
+            WeatherForecastHourlyTemperature.fromJson( hourTemperature )
+        ).toList();
+
+    WeatherForecastRainfall _rainfall;
     if ( forecast.containsKey( 'rainfall' ) ) {
-      rainfall = WeatherForecastRainfall( forecast[ 'rainfall' ] );
+      _rainfall = WeatherForecastRainfall.fromJson(
+          forecast.cast<String, Map<String, dynamic>>()[ 'rainfall' ]
+      );
     }
+
+    List<WeatherForecastHourlyRainfall> _hourlyRainfall;
     if ( forecast.containsKey( 'rainfallProbability' ) ) {
-      hourlyRainfall = forecast[ 'rainfallProbability' ]
-          .map<WeatherForecastHourlyRainfall>( ( hourRainfall ) => WeatherForecastHourlyRainfall( hourRainfall ) )
-          .toList();
+      _hourlyRainfall = forecast
+        .cast<String, List<dynamic>>()[ 'rainfallProbability' ]
+        .cast<Map<String, dynamic>>()
+        .map<WeatherForecastHourlyRainfall>(
+          ( Map<String, dynamic> hourRainfall ) =>
+            WeatherForecastHourlyRainfall.fromJson( hourRainfall )
+        ).toList();
     }
+
+    List<WeatherForecastHourlyWind> _hourlyWind;
     if ( forecast.containsKey( 'wind' ) ) {
-      hourlyWind = forecast[ 'wind' ]
-          .map<WeatherForecastHourlyWind>( ( hourlyWind ) => WeatherForecastHourlyWind( hourlyWind ) )
-          .toList();
+      _hourlyWind = forecast
+        .cast<String, List<dynamic>>()[ 'wind' ]
+        .cast<Map<String, dynamic>>()
+        .map<WeatherForecastHourlyWind>(
+          ( Map<String, dynamic> hourlyWind ) =>
+            WeatherForecastHourlyWind.fromJson( hourlyWind )
+        ).toList();
     }
+
+    WeatherForecastUV _uv;
     if ( forecast.containsKey( 'uv' ) ) {
-      uv = WeatherForecastUV( forecast[ 'uv' ] );
+      _uv = WeatherForecastUV(
+        forecast.cast<String, Map<String, dynamic>>()[ 'uv' ]
+      );
     }
-    windMax = WeatherForecastWind( forecast[ 'windMax' ] );
-    sun = WeatherForecastSun( forecast[ 'sun' ] );
+
+    final WeatherForecastWind _windMax = WeatherForecastWind(
+      forecast.cast<String, Map<String, dynamic>>()[ 'windMax' ]
+    );
+
+    final WeatherForecastSun _sun = WeatherForecastSun(
+        forecast.cast<String, Map<String, dynamic>>()[ 'sun' ]
+    );
+
+    WeatherForecastRegion _region;
     if ( forecast.containsKey( 'region' ) ) {
-      region = WeatherForecastRegion( forecast[ 'region' ] );
+      _region = WeatherForecastRegion(
+        forecast.cast<String, Map<String, dynamic>>()[ 'region' ]
+      );
     }
+
+    return WeatherForecast(
+      weather: _weather,
+      temperature: _temperature,
+      rainfall: _rainfall,
+      hourlyRainfall: _hourlyRainfall,
+      hourlyWind: _hourlyWind,
+      uv: _uv,
+      windMax: _windMax,
+      sun: _sun,
+      region: _region,
+    );
   }
 }
 
@@ -241,44 +301,70 @@ class WeatherForecastWeather {
   String code;
   String description;
 
-  WeatherForecastWeather( Map<String, dynamic> weather ) {
-    min = int.parse( weather[ 'min' ].toString() );
-    max = int.parse( weather[ 'max' ].toString() );
-    code = weather[ 'code' ].toString();
-    description = weather[ 'description' ].toString();
-  }
+  /// Constructor.
+  WeatherForecastWeather( { this.min, this.max, this.code, this.description} );
+
+  /// JSON factory.
+  factory WeatherForecastWeather.fromJson( Map<String, dynamic> weather ) =>
+    WeatherForecastWeather(
+      min: int.parse( weather[ 'min' ].toString() ),
+      max: int.parse( weather[ 'max' ].toString() ),
+      code: weather[ 'code' ].toString(),
+      description: weather[ 'description' ].toString(),
+    );
 }
 
 class WeatherForecastHourlyTemperature {
   double temperature;
   DateTime dateTime;
 
-  WeatherForecastHourlyTemperature( Map hourTemperature ) {
-    this.temperature = hourTemperature[ 'temperature' ]?.toDouble();
-    this.dateTime = DateTime.parse( hourTemperature[ 'dateTime' ] );
-  }
+  /// Constructor.
+  WeatherForecastHourlyTemperature( { this.temperature, this.dateTime } );
 
-  WeatherForecastHourlyTemperature.fromValues( this.temperature, this.dateTime );
+  /// JSON factory.
+  factory WeatherForecastHourlyTemperature.fromJson(
+      Map<String, dynamic> hourTemperature
+  ) => WeatherForecastHourlyTemperature(
+    temperature: double.parse( hourTemperature[ 'temperature' ].toString() ),
+    dateTime: DateTime.parse( hourTemperature[ 'dateTime' ].toString() ),
+  );
+
+  /// Values factory.
+  WeatherForecastHourlyTemperature.fromValues( {
+    this.temperature,
+    this.dateTime,
+  } );
 }
 
 class WeatherForecastRainfall {
   String rangeCode;
   int probability;
 
-  WeatherForecastRainfall( Map rainfall ) {
-    this.rangeCode = rainfall[ 'rangeCode' ];
-    this.probability = rainfall[ 'probability' ];
-  }
+  /// Constructor.
+  WeatherForecastRainfall( { this.rangeCode, this.probability } );
+
+  /// JSON factory.
+  factory WeatherForecastRainfall.fromJson( Map<String, dynamic> rainfall ) =>
+    WeatherForecastRainfall(
+      rangeCode: rainfall[ 'rangeCode' ].toString(),
+      probability: int.parse( rainfall[ 'probability' ].toString() ),
+    );
 }
 
 class WeatherForecastHourlyRainfall {
   DateTime dateTime;
   int probability;
 
-  WeatherForecastHourlyRainfall( Map hourRainfall ) {
-    this.dateTime = DateTime.parse( hourRainfall[ 'dateTime' ] );
-    this.probability = hourRainfall[ 'probability' ];
-  }
+  /// Constructor.
+  WeatherForecastHourlyRainfall( { this.dateTime, this.probability } );
+
+  /// JSON factory.
+  factory WeatherForecastHourlyRainfall.fromJson(
+    Map<String, dynamic> hourRainfall
+  ) => WeatherForecastHourlyRainfall(
+    dateTime: DateTime.parse( hourRainfall[ 'dateTime' ].toString() ),
+    probability: int.parse( hourRainfall[ 'probability' ].toString() ),
+  );
 }
 
 class WeatherForecastHourlyWind {
@@ -287,12 +373,23 @@ class WeatherForecastHourlyWind {
   double direction;
   String directionText;
 
-  WeatherForecastHourlyWind( Map hourRainfall ) {
-    this.dateTime = DateTime.parse( hourRainfall[ 'dateTime' ] );
-    this.speed = hourRainfall[ 'speed' ].toDouble();
-    this.direction = hourRainfall[ 'direction' ].toDouble();
-    this.directionText = hourRainfall[ 'directionText' ];
-  }
+  /// Constructor.
+  WeatherForecastHourlyWind( {
+    this.dateTime,
+    this.speed,
+    this.direction,
+    this.directionText
+  } );
+
+  /// JSON factory.
+  factory WeatherForecastHourlyWind.fromJson(
+    Map<String, dynamic> hourRainfall
+  ) => WeatherForecastHourlyWind(
+    dateTime: DateTime.parse( hourRainfall[ 'dateTime' ].toString() ),
+    speed: double.parse( hourRainfall[ 'speed' ].toString() ),
+    direction: double.parse( hourRainfall[ 'direction' ].toString() ),
+    directionText: hourRainfall[ 'directionText' ].toString(),
+  );
 }
 
 class WeatherForecastUV {

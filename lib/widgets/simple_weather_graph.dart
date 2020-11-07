@@ -8,7 +8,7 @@ import 'package:tuple/tuple.dart';
 import '../data/weather_model.dart';
 
 class SimpleWeatherGraph extends StatelessWidget {
-  static const int NUMBER_OF_ENTRIES = 8;
+  static const int numberOfEntries = 8;
 
   final WeatherObservations now;
   final List<WeatherForecastHourlyTemperature> forecast;
@@ -17,11 +17,19 @@ class SimpleWeatherGraph extends StatelessWidget {
 
   final String display;
 
-  SimpleWeatherGraph( this.now, this.forecast, this.rainfall, this.wind, this.display );
+  /// Constructor
+  const SimpleWeatherGraph( {
+    Key key,
+    this.now,
+    this.forecast,
+    this.rainfall,
+    this.wind,
+    this.display
+  } ) : super( key: key );
 
   @override
   Widget build( BuildContext context ) {
-    List<Map> _data;
+    List<Map<String, dynamic>> _data;
 
     switch( display ) {
       case 'wind':
@@ -31,32 +39,38 @@ class SimpleWeatherGraph extends StatelessWidget {
       default:
         _data = _prepareTemperatureData();
     }
-    return new CustomPaint(
-      painter: new ChartPainter( _data, rainfall, display, context ),
+
+    return CustomPaint(
+      painter: ChartPainter(
+        entries: _data,
+        rainfall: rainfall,
+        display: display,
+        context: context,
+      ),
     );
   }
 
   ///
   /// Normalise the wind data into standard data that the graph can use.
   ///
-  List<Map> _prepareWindData() {
-    DateTime _now = DateTime.now();
+  List<Map<String, dynamic>> _prepareWindData() {
+    final DateTime _now = DateTime.now();
 
-    Map _nowTemp = new Map();
+    final Map<String, dynamic> _nowTemp = <String, dynamic>{};
 
     if ( wind == null ) {
-      return new List<Map>();
+      return <Map<String, dynamic>>[];
     }
 
     _nowTemp[ 'value' ] = now.wind.speed;
     _nowTemp[ 'direction' ] = now.wind.direction;
     _nowTemp[ 'dateTime' ] = _now;
 
-    List<Map> _data = [ _nowTemp ];
+    final List<Map<String, dynamic>> _data = <Map<String, dynamic>>[ _nowTemp ];
 
     int count = 0;
-    return _data + wind.map( ( _windDatum ) {
-      if ( count == NUMBER_OF_ENTRIES - 1 ) {
+    return _data + wind.map( ( WeatherForecastHourlyWind _windDatum ) {
+      if ( count == numberOfEntries - 1 ) {
         return false;
       }
 
@@ -70,52 +84,54 @@ class SimpleWeatherGraph extends StatelessWidget {
 
       count++;
 
-      Map _datum = new Map();
+      final Map<String, dynamic> _datum = <String, dynamic>{};
 
       _datum[ 'value' ] = _windDatum.speed;
       _datum[ 'direction' ] = _windDatum.direction;
       _datum[ 'dateTime' ] = _windDatum.dateTime;
 
       return _datum;
-    } ).whereType<Map>().toList();
+    } ).whereType<Map<String, dynamic>>().toList();
   }
 
   ///
   /// Normalise the temperature data into standard data that the graph can use.
   ///
-  List<Map> _prepareTemperatureData() {
-    DateTime _now = DateTime.now();
+  List<Map<String, dynamic>> _prepareTemperatureData() {
+    final DateTime _now = DateTime.now();
 
-    Map _nowTemp = new Map();
+    final Map<String, dynamic> _nowTemp = <String, dynamic>{};
 
     _nowTemp[ 'value' ] = now.temperature.temperature;
     _nowTemp[ 'dateTime' ] = _now;
 
-    List<Map> _data = [ _nowTemp ];
+    final List<Map<String, dynamic>> _data = <Map<String, dynamic>>[ _nowTemp ];
 
     int count = 0;
-    return _data + forecast.map( ( _temperatureDatum ) {
-      if ( count == NUMBER_OF_ENTRIES - 1 ) {
-        return false;
+    return _data + forecast.map(
+      ( WeatherForecastHourlyTemperature _temperatureDatum ) {
+        if ( count == numberOfEntries - 1 ) {
+          return false;
+        }
+
+        if ( _temperatureDatum.dateTime.compareTo( _now ) < 0 ) {
+          return false;
+        }
+
+        if ( _temperatureDatum.dateTime.hour % 3 != 0 ) {
+          return false;
+        }
+
+        count++;
+
+        final Map<String, dynamic> _datum = <String, dynamic>{};
+
+        _datum[ 'value' ] = _temperatureDatum.temperature;
+        _datum[ 'dateTime' ] = _temperatureDatum.dateTime;
+
+        return _datum;
       }
-
-      if ( _temperatureDatum.dateTime.compareTo( _now ) < 0 ) {
-        return false;
-      }
-
-      if ( _temperatureDatum.dateTime.hour % 3 != 0 ) {
-        return false;
-      }
-
-      count++;
-
-      Map _datum = new Map();
-
-      _datum[ 'value' ] = _temperatureDatum.temperature;
-      _datum[ 'dateTime' ] = _temperatureDatum.dateTime;
-
-      return _datum;
-    } ).whereType<Map>().toList();
+    ).whereType<Map<String, dynamic>>().toList();
   }
 }
 
@@ -126,7 +142,8 @@ class ChartPainter extends CustomPainter {
   final String display;
   final BuildContext context;
 
-  ChartPainter( this.entries, this.rainfall, this.display, this.context );
+  /// Constructor.
+  ChartPainter( { this.entries, this.rainfall, this.display, this.context } );
 
   double topPadding;
   double drawingHeight;
@@ -136,7 +153,7 @@ class ChartPainter extends CustomPainter {
 
   @override
   void paint( Canvas canvas, Size size ) {
-    if ( entries.length < SimpleWeatherGraph.NUMBER_OF_ENTRIES ) {
+    if ( entries.length < SimpleWeatherGraph.numberOfEntries ) {
       return;
     }
 
@@ -152,9 +169,15 @@ class ChartPainter extends CustomPainter {
     _drawRainfall( canvas, size );
   }
 
-  Tuple2<int, int> _getMinAndMaxValues( List<Map> entries ) {
-    double maxTemp = entries.map<double>( ( entry ) => entry[ 'value' ].toDouble() ).reduce( max );
-    double minTemp = entries.map<double>( ( entry ) => entry[ 'value' ].toDouble() ).reduce( min );
+  Tuple2<int, int> _getMinAndMaxValues( List<Map<String, dynamic>> entries ) {
+    final double maxTemp = entries.map<double>(
+      ( Map<String, dynamic> entry ) =>
+        double.parse( entry[ 'value' ].toString() )
+    ).reduce( max );
+    final double minTemp = entries.map<double>(
+      ( Map<String, dynamic> entry ) =>
+        double.parse( entry[ 'value' ].toString() )
+    ).reduce( min );
 
     int maxValue = maxTemp.floor();
     int minValue = minTemp.floor();
@@ -162,81 +185,113 @@ class ChartPainter extends CustomPainter {
     maxValue += 1 + ( ( maxValue - minValue ) / 5 ).ceil();
     minValue -= ( ( maxValue - minValue ) / 10 ).ceil();
 
-    return new Tuple2( minValue, maxValue );
+    return Tuple2<int, int>( minValue, maxValue );
   }
 
   void _drawVerticalLines( Canvas canvas, Size size ) {
-    final paint = new Paint()
+    final ui.Paint paint = Paint()
       ..color = Colors.grey[ 300 ];
 
-    double offsetStep = drawingWidth / entries.length;
+    final double offsetStep = drawingWidth / entries.length;
 
     canvas.drawLine(
-      new Offset( 0, drawingHeight + topPadding ),
-      new Offset( size.width, drawingHeight + topPadding ),
+      Offset( 0, drawingHeight + topPadding ),
+      Offset( size.width, drawingHeight + topPadding ),
       paint,
     );
 
     for ( int line = 1; line < entries.length; line++ ) {
-      double xOffset = line * offsetStep;
+      final double xOffset = line * offsetStep;
 
       canvas.drawLine(
-        new Offset( xOffset, 0 ),
-        new Offset( xOffset, size.height ),
+        Offset( xOffset, 0 ),
+        Offset( xOffset, size.height ),
         paint,
       );
     }
   }
 
   void _drawBottomLabels( Canvas canvas, Size size ) {
-    for ( int entries = SimpleWeatherGraph.NUMBER_OF_ENTRIES - 1; entries >= 0; entries-- ) {
-      double offsetXbyEntry = drawingWidth / SimpleWeatherGraph.NUMBER_OF_ENTRIES;
-      double offsetX = offsetXbyEntry * entries + offsetXbyEntry / 2;
+    for (
+      int entries = SimpleWeatherGraph.numberOfEntries - 1;
+      entries >= 0;
+      entries--
+    ) {
+      final double offsetXbyEntry =
+        drawingWidth / SimpleWeatherGraph.numberOfEntries;
+      final double offsetX = offsetXbyEntry * entries + offsetXbyEntry / 2;
 
-      ui.Paragraph paragraph = _buildParagraphForBottomLabel( entries );
+      final ui.Paragraph paragraph = _buildParagraphForBottomLabel( entries );
 
       canvas.drawParagraph(
         paragraph,
-        new Offset( offsetX - 25.0, 17.0 + drawingHeight + topPadding ),
+        Offset( offsetX - 25.0, 17.0 + drawingHeight + topPadding ),
       );
     }
   }
 
   ui.Paragraph _buildParagraphForBottomLabel( int entry ) {
-    ui.ParagraphBuilder builder = new ui.ParagraphBuilder(
-        new ui.ParagraphStyle( fontSize: 14.0, textAlign: TextAlign.center ) )
-      ..pushStyle( new ui.TextStyle( color: Theme.of( context ).textTheme.bodyText2.color ) );
+    final ui.ParagraphBuilder builder = ui.ParagraphBuilder(
+        ui.ParagraphStyle( fontSize: 14, textAlign: TextAlign.center ) )
+      ..pushStyle(
+        ui.TextStyle( color: Theme.of( context ).textTheme.bodyText2.color )
+      );
 
     if ( entry == 0 ) {
       builder.addText( 'Now' );
     } else {
-      builder.addText( Jiffy( entries[ entry ][ 'dateTime' ] ).format( 'H:mm' ) );
+      builder.addText(
+        Jiffy( entries[ entry ][ 'dateTime' ] ).format( 'H:mm' )
+      );
     }
 
     final ui.Paragraph paragraph = builder.build()
-      ..layout( new ui.ParagraphConstraints( width: 50.0 ) );
+      ..layout( const ui.ParagraphConstraints( width: 50 ) );
 
     return paragraph;
   }
 
   void _drawLines( ui.Canvas canvas, int minLineValue, int maxLineValue ) {
-    final linePaint = new Paint()
+    final ui.Paint linePaint = Paint()
       ..color = Colors.grey[ 350 ]
       ..strokeWidth = 2.0;
 
-    Paint dotPaint = new Paint()
+    final ui.Paint dotPaint = Paint()
       ..strokeWidth = 3.0;
 
-    DateTime beginningOfChart = entries[ 0 ][ 'dateTime' ];
+    final DateTime beginningOfChart = DateTime.parse(
+      entries[ 0 ][ 'dateTime' ].toString()
+    )
 
     for ( int i = 0; i < entries.length - 1; i++ ) {
-      Offset startEntryOffset = _getLineOffset( i, i + 1, beginningOfChart, minLineValue, maxLineValue, true );
-      Offset endEntryOffset = _getLineOffset( i + 1, i, beginningOfChart, minLineValue, maxLineValue, false );
-      Offset entryOffset = _getEntryOffset( i + 1, beginningOfChart, minLineValue, maxLineValue );
+      final Offset startEntryOffset = _getLineOffset(
+        i,
+        i + 1,
+        beginningOfChart,
+        minLineValue,
+        maxLineValue,
+        true
+      );
+      final Offset endEntryOffset = _getLineOffset(
+        i + 1,
+        i,
+        beginningOfChart,
+        minLineValue,
+        maxLineValue,
+        false
+      );
+      final Offset entryOffset = _getEntryOffset(
+        i + 1,
+        beginningOfChart,
+        minLineValue,
+        maxLineValue
+      );
 
       canvas.drawLine( startEntryOffset, endEntryOffset, linePaint );
 
-      dotPaint.color = _convertValueToColor( entries[ i + 1 ][ 'value' ] );
+      dotPaint.color = _convertValueToColor(
+        double.parse( entries[ i + 1 ][ 'value' ].toString() )
+      );
 
       switch( display ) {
         case 'wind':
@@ -244,16 +299,23 @@ class ChartPainter extends CustomPainter {
           break;
 
         default:
-          canvas.drawCircle( entryOffset, 3.0, dotPaint );
+          canvas.drawCircle( entryOffset, 3, dotPaint );
       }
 
       canvas.drawParagraph(
         _buildParagraphForEntry( i + 1 ),
-        _getEntryParagraphOffset( i + 1, beginningOfChart, minLineValue, maxLineValue ),
+        _getEntryParagraphOffset(
+          i + 1,
+          beginningOfChart,
+          minLineValue,
+          maxLineValue
+        ),
       );
     }
 
-    dotPaint.color = _convertValueToColor( entries.first[ 'value' ] );
+    dotPaint.color = _convertValueToColor(
+        double.parse( entries.first[ 'value' ].toString() )
+    );
 
     switch( display ) {
       case 'wind':
@@ -263,12 +325,10 @@ class ChartPainter extends CustomPainter {
       default:
         canvas.drawCircle(
             _getEntryOffset( 0, beginningOfChart, minLineValue, maxLineValue ),
-            3.0,
+            3,
             dotPaint
         );
     }
-
-    dotPaint.color = _convertValueToColor( entries.first[ 'value' ] );
 
     canvas.drawParagraph(
       _buildParagraphForEntry( 0 ),
@@ -344,7 +404,7 @@ class ChartPainter extends CustomPainter {
     Offset current = _getEntryOffset( entry, beginningOfChart, minLineValue, maxLineValue );
     Offset other = _getEntryOffset( otherEntry, beginningOfChart, minLineValue, maxLineValue );
 
-    double lineDistance = drawingWidth / SimpleWeatherGraph.NUMBER_OF_ENTRIES;
+    double lineDistance = drawingWidth / SimpleWeatherGraph.numberOfEntries;
     double lineHeight = ( other.dy - current.dy ).abs();
     double lineLength = sqrt( pow( lineDistance, 2 ) + pow( lineHeight, 2 ) );
 
@@ -361,7 +421,7 @@ class ChartPainter extends CustomPainter {
   }
 
   Offset _getEntryOffset( int entry, DateTime beginningOfChart, int minLineValue, int maxLineValue ) {
-    double columnWidth = drawingWidth / SimpleWeatherGraph.NUMBER_OF_ENTRIES;
+    double columnWidth = drawingWidth / SimpleWeatherGraph.numberOfEntries;
     double xOffset = entry * columnWidth + 0.5 * columnWidth;
     double relativeYposition = ( entries[ entry ][ 'value' ] - minLineValue ) / ( maxLineValue - minLineValue );
     double yOffset = drawingHeight - relativeYposition * drawingHeight + topPadding;
@@ -376,7 +436,7 @@ class ChartPainter extends CustomPainter {
   }
 
   void _drawRainfall( Canvas canvas, Size size ) {
-    double columnWidth = drawingWidth / SimpleWeatherGraph.NUMBER_OF_ENTRIES;
+    double columnWidth = drawingWidth / SimpleWeatherGraph.numberOfEntries;
     int entry = 0;
 
     rainfall.forEach( ( rainfallData ) {
