@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart' show rootBundle;
 
+/// The config loader data model.
 class Config {
   static final Config _instance = Config._internal();
   static Map<String, dynamic> _config;

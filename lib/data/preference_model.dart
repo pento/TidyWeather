@@ -8,17 +8,18 @@ class PreferenceModel extends ChangeNotifier with WidgetsBindingObserver {
   static PreferenceModel _self;
   String _theme = 'system';
 
-  ThemeData _lightTheme = ThemeData(
+  final ThemeData _lightTheme = ThemeData(
     brightness: Brightness.light,
     splashColor: Colors.lightBlue,
     primaryColorLight: Colors.grey.shade300,
   );
 
-  ThemeData _darkTheme = ThemeData(
+  final ThemeData _darkTheme = ThemeData(
     brightness: Brightness.dark,
     primaryColorLight: Colors.grey.shade400,
   );
 
+  /// Constructor.
   PreferenceModel() {
     _theme = PrefService.getString('ui_theme');
     _self = this;
@@ -32,14 +33,14 @@ class PreferenceModel extends ChangeNotifier with WidgetsBindingObserver {
 
   ThemeData lightTheme(BuildContext context) {
     if (_theme == 'sun') {
-      WeatherForecast forecast =
+      final WeatherForecast forecast =
           Provider.of<WeatherModel>(context, listen: false).today.forecast;
 
       if (forecast == null) {
         return _lightTheme;
       }
 
-      DateTime now = DateTime.now();
+      final DateTime now = DateTime.now();
 
       if (now.isBefore(forecast.sun.sunrise) ||
           now.isAfter(forecast.sun.sunset)) {
@@ -51,14 +52,14 @@ class PreferenceModel extends ChangeNotifier with WidgetsBindingObserver {
 
   ThemeData darkTheme(BuildContext context) {
     if (_theme == 'sun') {
-      WeatherForecast forecast =
+      final WeatherForecast forecast =
           Provider.of<WeatherModel>(context, listen: false).today.forecast;
 
       if (forecast == null) {
         return _darkTheme;
       }
 
-      DateTime now = DateTime.now();
+      final DateTime now = DateTime.now();
 
       if (now.isAfter(forecast.sun.sunrise) &&
           now.isBefore(forecast.sun.sunset)) {

@@ -1,15 +1,17 @@
+import 'dart:developer' as developer;
+
 import 'package:flutter/material.dart';
 
+/// Given a weather code, returns a background gradient appropriate
+/// for that weather.
 LinearGradient weatherGradient(BuildContext context, String weatherCode,
-    [double opacityFactor = 1.0]) {
-  return LinearGradient(
-    colors: weatherColours(context, weatherCode, opacityFactor),
-    begin: Alignment.centerLeft,
-    end: Alignment(0.5, 0),
-  );
-}
+        [double opacityFactor = 1.0]) =>
+    LinearGradient(
+      colors: _weatherColours(context, weatherCode, opacityFactor),
+      end: const Alignment(0.5, 0),
+    );
 
-final Map<String, Color> _weatherGroupColours = {
+final Map<String, Color> _weatherGroupColours = <String, Color>{
   'fine': Colors.lightBlue,
   'rain-fine': Colors.lightGreen.shade800,
   'cloud-rain': Colors.blueGrey,
@@ -19,7 +21,7 @@ final Map<String, Color> _weatherGroupColours = {
   'hazy': Colors.brown.shade900,
 };
 
-final Map<String, Color> _weatherColoursMap = {
+final Map<String, Color> _weatherColoursMap = <String, Color>{
   'chance-shower-cloud': _weatherGroupColours['cloud-rain'],
   'chance-shower-fine': _weatherGroupColours['rain-fine'],
   'chance-snow-cloud': _weatherGroupColours['fog-snow'],
@@ -51,14 +53,14 @@ final Map<String, Color> _weatherColoursMap = {
   'wind': _weatherGroupColours['fine'],
 };
 
-List<Color> weatherColours(BuildContext context, String weatherCode,
+List<Color> _weatherColours(BuildContext context, String weatherCode,
     [double opacityFactor = 1.0]) {
   Color weatherColour;
   Color blendColour = Colors.white;
   double lightOpacity = 0.9;
   double darkOpacity;
 
-  ThemeData currentTheme = Theme.of(context);
+  final ThemeData currentTheme = Theme.of(context);
   if (currentTheme.brightness == Brightness.dark) {
     weatherColour = currentTheme.splashColor;
     lightOpacity = 0.3;
@@ -68,7 +70,7 @@ List<Color> weatherColours(BuildContext context, String weatherCode,
   } else {
     // A null weather code should be considered an intentional lookup failure.
     if (weatherCode != null) {
-      print('Unknown weather code: $weatherCode');
+      developer.log('Unknown weather code: $weatherCode');
     }
 
     weatherColour = currentTheme.splashColor;
@@ -76,7 +78,7 @@ List<Color> weatherColours(BuildContext context, String weatherCode,
 
   darkOpacity = weatherColour.opacity;
 
-  return [
+  return <Color>[
     Color.lerp(
       Colors.transparent,
       Color.alphaBlend(weatherColour.withOpacity(lightOpacity), blendColour),

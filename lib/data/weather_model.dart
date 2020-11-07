@@ -166,13 +166,13 @@ class WeatherDay {
     }
 
     if (weather['observations'] != null) {
-      _observations = WeatherObservations(
+      _observations = WeatherObservations.fromJson(
           weather.cast<String, Map<String, dynamic>>()['observations']);
     }
 
     if (weather['radar'] != null) {
-      _radar =
-          WeatherRadar(weather.cast<String, Map<String, dynamic>>()['radar']);
+      _radar = WeatherRadar.fromJson(
+          weather.cast<String, Map<String, dynamic>>()['radar']);
     }
 
     return WeatherDay(
@@ -252,19 +252,19 @@ class WeatherForecast {
 
     WeatherForecastUV _uv;
     if (forecast.containsKey('uv')) {
-      _uv = WeatherForecastUV(
+      _uv = WeatherForecastUV.fromJson(
           forecast.cast<String, Map<String, dynamic>>()['uv']);
     }
 
-    final WeatherForecastWind _windMax = WeatherForecastWind(
+    final WeatherForecastWind _windMax = WeatherForecastWind.fromJson(
         forecast.cast<String, Map<String, dynamic>>()['windMax']);
 
-    final WeatherForecastSun _sun = WeatherForecastSun(
+    final WeatherForecastSun _sun = WeatherForecastSun.fromJson(
         forecast.cast<String, Map<String, dynamic>>()['sun']);
 
     WeatherForecastRegion _region;
     if (forecast.containsKey('region')) {
-      _region = WeatherForecastRegion(
+      _region = WeatherForecastRegion.fromJson(
           forecast.cast<String, Map<String, dynamic>>()['region']);
     }
 
@@ -381,12 +381,17 @@ class WeatherForecastUV {
   DateTime start;
   DateTime end;
 
-  WeatherForecastUV(Map uv) {
-    this.max = uv['max']?.toDouble();
-    this.description = uv['description'];
-    this.start = DateTime.parse(uv['start']);
-    this.end = DateTime.parse(uv['end']);
-  }
+  /// Constructor.
+  WeatherForecastUV({this.max, this.description, this.start, this.end});
+
+  /// JSON factory.
+  factory WeatherForecastUV.fromJson(Map<String, dynamic> uv) =>
+      WeatherForecastUV(
+        max: double.parse(uv['max'].toString()),
+        description: uv['description'].toString(),
+        start: DateTime.parse(uv['start'].toString()),
+        end: DateTime.parse(uv['end'].toString()),
+      );
 }
 
 class WeatherForecastWind {
@@ -395,12 +400,18 @@ class WeatherForecastWind {
   int direction;
   String directionText;
 
-  WeatherForecastWind(Map wind) {
-    this.dateTime = DateTime.parse(wind['dateTime']);
-    this.speed = wind['speed']?.toDouble();
-    this.direction = wind['direction'];
-    this.directionText = wind['directionText'];
-  }
+  /// Constructor.
+  WeatherForecastWind(
+      {this.dateTime, this.speed, this.direction, this.directionText});
+
+  /// JSON factory.
+  factory WeatherForecastWind.fromJson(Map<String, dynamic> wind) =>
+      WeatherForecastWind(
+        dateTime: DateTime.parse(wind['dateTime'].toString()),
+        speed: double.parse(wind['speed'].toString()),
+        direction: int.parse(wind['direction'].toString()),
+        directionText: wind['directionText'].toString(),
+      );
 }
 
 class WeatherForecastSun {
@@ -409,22 +420,33 @@ class WeatherForecastSun {
   DateTime sunset;
   DateTime lastLight;
 
-  WeatherForecastSun(Map sun) {
-    this.firstLight = DateTime.parse(sun['firstLight']);
-    this.sunrise = DateTime.parse(sun['sunrise']);
-    this.sunset = DateTime.parse(sun['sunset']);
-    this.lastLight = DateTime.parse(sun['lastLight']);
-  }
+  /// Constructor.
+  WeatherForecastSun(
+      {this.firstLight, this.sunrise, this.sunset, this.lastLight});
+
+  /// JSON factory.
+  factory WeatherForecastSun.fromJson(Map<String, dynamic> sun) =>
+      WeatherForecastSun(
+        firstLight: DateTime.parse(sun['firstLight'].toString()),
+        sunrise: DateTime.parse(sun['sunrise'].toString()),
+        sunset: DateTime.parse(sun['sunset'].toString()),
+        lastLight: DateTime.parse(sun['lastLight'].toString()),
+      );
 }
 
 class WeatherForecastRegion {
   String name;
   String description;
 
-  WeatherForecastRegion(Map region) {
-    this.name = region['name'];
-    this.description = region['description'];
-  }
+  /// Constructor
+  WeatherForecastRegion({this.name, this.description});
+
+  /// JSON factory.
+  factory WeatherForecastRegion.fromJson(Map<String, dynamic> region) =>
+      WeatherForecastRegion(
+        name: region['name'].toString(),
+        description: region['description'].toString(),
+      );
 }
 
 class WeatherObservations {
@@ -434,24 +456,41 @@ class WeatherObservations {
   WeatherObservationsUv uv;
   WeatherObservationsHumidity humidity;
 
-  WeatherObservations(Map observations) {
-    this.temperature =
-        new WeatherObservationsTemperature(observations['temperature']);
-    this.rainfall = new WeatherObservationsRainfall(observations['rainfall']);
-    this.wind = new WeatherObservationsWind(observations['wind']);
-    this.uv = new WeatherObservationsUv(observations['uv']);
-    this.humidity = new WeatherObservationsHumidity(observations['humidity']);
-  }
+  /// Constructor.
+  WeatherObservations(
+      {this.temperature, this.rainfall, this.wind, this.uv, this.humidity});
+
+  /// JSON factory.
+  factory WeatherObservations.fromJson(Map<String, dynamic> observations) =>
+      WeatherObservations(
+        temperature: WeatherObservationsTemperature.fromJson(
+            observations.cast<String, Map<String, dynamic>>()['temperature']),
+        rainfall: WeatherObservationsRainfall.fromJson(
+            observations.cast<String, Map<String, dynamic>>()['rainfall']),
+        wind: WeatherObservationsWind.fromJson(
+            observations.cast<String, Map<String, dynamic>>()['wind']),
+        uv: WeatherObservationsUv.fromJson(
+            observations.cast<String, Map<String, dynamic>>()['uv']),
+        humidity: WeatherObservationsHumidity.fromJson(
+            observations.cast<String, Map<String, dynamic>>()['humidity']),
+      );
 }
 
 class WeatherObservationsTemperature {
   double temperature;
   double apparentTemperature;
 
-  WeatherObservationsTemperature(Map temperature) {
-    this.temperature = temperature['temperature']?.toDouble();
-    this.apparentTemperature = temperature['apparentTemperature']?.toDouble();
-  }
+  /// Constructor.
+  WeatherObservationsTemperature({this.temperature, this.apparentTemperature});
+
+  /// JSON factory.
+  factory WeatherObservationsTemperature.fromJson(
+          Map<String, dynamic> temperature) =>
+      WeatherObservationsTemperature(
+        temperature: double.parse(temperature['temperature'].toString()),
+        apparentTemperature:
+            double.parse(temperature['apparentTemperature'].toString()),
+      );
 }
 
 class WeatherObservationsWind {
@@ -460,20 +499,31 @@ class WeatherObservationsWind {
   double direction;
   String directionText;
 
-  WeatherObservationsWind(Map wind) {
-    this.speed = wind['speed']?.toDouble();
-    this.gustSpeed = wind['gustSpeed']?.toDouble();
-    this.direction = wind['direction']?.toDouble();
-    this.directionText = wind['directionText'];
-  }
+  /// Constructor.
+  WeatherObservationsWind(
+      {this.speed, this.gustSpeed, this.direction, this.directionText});
+
+  /// JSON factory.
+  factory WeatherObservationsWind.fromJson(Map<String, dynamic> wind) =>
+      WeatherObservationsWind(
+        speed: double.parse(wind['speed'].toString()),
+        gustSpeed: double.parse(wind['gustSpeed'].toString()),
+        direction: double.parse(wind['direction'].toString()),
+        directionText: wind['directionText'].toString(),
+      );
 }
 
 class WeatherObservationsRainfall {
   double since9AMAmount;
 
-  WeatherObservationsRainfall(Map rainfall) {
-    this.since9AMAmount = rainfall['since9AMAmount']?.toDouble();
-  }
+  /// Constructor.
+  WeatherObservationsRainfall({this.since9AMAmount});
+
+  /// JSON factory.
+  factory WeatherObservationsRainfall.fromJson(Map<String, dynamic> rainfall) =>
+      WeatherObservationsRainfall(
+        since9AMAmount: double.parse(rainfall['since9AMAmount'].toString()),
+      );
 }
 
 class WeatherObservationsUv {
@@ -482,20 +532,31 @@ class WeatherObservationsUv {
   String name;
   DateTime utcDateTime;
 
-  WeatherObservationsUv(Map uv) {
-    this.index = double.parse(uv['index']);
-    this.description = uv['description'];
-    this.name = uv['name'];
-    this.utcDateTime = DateTime.parse(uv['utcDateTime']);
-  }
+  /// Constructor.
+  WeatherObservationsUv(
+      {this.index, this.description, this.name, this.utcDateTime});
+
+  /// JSON factory.
+  factory WeatherObservationsUv.fromJson(Map<String, dynamic> uv) =>
+      WeatherObservationsUv(
+        index: double.parse(uv['index'].toString()),
+        description: uv['description'].toString(),
+        name: uv['name'].toString(),
+        utcDateTime: DateTime.parse(uv['utcDateTime'].toString()),
+      );
 }
 
 class WeatherObservationsHumidity {
   double percentage;
 
-  WeatherObservationsHumidity(Map humidity) {
-    this.percentage = humidity['percentage']?.toDouble();
-  }
+  /// Constructor.
+  WeatherObservationsHumidity({this.percentage});
+
+  /// JSON factory.
+  factory WeatherObservationsHumidity.fromJson(Map<String, dynamic> humidity) =>
+      WeatherObservationsHumidity(
+        percentage: double.parse(humidity['percentage'].toString()),
+      );
 }
 
 class WeatherRadar {
@@ -506,38 +567,58 @@ class WeatherRadar {
   WeatherRadarLocation location;
   List<WeatherRadarImage> overlays;
 
-  WeatherRadar(Map radar) {
-    this.interval = radar['interval'];
-    this.name = radar['name'];
-    this.mapMin = WeatherRadarLocation(
-        radar['bounds']['minLat'], radar['bounds']['minLng']);
-    this.mapMax = WeatherRadarLocation(
-        radar['bounds']['maxLat'], radar['bounds']['maxLng']);
-    this.location = WeatherRadarLocation(radar['lat'], radar['lng']);
+  /// Constructor.
+  WeatherRadar(
+      {this.interval,
+      this.name,
+      this.mapMin,
+      this.mapMax,
+      this.location,
+      this.overlays});
 
-    this.overlays = radar['overlays']
-        .map<WeatherRadarImage>((radarImage) =>
-            new WeatherRadarImage(radarImage, radar['overlayPath']))
-        .toList();
-  }
+  /// JSON factory.
+  factory WeatherRadar.fromJson(Map<String, dynamic> radar) => WeatherRadar(
+        interval: int.parse(radar['interval'].toString()),
+        name: radar['name'].toString(),
+        mapMin: WeatherRadarLocation(
+            latitude: double.parse(radar['bounds']['minLat'].toString()),
+            longitude: double.parse(radar['bounds']['minLng'].toString())),
+        mapMax: WeatherRadarLocation(
+            latitude: double.parse(radar['bounds']['maxLat'].toString()),
+            longitude: double.parse(radar['bounds']['maxLng'].toString())),
+        location: WeatherRadarLocation(
+            latitude: double.parse(radar['lat'].toString()),
+            longitude: double.parse(radar['lng'].toString())),
+        overlays: radar
+            .cast<String, List<dynamic>>()['overlays']
+            .cast<Map<String, dynamic>>()
+            .map<WeatherRadarImage>((Map<String, dynamic> radarImage) =>
+                WeatherRadarImage.fromJson(
+                    radarImage, radar['overlayPath'].toString()))
+            .toList(),
+      );
 }
 
 class WeatherRadarLocation {
   double latitude;
   double longitude;
 
-  WeatherRadarLocation(latitude, longitude) {
-    this.latitude = latitude.toDouble();
-    this.longitude = longitude.toDouble();
-  }
+  /// Constructor.
+  WeatherRadarLocation({this.latitude, this.longitude});
 }
 
 class WeatherRadarImage {
   DateTime dateTime;
   String url;
 
-  WeatherRadarImage(Map radarImage, path) {
-    this.dateTime = DateTime.parse(radarImage['dateTime'] + 'Z');
-    this.url = '$path${radarImage['name']}';
-  }
+  /// Constructor.
+  WeatherRadarImage({this.dateTime, this.url});
+
+  /// JSON factory.
+  factory WeatherRadarImage.fromJson(
+          Map<String, dynamic> radarImage, String path) =>
+      WeatherRadarImage(
+        dateTime: DateTime.parse('${radarImage['dateTime']}Z'),
+        url: '$path${radarImage['name']}',
+      );
 }

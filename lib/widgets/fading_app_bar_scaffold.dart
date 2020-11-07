@@ -1,9 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gradient_app_bar/gradient_app_bar.dart';
 
 import '../pages/home.dart';
 import '../widgets/drawer.dart';
-import '../widgets/weatherGradient.dart';
+import '../widgets/weather_gradient.dart';
 
 class FadingAppBarScaffold extends StatefulWidget {
   const FadingAppBarScaffold({
@@ -21,6 +22,14 @@ class FadingAppBarScaffold extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => FadingAppBarScaffoldState();
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(StringProperty('title', title))
+      ..add(StringProperty('weatherCode', weatherCode))
+      ..add(DiagnosticsProperty<ScrollController>('controller', controller));
+  }
 }
 
 class FadingAppBarScaffoldState extends State<FadingAppBarScaffold> {
@@ -53,16 +62,14 @@ class FadingAppBarScaffoldState extends State<FadingAppBarScaffold> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: widget.body,
-      drawer: buildDrawer(context, HomePage.route),
-      extendBodyBehindAppBar: true,
-      appBar: GradientAppBar(
-        title: Text(widget.title),
-        gradient: weatherGradient(context, widget.weatherCode, _opacity),
-        elevation: 0,
-      ),
-    );
-  }
+  Widget build(BuildContext context) => Scaffold(
+        body: widget.body,
+        drawer: buildDrawer(context, HomePage.route),
+        extendBodyBehindAppBar: true,
+        appBar: GradientAppBar(
+          title: Text(widget.title),
+          gradient: weatherGradient(context, widget.weatherCode, _opacity),
+          elevation: 0,
+        ),
+      );
 }

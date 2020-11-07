@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 
-import '../widgets/LinkTextSpan.dart';
+import '../widgets/link_text_span.dart';
 
+/// The about page.
 class AboutPage extends StatefulWidget {
+  /// The route for this page in the Navigator API.
   static const String route = '/about';
+
+  /// Constructor.
+  const AboutPage({Key key}) : super(key: key);
 
   @override
   _AboutPageState createState() => _AboutPageState();
@@ -19,10 +24,10 @@ class _AboutPageState extends State<AboutPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('About Tidy Weather'),
+        title: const Text('About Tidy Weather'),
       ),
       body: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -30,7 +35,7 @@ class _AboutPageState extends State<AboutPage> {
               text: TextSpan(
                 style: textStyle,
                 children: <TextSpan>[
-                  TextSpan(
+                  const TextSpan(
                     text: 'Tidy Weather is lovingly crafted by ',
                   ),
                   LinkTextSpan(
@@ -38,7 +43,7 @@ class _AboutPageState extends State<AboutPage> {
                     text: 'Gary',
                     url: 'https://pento.net',
                   ),
-                  TextSpan(
+                  const TextSpan(
                     text: '.',
                   ),
                 ],
@@ -51,16 +56,17 @@ class _AboutPageState extends State<AboutPage> {
               text: TextSpan(
                 style: textStyle,
                 children: <TextSpan>[
-                  TextSpan(
-                    text:
-                        'This is an Open Source application, you can view the source code, report bugs, and contribute fixes in the ',
+                  const TextSpan(
+                    text: 'This is an Open Source application, you can view '
+                        'the source code, report bugs, and contribute '
+                        'fixes in the ',
                   ),
                   LinkTextSpan(
                     style: linkStyle,
                     text: 'Tidy Weather repository',
                     url: 'https://github.com/pento/TidyWeather/',
                   ),
-                  TextSpan(
+                  const TextSpan(
                     text: '.',
                   ),
                 ],
@@ -73,7 +79,7 @@ class _AboutPageState extends State<AboutPage> {
               text: TextSpan(
                 style: textStyle,
                 children: <TextSpan>[
-                  TextSpan(
+                  const TextSpan(
                     text: 'Some data in this app is sourced from the ',
                   ),
                   LinkTextSpan(
@@ -82,7 +88,7 @@ class _AboutPageState extends State<AboutPage> {
                     url:
                         'http://www.bom.gov.au/data-access/3rd-party-attribution.shtml',
                   ),
-                  TextSpan(
+                  const TextSpan(
                     text: ', via ',
                   ),
                   LinkTextSpan(
@@ -90,7 +96,7 @@ class _AboutPageState extends State<AboutPage> {
                     text: 'the WillyWeather API',
                     url: 'https://www.willyweather.com.au/info/api.html',
                   ),
-                  TextSpan(
+                  const TextSpan(
                     text: '.',
                   ),
                 ],
@@ -103,7 +109,7 @@ class _AboutPageState extends State<AboutPage> {
               text: TextSpan(
                 style: textStyle,
                 children: <TextSpan>[
-                  TextSpan(
+                  const TextSpan(
                     text: 'UV observations courtesy of ARPANSA. ',
                   ),
                   LinkTextSpan(
@@ -112,7 +118,7 @@ class _AboutPageState extends State<AboutPage> {
                     url:
                         'https://www.arpansa.gov.au/our-services/monitoring/ultraviolet-radiation-monitoring/ultraviolet-radation-data-information',
                   ),
-                  TextSpan(
+                  const TextSpan(
                     text: '.',
                   ),
                 ],
@@ -125,7 +131,7 @@ class _AboutPageState extends State<AboutPage> {
               text: TextSpan(
                 style: textStyle,
                 children: <TextSpan>[
-                  TextSpan(
+                  const TextSpan(
                     text: 'Maps are © ',
                   ),
                   LinkTextSpan(
@@ -133,7 +139,7 @@ class _AboutPageState extends State<AboutPage> {
                     text: 'OpenStreetMap',
                     url: 'https://www.openstreetmap.org/',
                   ),
-                  TextSpan(
+                  const TextSpan(
                     text: ' contributors.',
                   ),
                 ],
