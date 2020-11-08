@@ -14,73 +14,81 @@ import './pages/settings.dart';
 import './pages/today.dart';
 import './pages/week.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await PrefService.init( prefix: 'pref_' );
-  await Config.load( 'config.json' );
+  await PrefService.init(prefix: 'pref_');
+  await Config().load('config.json');
 
-  runApp(
-      MultiProvider(
-        providers: [
-          ChangeNotifierProvider( create: ( context ) => LocationModel() ),
-          ChangeNotifierProvider( create: ( context ) => WeatherModel( context: context ) ),
-          ChangeNotifierProvider( create: ( context ) => PreferenceModel() ),
-        ],
-        child: MyApp(),
-      )
-  );
+  runApp(MultiProvider(
+    providers: <ChangeNotifierProvider<dynamic>>[
+      ChangeNotifierProvider<LocationModel>(
+          create: (BuildContext context) => LocationModel()),
+      ChangeNotifierProvider<WeatherModel>(
+          create: (BuildContext context) => WeatherModel(context: context)),
+      ChangeNotifierProvider<PreferenceModel>(
+          create: (BuildContext context) => PreferenceModel()),
+    ],
+    child: MyApp(),
+  ));
 
-  BackgroundFetch.registerHeadlessTask( backgroundFetchHeadlessTask );
+  await BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
 }
 
+/// The main app class.
 class MyApp extends StatelessWidget {
-
-  MyApp() {
-    BackgroundFetch.configure( BackgroundFetchConfig(
-        minimumFetchInterval: 30,
-        stopOnTerminate: false,
-        enableHeadless: true,
-        startOnBoot: true,
-        requiresBatteryNotLow: false,
-        requiresCharging: false,
-        requiresStorageNotLow: false,
-        requiresDeviceIdle: false,
-        requiredNetworkType: NetworkType.ANY,
-    ), ( String taskId ) async {
-      LocationModel.load().whenComplete( () { BackgroundFetch.finish( taskId ); } );
-    } );
+  /// Constructor.
+  MyApp({Key key}) : super(key: key) {
+    BackgroundFetch.configure(
+        BackgroundFetchConfig(
+          minimumFetchInterval: 30,
+          stopOnTerminate: false,
+          enableHeadless: true,
+          startOnBoot: true,
+          requiresBatteryNotLow: false,
+          requiresCharging: false,
+          requiresStorageNotLow: false,
+          requiresDeviceIdle: false,
+          requiredNetworkType: NetworkType.ANY,
+        ), (String taskId) async {
+      await LocationModel.load().whenComplete(() {
+        BackgroundFetch.finish(taskId);
+      });
+    });
   }
 
   @override
-  Widget build( BuildContext context ) {
-
-    return Selector<PreferenceModel, Tuple2<ThemeData, ThemeData>>(
-      selector: ( context, preferences ) => Tuple2( preferences.lightTheme( context ), preferences.darkTheme( context ) ),
-
-      builder: ( context, themes, child ) {
-        return MaterialApp(
-          title: "Tidy Weather",
+  Widget build(BuildContext context) =>
+      Selector<PreferenceModel, Tuple2<ThemeData, ThemeData>>(
+        selector: (BuildContext context, PreferenceModel preferences) =>
+            Tuple2<ThemeData, ThemeData>(preferences.lightTheme(context),
+                preferences.darkTheme(context)),
+        builder: (BuildContext context, Tuple2<ThemeData, ThemeData> themes,
+                Widget child) =>
+            MaterialApp(
+          title: 'Tidy Weather',
           theme: themes.item1,
           darkTheme: themes.item2,
-          home: HomePage(),
+          home: const HomePage(),
           routes: <String, WidgetBuilder>{
-            AboutPage.route: ( context ) => AboutPage(),
-            SettingsPage.route: ( context ) => SettingsPage(),
-            TodayPage.route: ( context ) => TodayPage(),
-            WeekPage.route: ( context ) => WeekPage(),
+            AboutPage.route: (BuildContext context) => const AboutPage(),
+            SettingsPage.route: (BuildContext context) => const SettingsPage(),
+            TodayPage.route: (BuildContext context) => const TodayPage(),
+            WeekPage.route: (BuildContext context) => const WeekPage(),
           },
-        );
-      },
-    );
-  }
+        ),
+      );
 }
 
-void backgroundFetchHeadlessTask( String taskId ) async {
-  await PrefService.init( prefix: 'pref_' );
+/// This function is used by the BackgroundFetch library, which allows it to
+/// check for weather updates even if the app has been killed by the OS.
+Future<void> backgroundFetchHeadlessTask(String taskId) async {
+  await PrefService.init(prefix: 'pref_');
 
-  LocationModel( background: true );
-  WeatherModel( background: true );
+  LocationModel(background: true);
+  WeatherModel();
 
-  LocationModel.load().whenComplete( () { BackgroundFetch.finish( taskId ); } );
+  await LocationModel.load().whenComplete(() {
+    BackgroundFetch.finish(taskId);
+  });
 }

@@ -22,6 +22,7 @@ dependencies:
   jiffy: ^3.0.1
   latlong: ^0.6.1
   material_design_icons_flutter: ^4.0.5755
+  pedantic: ^1.9.2
   preferences: ^5.2.1
   provider: ^4.3.2
   tuple: ^1.0.3
