@@ -4,12 +4,14 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:pedantic/pedantic.dart';
 import 'package:preferences/preference_service.dart';
 
 import './weather_model.dart';
 
-class LocationModel extends ChangeNotifier {
+class LocationModel extends ChangeNotifier with WidgetsBindingObserver {
   bool _background;
+  bool _requestingPermission = false;
   Placemark _place = Placemark();
   LocationPermission _permissionStatus;
 
@@ -20,63 +22,129 @@ class LocationModel extends ChangeNotifier {
   LocationPermission get permissionStatus => _permissionStatus;
 
   /// Constructor.
-  LocationModel({bool background = false}) {
+  LocationModel({bool background = false, bool loadDataImmediately = true}) {
+    WidgetsBinding.instance.addObserver(this);
+
     _self = this;
 
     _background = background;
 
-    loadData();
+    if (loadDataImmediately) {
+      loadData();
+    }
+  }
+
+  /// If we need to request additional permission, open the appropriate dialog.
+  static Future<void> requestPermission({bool forceOpen = false}) async {
+    if (_self._background) {
+      // We can't open a permission dialog if we're in the background.
+      return;
+    }
+
+    if (forceOpen) {
+      _self._requestingPermission = true;
+      unawaited(Geolocator.openAppSettings());
+      return;
+    }
+
+    _self._permissionStatus = await Geolocator.checkPermission();
+
+    switch (_self._permissionStatus) {
+      case LocationPermission.always:
+        // No need to do anything if we have full permissions.
+        break;
+      case LocationPermission.denied:
+        // We could technically wait here, but it's better to just rely
+        // on the AppLifecycleState updating, indicating we regained focus.
+        _self._requestingPermission = true;
+        unawaited(Geolocator.requestPermission());
+        break;
+      case LocationPermission.whileInUse:
+      case LocationPermission.deniedForever:
+        // We need to open the system dialog, add background check
+        // for permission changing, since there's no nice way for us to wait.
+        _self._requestingPermission = true;
+        unawaited(Geolocator.openAppSettings());
+        break;
+    }
+  }
+
+  @override
+  Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
+    // If we've just re-gained focus, check if permissions have changed.
+    if (state == AppLifecycleState.resumed) {
+      _self._requestingPermission = false;
+      final LocationPermission newStatus = await Geolocator.checkPermission();
+      if (newStatus != _permissionStatus) {
+        _permissionStatus = newStatus;
+        notifyListeners();
+      }
+
+      if (_permissionStatus == LocationPermission.always ||
+          _permissionStatus == LocationPermission.whileInUse) {
+        await loadData();
+      }
+    }
   }
 
   static Future<void> load() => Future<void>(_self.loadData);
 
   Future<void> loadData() async {
-    _permissionStatus = await Geolocator.checkPermission();
-
-    // If we don't have permission, there's nothing else we can do.
-    if (_permissionStatus == LocationPermission.deniedForever ||
-        _permissionStatus == LocationPermission.denied) {
-      developer.log(
-          "We don't have permission to get the location: $_permissionStatus");
-      notifyListeners();
+    if (_requestingPermission) {
+      // Can't do anything if we're currently requesting permission.
       return;
     }
 
-    // We can't get the location if we only have foreground permission.
-    if (_background && _permissionStatus != LocationPermission.always) {
+    _permissionStatus ??= await Geolocator.checkPermission();
+
+    if (_permissionStatus == LocationPermission.denied) {
+      await requestPermission();
+      return;
+    }
+
+    // If we don't have permission, there's nothing else we can do.
+    if (_permissionStatus == LocationPermission.deniedForever) {
       developer.log(
-          "We don't have permission to get the location in the background.");
-      notifyListeners();
+          "We don't have permission to get the location: $_permissionStatus");
       return;
     }
 
     Position currentPosition;
 
-    final List<Placemark> place = await Geolocator.getCurrentPosition(
-            desiredAccuracy: LocationAccuracy.high)
-        .then((Position position) async {
-      currentPosition = position;
-      developer.log('Location: ${position.latitude}, ${position.longitude}');
-      return placemarkFromCoordinates(position.latitude, position.longitude);
-    }).timeout(const Duration(seconds: 10), onTimeout: () {
-      developer.log('Retrieving location timed out.');
-      currentPosition = Position(
-        longitude: PrefService.getDouble('_last_place_position_longitude'),
-        latitude: PrefService.getDouble('_last_place_position_latitude'),
-      );
+    List<Placemark> place;
+    try {
+      place = await Geolocator.getCurrentPosition(
+              desiredAccuracy: LocationAccuracy.high)
+          .then((Position position) async {
+        currentPosition = position;
+        developer.log('Location: ${position.latitude}, ${position.longitude}');
+        return placemarkFromCoordinates(position.latitude, position.longitude);
+      }).timeout(const Duration(seconds: 10), onTimeout: () {
+        developer.log('Retrieving location timed out.');
+        currentPosition = Position(
+          longitude: PrefService.getDouble('_last_place_position_longitude'),
+          latitude: PrefService.getDouble('_last_place_position_latitude'),
+        );
 
-      return <Placemark>[
-        Placemark(
-          locality: PrefService.getString('_last_place_locality'),
-          postalCode: PrefService.getString('_last_place_postalCode'),
-          isoCountryCode: PrefService.getString('_last_place_isoCountryCode'),
-        ),
-      ];
-    });
+        return <Placemark>[
+          Placemark(
+            locality: PrefService.getString('_last_place_locality'),
+            postalCode: PrefService.getString('_last_place_postalCode'),
+            isoCountryCode: PrefService.getString('_last_place_isoCountryCode'),
+          ),
+        ];
+      });
+    } on Exception catch (error) {
+      developer.log('Failed to get the location: $error');
+      // We possibly failed because permission was denied. Check permission
+      // status again, so we can update the info message, if necessary.
+      _permissionStatus = await Geolocator.checkPermission();
+      notifyListeners();
+      return;
+    }
 
     if (place[0].isoCountryCode == null) {
       developer.log('No position found.', error: place[0]);
-      notifyListeners();
       return;
     }
 

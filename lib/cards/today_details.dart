@@ -131,7 +131,7 @@ class _TodayDetailsCardState extends State<TodayDetailsCard> {
                       icon: MdiIcons.weatherWindy,
                       iconColor: Colors.lightGreen,
                       title: const Text('Current wind gust'),
-                      text: observations.wind.gustSpeed != null
+                      text: !observations.wind.gustSpeed.isNaN
                           ? Text('${observations.wind.gustSpeed} km/h')
                           : const Text('Unknown'),
                       subtext: const Text('Gust'),

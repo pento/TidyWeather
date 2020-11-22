@@ -8,6 +8,7 @@ import android.content.Intent
 import android.util.Log
 import android.widget.RemoteViews
 import java.time.LocalDateTime
+import java.time.format.DateTimeParseException
 import kotlin.collections.HashMap
 
 /**
@@ -44,7 +45,13 @@ internal fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManage
 
     val now = LocalDateTime.now()
 
-    val night = now.isBefore( LocalDateTime.parse( sunrise) ) || now.isAfter( LocalDateTime.parse( sunset ) )
+    var night = false
+    try {
+        night = now.isBefore( LocalDateTime.parse( sunrise ) ) || now.isAfter( LocalDateTime.parse( sunset ) )
+    } catch ( e: DateTimeParseException ) {
+        // Encountered an invalid date, so default to daytime.
+        Log.d( "TidyWeather", "Encountered invalid date whilst updating widget. Sunrise: $sunrise. Sunset: $sunset" )
+    }
 
     // Construct the RemoteViews object
     val views = RemoteViews( context.packageName, R.layout.weather_widget )
