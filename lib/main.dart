@@ -23,7 +23,8 @@ Future<void> main() async {
   runApp(MultiProvider(
     providers: <ChangeNotifierProvider<dynamic>>[
       ChangeNotifierProvider<LocationModel>(
-          create: (BuildContext context) => LocationModel()),
+          create: (BuildContext context) =>
+              LocationModel(loadDataImmediately: false)),
       ChangeNotifierProvider<WeatherModel>(
           create: (BuildContext context) => WeatherModel(context: context)),
       ChangeNotifierProvider<PreferenceModel>(

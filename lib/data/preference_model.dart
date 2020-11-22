@@ -7,6 +7,7 @@ import './weather_model.dart';
 class PreferenceModel extends ChangeNotifier with WidgetsBindingObserver {
   static PreferenceModel _self;
   String _theme = 'system';
+  bool _seenPermissionExplanation = false;
 
   final ThemeData _lightTheme = ThemeData(
     brightness: Brightness.light,
@@ -22,6 +23,8 @@ class PreferenceModel extends ChangeNotifier with WidgetsBindingObserver {
   /// Constructor.
   PreferenceModel() {
     _theme = PrefService.getString('ui_theme');
+    _seenPermissionExplanation =
+        PrefService.getBool('seen_permission_explanation');
     _self = this;
     WidgetsBinding.instance.addObserver(this);
   }
@@ -68,6 +71,20 @@ class PreferenceModel extends ChangeNotifier with WidgetsBindingObserver {
     }
     return _darkTheme;
   }
+
+  bool get seenPermissionExplanation => _seenPermissionExplanation ?? false;
+
+  static void sawPermissionExplanation() {
+    _self._sawPermissionExplanation();
+  }
+
+  void _sawPermissionExplanation() {
+    PrefService.setBool('seen_permission_explanation', true);
+    _seenPermissionExplanation = true;
+    notifyListeners();
+  }
+
+  String get theme => _theme;
 
   static void updateTheme(String theme) {
     _self._updateTheme(theme);

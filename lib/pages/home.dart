@@ -52,25 +52,6 @@ class AppState extends State<HomePage> {
           // We don't yet have permission, let's request that.
           if (data.item1 == LocationPermission.denied ||
               data.item1 == LocationPermission.deniedForever) {
-            final List<Widget> _text = <Widget>[
-              const Text(
-                'Welcome to Tidy Weather!',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 24),
-            ];
-            if (data.item1 == LocationPermission.denied) {
-              _text.add(const Text(
-                  'In order to display your weather, we need permission to '
-                  'check your location. Allowing location access all of the '
-                  'time will ensure your weather is always up to date, even '
-                  "when the app isn't open."));
-            } else {
-              _text.add(const Text(
-                  'In order to display your weather, we need permission to '
-                  "check your location. You'll need to allow location access "
-                  'in the device settings.'));
-            }
             return Scaffold(
               appBar: AppBar(
                 title: const Text('Tidy Weather'),
@@ -82,17 +63,18 @@ class AppState extends State<HomePage> {
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        ..._text,
+                        const Text(
+                          'Welcome to Tidy Weather!',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 24),
+                        const Text('In order to display your weather, we need '
+                            "permission to check your location. You'll need to "
+                            'allow location access in the device settings.'),
                         const SizedBox(height: 16),
                         ElevatedButton(
                           onPressed: () async {
-                            if (data.item1 == LocationPermission.denied) {
-                              await Geolocator.requestPermission();
-                            } else {
-                              await Geolocator.openAppSettings();
-                            }
-
-                            await LocationModel.load();
+                            await LocationModel.requestPermission();
                           },
                           child: const Text('Grant Location Permission'),
                         )

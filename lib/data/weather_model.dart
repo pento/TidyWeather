@@ -37,6 +37,10 @@ class WeatherModel extends ChangeNotifier {
   int todayIndex() {
     final DateTime now = DateTime.now();
 
+    if (_weather == null) {
+      return -1;
+    }
+
     return _weather
         .cast<String, List<dynamic>>()['forecasts']
         .cast<Map<String, dynamic>>()
@@ -94,6 +98,24 @@ class WeatherModel extends ChangeNotifier {
   }
 }
 
+/// Given a some API data that may be defined, or may be empty,
+/// return double.nan if we couldn't handle the data.
+double maybeParseDouble(dynamic data) {
+  if (data == null) {
+    return double.nan;
+  }
+
+  if (data.toString().isEmpty) {
+    return double.nan;
+  }
+
+  try {
+    return double.parse(data.toString());
+  } on Exception {
+    return double.nan;
+  }
+}
+
 /// Data model for a week of weather.
 class WeatherWeek {
   /// A list of the days in this week.
@@ -119,7 +141,7 @@ class WeatherWeek {
 /// Data model for a single day of weather.
 class WeatherDay {
   /// The name of the location where this weather is for.
-  String locationName = 'Loading...';
+  String locationName;
 
   /// The date of the forecast.
   DateTime dateTime;
@@ -143,8 +165,10 @@ class WeatherDay {
 
   /// JSON factory.
   factory WeatherDay.fromJson(Map<String, dynamic> weather, int day) {
-    if (weather['location']['name'] == null) {
-      return WeatherDay();
+    if (weather == null ||
+        weather['location'] == null ||
+        weather['location']['name'] == null) {
+      return WeatherDay(locationName: 'Loading...');
     }
 
     final String _locationName = weather['location']['name'].toString();
@@ -312,7 +336,7 @@ class WeatherForecastHourlyTemperature {
   factory WeatherForecastHourlyTemperature.fromJson(
           Map<String, dynamic> hourTemperature) =>
       WeatherForecastHourlyTemperature(
-        temperature: double.parse(hourTemperature['temperature'].toString()),
+        temperature: maybeParseDouble(hourTemperature['temperature']),
         dateTime: DateTime.parse(hourTemperature['dateTime'].toString()),
       );
 
@@ -369,8 +393,8 @@ class WeatherForecastHourlyWind {
           Map<String, dynamic> hourRainfall) =>
       WeatherForecastHourlyWind(
         dateTime: DateTime.parse(hourRainfall['dateTime'].toString()),
-        speed: double.parse(hourRainfall['speed'].toString()),
-        direction: double.parse(hourRainfall['direction'].toString()),
+        speed: maybeParseDouble(hourRainfall['speed']),
+        direction: maybeParseDouble(hourRainfall['direction']),
         directionText: hourRainfall['directionText'].toString(),
       );
 }
@@ -387,7 +411,7 @@ class WeatherForecastUV {
   /// JSON factory.
   factory WeatherForecastUV.fromJson(Map<String, dynamic> uv) =>
       WeatherForecastUV(
-        max: double.parse(uv['max'].toString()),
+        max: maybeParseDouble(uv['max']),
         description: uv['description'].toString(),
         start: DateTime.parse(uv['start'].toString()),
         end: DateTime.parse(uv['end'].toString()),
@@ -408,7 +432,7 @@ class WeatherForecastWind {
   factory WeatherForecastWind.fromJson(Map<String, dynamic> wind) =>
       WeatherForecastWind(
         dateTime: DateTime.parse(wind['dateTime'].toString()),
-        speed: double.parse(wind['speed'].toString()),
+        speed: maybeParseDouble(wind['speed']),
         direction: int.parse(wind['direction'].toString()),
         directionText: wind['directionText'].toString(),
       );
@@ -487,9 +511,9 @@ class WeatherObservationsTemperature {
   factory WeatherObservationsTemperature.fromJson(
           Map<String, dynamic> temperature) =>
       WeatherObservationsTemperature(
-        temperature: double.parse(temperature['temperature'].toString()),
+        temperature: maybeParseDouble(temperature['temperature']),
         apparentTemperature:
-            double.parse(temperature['apparentTemperature'].toString()),
+            maybeParseDouble(temperature['apparentTemperature']),
       );
 }
 
@@ -506,9 +530,9 @@ class WeatherObservationsWind {
   /// JSON factory.
   factory WeatherObservationsWind.fromJson(Map<String, dynamic> wind) =>
       WeatherObservationsWind(
-        speed: double.parse(wind['speed'].toString()),
-        gustSpeed: double.parse(wind['gustSpeed'].toString()),
-        direction: double.parse(wind['direction'].toString()),
+        speed: maybeParseDouble(wind['speed']),
+        gustSpeed: maybeParseDouble(wind['gustSpeed']),
+        direction: maybeParseDouble(wind['direction']),
         directionText: wind['directionText'].toString(),
       );
 }
@@ -522,7 +546,7 @@ class WeatherObservationsRainfall {
   /// JSON factory.
   factory WeatherObservationsRainfall.fromJson(Map<String, dynamic> rainfall) =>
       WeatherObservationsRainfall(
-        since9AMAmount: double.parse(rainfall['since9AMAmount'].toString()),
+        since9AMAmount: maybeParseDouble(rainfall['since9AMAmount']),
       );
 }
 
@@ -539,7 +563,7 @@ class WeatherObservationsUv {
   /// JSON factory.
   factory WeatherObservationsUv.fromJson(Map<String, dynamic> uv) =>
       WeatherObservationsUv(
-        index: double.parse(uv['index'].toString()),
+        index: maybeParseDouble(uv['index']),
         description: uv['description'].toString(),
         name: uv['name'].toString(),
         utcDateTime: DateTime.parse(uv['utcDateTime'].toString()),
@@ -555,7 +579,7 @@ class WeatherObservationsHumidity {
   /// JSON factory.
   factory WeatherObservationsHumidity.fromJson(Map<String, dynamic> humidity) =>
       WeatherObservationsHumidity(
-        percentage: double.parse(humidity['percentage'].toString()),
+        percentage: maybeParseDouble(humidity['percentage']),
       );
 }
 
@@ -581,14 +605,14 @@ class WeatherRadar {
         interval: int.parse(radar['interval'].toString()),
         name: radar['name'].toString(),
         mapMin: WeatherRadarLocation(
-            latitude: double.parse(radar['bounds']['minLat'].toString()),
-            longitude: double.parse(radar['bounds']['minLng'].toString())),
+            latitude: maybeParseDouble(radar['bounds']['minLat']),
+            longitude: maybeParseDouble(radar['bounds']['minLng'])),
         mapMax: WeatherRadarLocation(
-            latitude: double.parse(radar['bounds']['maxLat'].toString()),
-            longitude: double.parse(radar['bounds']['maxLng'].toString())),
+            latitude: maybeParseDouble(radar['bounds']['maxLat']),
+            longitude: maybeParseDouble(radar['bounds']['maxLng'])),
         location: WeatherRadarLocation(
-            latitude: double.parse(radar['lat'].toString()),
-            longitude: double.parse(radar['lng'].toString())),
+            latitude: maybeParseDouble(radar['lat']),
+            longitude: maybeParseDouble(radar['lng'])),
         overlays: radar
             .cast<String, List<dynamic>>()['overlays']
             .cast<Map<String, dynamic>>()
