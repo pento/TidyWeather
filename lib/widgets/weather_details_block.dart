@@ -35,30 +35,30 @@ class _WeatherDetailsBlockState extends State<WeatherDetailsBlock> {
           onLongPress: _toggleCard,
           onTap: _toggleCard,
           child: FlipCard(
-              key: _cardKey,
-              direction: FlipDirection.VERTICAL,
-              flipOnTouch: false,
-              front: Container(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 5, horizontal: 12),
-                child: Row(
-                  children: <Widget>[
-                    Column(
-                      children: <Widget>[
-                        Container(
-                          padding: const EdgeInsets.all(6),
-                          decoration: BoxDecoration(
-                            color: widget.iconColor,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Icon(
-                            widget.icon,
-                            color: Colors.white,
-                          ),
+            key: _cardKey,
+            direction: FlipDirection.VERTICAL,
+            flipOnTouch: false,
+            front: Container(
+              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 12),
+              child: Row(
+                children: <Widget>[
+                  Column(
+                    children: <Widget>[
+                      Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: widget.iconColor,
+                          borderRadius: BorderRadius.circular(20),
                         ),
-                      ],
-                    ),
-                    Container(
+                        child: Icon(
+                          widget.icon,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Flexible(
+                    child: Container(
                       padding: const EdgeInsets.only(left: 10),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -68,36 +68,39 @@ class _WeatherDetailsBlockState extends State<WeatherDetailsBlock> {
                         ],
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              back: Container(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 5, horizontal: 12),
-                child: Row(
-                  children: <Widget>[
-                    Column(
-                      children: <Widget>[
-                        Container(
-                          padding: const EdgeInsets.all(6),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Icon(
-                            widget.icon,
-                            color: widget.iconColor,
-                          ),
+            ),
+            back: Container(
+              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 12),
+              child: Row(
+                children: <Widget>[
+                  Column(
+                    children: <Widget>[
+                      Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
                         ),
-                      ],
-                    ),
-                    Container(
+                        child: Icon(
+                          widget.icon,
+                          color: widget.iconColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Flexible(
+                    child: Container(
                       padding: const EdgeInsets.only(left: 10),
                       child: widget.title,
                     ),
-                  ],
-                ),
-              )),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
       );
 

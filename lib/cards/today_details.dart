@@ -203,5 +203,5 @@ Color convertUVtoColor(double uv) {
     return Colors.red.shade800;
   }
 
-  return Colors.deepPurple;
+  return Colors.deepPurple.shade400;
 }
