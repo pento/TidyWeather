@@ -163,9 +163,11 @@ packages:
   flutter_map:
     dependency: "direct main"
     description:
-      name: flutter_map
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "."
+      ref: "try/fast-tile-replace"
+      resolved-ref: "0318ba8119275fe38af2c40bd87646faddc5cdcc"
+      url: "git://github.com/pento/flutter_map.git"
+    source: git
     version: "0.10.1+1"
   flutter_svg:
     dependency: "direct main"

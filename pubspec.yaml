@@ -12,7 +12,10 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_launcher_icons: ^0.8.1
-  flutter_map: ^0.10.1
+  flutter_map:
+    git:
+      url: git://github.com/pento/flutter_map.git
+      ref: try/fast-tile-replace
   flutter_svg: ^0.19.2+1
   geocoding: ^1.0.5
   geolocator: ^6.1.7

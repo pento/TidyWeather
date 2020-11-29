@@ -107,6 +107,7 @@ class _RadarCardState extends State<RadarCard> {
                         additionalOptions: <String, String>{
                           'accessToken': Config().item('mapbox_access_token'),
                         },
+                        fastReplace: true,
                       ),
                     ],
                   ),
