@@ -8,12 +8,16 @@ environment:
 
 dependencies:
   background_fetch: ^0.6.0
+  ffi: ^1.0.0
   flip_card: ^0.4.4
   flutter:
     sdk: flutter
   flutter_launcher_icons: ^0.8.1
-  flutter_map: ^0.10.1
-  flutter_svg: ^0.19.2+1
+  flutter_map:
+    git:
+      url: git://github.com/pento/flutter_map.git
+      ref: try/fast-tile-replace
+  flutter_svg: ^0.19.3
   geocoding: ^1.0.5
   geolocator: ^6.1.7
   gradient_app_bar:
