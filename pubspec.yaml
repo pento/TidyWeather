@@ -7,31 +7,31 @@ environment:
   sdk: ">=2.3.0"
 
 dependencies:
-  background_fetch: ^0.6.0
-  ffi: ^1.0.0
-  flip_card: ^0.4.4
+  background_fetch: 1.0.0-nullsafety.1
+  ffi: 1.0.0
+  flip_card: 0.4.4
   flutter:
     sdk: flutter
-  flutter_launcher_icons: ^0.8.1
+  flutter_launcher_icons: 0.9.0
   flutter_map:
     git:
       url: git://github.com/pento/flutter_map.git
       ref: try/fast-tile-replace
-  flutter_svg: ^0.19.3
-  geocoding: ^1.0.5
-  geolocator: ^6.1.7
+  flutter_svg: 0.21.0-nullsafety.0
+  geocoding: 2.0.0
+  geolocator: 7.0.1
   gradient_app_bar:
     git:
       url: git://github.com/TinyProgrammers/GradientAppBar.git
-  http: ^0.12.2
-  jiffy: ^3.0.1
-  latlong: ^0.6.1
-  material_design_icons_flutter: ^4.0.5755
-  pedantic: ^1.9.2
-  preferences: ^5.2.1
-  provider: ^4.3.2
-  tuple: ^1.0.3
-  url_launcher: ^5.7.10
+  http: 0.13.1
+  jiffy: 4.1.0
+  latlong: 0.6.1
+  material_design_icons_flutter: 5.0.5955-rc.1
+  pedantic: 1.11.0
+  preferences: 5.2.1
+  provider: 5.0.0
+  tuple: 1.0.2
+  url_launcher: 6.0.3
 
 flutter_icons:
   image_path: "assets/images/icon-512.png"

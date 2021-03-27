@@ -67,8 +67,9 @@ class WeatherModel extends ChangeNotifier {
 
   /// Load the data for the given location.
   Future<void> loadData(String town, String postcode, String uvStation) async {
-    final http.Response weatherResponse = await http.get(
+    final Uri url = Uri.parse(
         'https://api.tidyweather.com/api/weather?town=$town&postcode=$postcode&uvstation=$uvStation');
+    final http.Response weatherResponse = await http.get(url);
     final dynamic data = jsonDecode(weatherResponse.body);
     if (data is Map<String, dynamic>) {
       _weather = data;
