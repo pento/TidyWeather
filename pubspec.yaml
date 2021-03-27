@@ -20,9 +20,6 @@ dependencies:
   flutter_svg: 0.21.0-nullsafety.0
   geocoding: 2.0.0
   geolocator: 7.0.1
-  gradient_app_bar:
-    git:
-      url: git://github.com/TinyProgrammers/GradientAppBar.git
   http: 0.13.1
   jiffy: 4.1.0
   latlong: 0.6.1
