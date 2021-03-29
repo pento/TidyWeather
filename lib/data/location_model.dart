@@ -141,6 +141,12 @@ class LocationModel extends ChangeNotifier with WidgetsBindingObserver {
         _currentPosition = Position(
           longitude: _preferences.getDouble('_last_place_position_longitude'),
           latitude: _preferences.getDouble('_last_place_position_latitude'),
+          timestamp: DateTime.now(),
+          speed: 0,
+          heading: 0,
+          accuracy: 0,
+          altitude: 0,
+          speedAccuracy: 0,
         );
 
         return <Placemark>[

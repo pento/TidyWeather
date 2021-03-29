@@ -18,6 +18,7 @@ class WeatherModel extends ChangeNotifier {
   BuildContext _context;
   SharedPreferences _preferences;
   LocationModel _location;
+  bool _disposed = false;
 
   /// Construct a WeatherModel.
   WeatherModel(LocationModel location,
@@ -26,7 +27,6 @@ class WeatherModel extends ChangeNotifier {
     final String weatherCache = _preferences.getString('cached_weather_data');
     if (weatherCache != null) {
       final Map<String, dynamic> data =
-          // ignore: avoid_as
           jsonDecode(weatherCache) as Map<String, dynamic>;
 
       if (data.containsKey('location')) {
@@ -38,6 +38,19 @@ class WeatherModel extends ChangeNotifier {
     _location = location;
 
     loadData();
+  }
+
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
+  }
+
+  @override
+  void notifyListeners() {
+    if (!_disposed) {
+      super.notifyListeners();
+    }
   }
 
   /// Find the index of today in _weather[ 'forecasts' ].

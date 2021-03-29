@@ -16,7 +16,6 @@ class Config {
   Future<void> load(String configPath) async => rootBundle.loadStructuredData(
         configPath,
         (String jsonStr) async {
-          // ignore: avoid_as
           _config = json.decode(jsonStr) as Map<String, dynamic>;
         },
       );

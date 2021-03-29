@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
@@ -67,10 +68,6 @@ class _SettingsPageState extends State<SettingsPage> {
               highlightPermission = false;
               break;
           }
-
-          final TextStyle headingStyle = TextStyle(
-              color: Theme.of(context).accentColor,
-              fontWeight: FontWeight.bold);
 
           return Scaffold(
             appBar: AppBar(
@@ -149,15 +146,15 @@ class _SettingsPageState extends State<SettingsPage> {
 }
 
 class SettingsGroupTitle extends StatelessWidget {
-  final String title;
+  final String _title;
 
-  const SettingsGroupTitle(this.title);
+  const SettingsGroupTitle(this._title, {Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: EdgeInsets.only(left: 10, bottom: 0.0, top: 20.0),
+        padding: const EdgeInsets.only(left: 10, top: 20),
         child: Text(
-          title,
+          _title,
           style: TextStyle(
               color: Theme.of(context).accentColor,
               fontWeight: FontWeight.bold),

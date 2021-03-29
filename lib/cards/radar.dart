@@ -75,7 +75,7 @@ class _RadarCardState extends State<RadarCard> {
                       zoom: 8,
                       minZoom: 7,
                       maxZoom: 9,
-                      interactive: false,
+                      interactiveFlags: InteractiveFlag.none,
                     ),
                     layers: <LayerOptions>[
                       TileLayerOptions(
