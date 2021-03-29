@@ -25,8 +25,8 @@ class _SettingsPageState extends State<SettingsPage> {
         selector: (BuildContext context, PreferenceModel preferences,
                 LocationModel location) =>
             Tuple4<bool, String, LocationPermission, Color>(
-          preferences.seenPermissionExplanation(),
-          preferences.theme(),
+          preferences.seenPermissionExplanation,
+          preferences.theme,
           location.permissionStatus,
           Theme.of(context).iconTheme.color,
         ),

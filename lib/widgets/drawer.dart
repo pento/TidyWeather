@@ -12,7 +12,7 @@ Drawer buildDrawer(BuildContext context, String currentRoute) => Drawer(
       child: Selector2<PreferenceModel, LocationModel, bool>(
         selector: (BuildContext context, PreferenceModel preferences,
                 LocationModel location) =>
-            !preferences.seenPermissionExplanation() &&
+            !preferences.seenPermissionExplanation &&
             location.permissionStatus != LocationPermission.always,
         builder:
             (BuildContext context, bool showPermissionWarning, Widget child) =>

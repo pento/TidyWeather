@@ -72,7 +72,7 @@ class PreferenceModel extends ChangeNotifier with WidgetsBindingObserver {
     return _darkTheme;
   }
 
-  bool seenPermissionExplanation() {
+  bool get seenPermissionExplanation {
     final bool seen = _preferences.getBool('seen_permission_explanation');
     if (seen == null) {
       return false;
@@ -90,7 +90,7 @@ class PreferenceModel extends ChangeNotifier with WidgetsBindingObserver {
         .then((bool success) => notifyListeners());
   }
 
-  String theme() {
+  String get theme {
     final String theme = _preferences.getString('ui_theme');
 
     if (theme == null) {
