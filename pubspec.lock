@@ -109,10 +109,12 @@ packages:
   flip_card:
     dependency: "direct main"
     description:
-      name: flip_card
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.4.4"
+      path: "."
+      ref: HEAD
+      resolved-ref: d651c879f789ebfb17f163a6f857b7331a9eb5a2
+      url: "https://github.com/BrunoJurkovic/flip_card.git"
+    source: git
+    version: "0.5.0"
   flutter:
     dependency: "direct main"
     description: flutter

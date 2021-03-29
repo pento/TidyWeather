@@ -9,7 +9,9 @@ environment:
 dependencies:
   background_fetch: 1.0.0-nullsafety.1
   ffi: 1.0.0
-  flip_card: 0.4.4
+  flip_card:
+    git:
+      url: https://github.com/BrunoJurkovic/flip_card.git
   flutter:
     sdk: flutter
   flutter_launcher_icons: 0.9.0
