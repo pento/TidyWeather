@@ -12,7 +12,7 @@ Drawer buildDrawer(BuildContext context, String currentRoute) => Drawer(
       child: Selector2<PreferenceModel, LocationModel, bool>(
         selector: (BuildContext context, PreferenceModel preferences,
                 LocationModel location) =>
-            !preferences.seenPermissionExplanation(context) &&
+            !preferences.seenPermissionExplanation() &&
             location.permissionStatus != LocationPermission.always,
         builder:
             (BuildContext context, bool showPermissionWarning, Widget child) =>
@@ -40,7 +40,7 @@ Drawer buildDrawer(BuildContext context, String currentRoute) => Drawer(
               onTap: () async {
                 Navigator.pop(context);
                 await Navigator.pushNamed(context, SettingsPage.route);
-                PreferenceModel.sawPermissionExplanation(context);
+                PreferenceModel.sawPermissionExplanation();
               },
             ),
             const Divider(),

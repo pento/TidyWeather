@@ -72,7 +72,7 @@ class PreferenceModel extends ChangeNotifier with WidgetsBindingObserver {
     return _darkTheme;
   }
 
-  bool seenPermissionExplanation(BuildContext context) {
+  bool seenPermissionExplanation() {
     final bool seen = _preferences.getBool('seen_permission_explanation');
     if (seen == null) {
       return false;
@@ -80,17 +80,17 @@ class PreferenceModel extends ChangeNotifier with WidgetsBindingObserver {
     return seen;
   }
 
-  static void sawPermissionExplanation(BuildContext context) {
-    _self._sawPermissionExplanation(context);
+  static void sawPermissionExplanation() {
+    _self._sawPermissionExplanation();
   }
 
-  void _sawPermissionExplanation(BuildContext context) {
+  void _sawPermissionExplanation() {
     _preferences
         .setBool('seen_permission_explanation', true)
         .then((bool success) => notifyListeners());
   }
 
-  String theme(BuildContext context) {
+  String theme() {
     final String theme = _preferences.getString('ui_theme');
 
     if (theme == null) {
@@ -100,11 +100,11 @@ class PreferenceModel extends ChangeNotifier with WidgetsBindingObserver {
     return theme;
   }
 
-  static void updateTheme({String theme, BuildContext context}) {
-    _self._updateTheme(theme: theme, context: context);
+  static void updateTheme({String theme}) {
+    _self._updateTheme(theme: theme);
   }
 
-  void _updateTheme({String theme, BuildContext context}) {
+  void _updateTheme({String theme}) {
     _preferences
         .setString('ui_theme', theme)
         .then((bool success) => notifyListeners());

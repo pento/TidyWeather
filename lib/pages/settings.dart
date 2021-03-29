@@ -25,8 +25,8 @@ class _SettingsPageState extends State<SettingsPage> {
         selector: (BuildContext context, PreferenceModel preferences,
                 LocationModel location) =>
             Tuple4<bool, String, LocationPermission, Color>(
-          preferences.seenPermissionExplanation(context),
-          preferences.theme(context),
+          preferences.seenPermissionExplanation(),
+          preferences.theme(),
           location.permissionStatus,
           Theme.of(context).iconTheme.color,
         ),
@@ -85,8 +85,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   value: 'system',
                   groupValue: data.item2,
                   onChanged: (String value) {
-                    PreferenceModel.updateTheme(
-                        theme: 'system', context: context);
+                    PreferenceModel.updateTheme(theme: 'system');
                   },
                 ),
                 RadioListTile<String>(
@@ -94,7 +93,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   value: 'sun',
                   groupValue: data.item2,
                   onChanged: (String value) {
-                    PreferenceModel.updateTheme(theme: 'sun', context: context);
+                    PreferenceModel.updateTheme(theme: 'sun');
                   },
                 ),
                 Container(
