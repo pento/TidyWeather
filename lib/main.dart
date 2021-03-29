@@ -1,7 +1,7 @@
 import 'package:background_fetch/background_fetch.dart';
 import 'package:flutter/material.dart';
-import 'package:preferences/preference_service.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tuple/tuple.dart';
 
 import './data/config.dart';
@@ -17,18 +17,28 @@ import './pages/week.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await PrefService.init(prefix: 'pref_');
+  final SharedPreferences _preferences = await SharedPreferences.getInstance();
+
   await Config().load('config.json');
 
   runApp(MultiProvider(
-    providers: <ChangeNotifierProvider<dynamic>>[
-      ChangeNotifierProvider<LocationModel>(
-          create: (BuildContext context) =>
-              LocationModel(loadDataImmediately: false)),
-      ChangeNotifierProvider<WeatherModel>(
-          create: (BuildContext context) => WeatherModel(context: context)),
+    providers: <InheritedProvider<dynamic>>[
       ChangeNotifierProvider<PreferenceModel>(
-          create: (BuildContext context) => PreferenceModel()),
+        create: (BuildContext context) =>
+            PreferenceModel(preferences: _preferences),
+      ),
+      ChangeNotifierProvider<LocationModel>(
+        create: (BuildContext context) =>
+            LocationModel(preferences: _preferences),
+      ),
+      ChangeNotifierProxyProvider<LocationModel, WeatherModel>(
+          create: (BuildContext context) => WeatherModel(
+              Provider.of<LocationModel>(context, listen: false),
+              preferences: _preferences),
+          update: (BuildContext context, LocationModel location,
+                  WeatherModel weather) =>
+              WeatherModel(location,
+                  context: context, preferences: _preferences)),
     ],
     child: MyApp(),
   ));
@@ -83,13 +93,13 @@ class MyApp extends StatelessWidget {
 
 /// This function is used by the BackgroundFetch library, which allows it to
 /// check for weather updates even if the app has been killed by the OS.
-Future<void> backgroundFetchHeadlessTask(String taskId) async {
-  await PrefService.init(prefix: 'pref_');
+Future<void> backgroundFetchHeadlessTask(HeadlessTask task) async {
+  final LocationModel _location = LocationModel(background: true);
 
-  LocationModel(background: true);
-  WeatherModel();
-
-  await LocationModel.load().whenComplete(() {
-    BackgroundFetch.finish(taskId);
+  await LocationModel.load().then((void data) {
+    final WeatherModel _weather = WeatherModel(_location);
+    return _weather.loadData();
+  }).whenComplete(() {
+    BackgroundFetch.finish(task.taskId);
   });
 }

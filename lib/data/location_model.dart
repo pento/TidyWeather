@@ -5,15 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:pedantic/pedantic.dart';
-import 'package:preferences/preference_service.dart';
-
-import './weather_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LocationModel extends ChangeNotifier with WidgetsBindingObserver {
   bool _background;
   bool _requestingPermission = false;
+  bool _disposed = false;
+  Position _currentPosition;
   Placemark _place = Placemark();
   LocationPermission _permissionStatus;
+  SharedPreferences _preferences;
 
   static LocationModel _self;
 
@@ -22,15 +23,33 @@ class LocationModel extends ChangeNotifier with WidgetsBindingObserver {
   LocationPermission get permissionStatus => _permissionStatus;
 
   /// Constructor.
-  LocationModel({bool background = false, bool loadDataImmediately = true}) {
+  LocationModel(
+      {bool background = false,
+      bool loadDataImmediately = true,
+      SharedPreferences preferences}) {
     WidgetsBinding.instance.addObserver(this);
 
     _self = this;
 
     _background = background;
 
+    _preferences = preferences;
+
     if (loadDataImmediately) {
       loadData();
+    }
+  }
+
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
+  }
+
+  @override
+  void notifyListeners() {
+    if (!_disposed) {
+      super.notifyListeners();
     }
   }
 
@@ -109,28 +128,27 @@ class LocationModel extends ChangeNotifier with WidgetsBindingObserver {
       return;
     }
 
-    Position currentPosition;
-
     List<Placemark> place;
     try {
       place = await Geolocator.getCurrentPosition(
               desiredAccuracy: LocationAccuracy.high)
           .then((Position position) async {
-        currentPosition = position;
+        _currentPosition = position;
         developer.log('Location: ${position.latitude}, ${position.longitude}');
         return placemarkFromCoordinates(position.latitude, position.longitude);
       }).timeout(const Duration(seconds: 10), onTimeout: () {
         developer.log('Retrieving location timed out.');
-        currentPosition = Position(
-          longitude: PrefService.getDouble('_last_place_position_longitude'),
-          latitude: PrefService.getDouble('_last_place_position_latitude'),
+        _currentPosition = Position(
+          longitude: _preferences.getDouble('_last_place_position_longitude'),
+          latitude: _preferences.getDouble('_last_place_position_latitude'),
         );
 
         return <Placemark>[
           Placemark(
-            locality: PrefService.getString('_last_place_locality'),
-            postalCode: PrefService.getString('_last_place_postalCode'),
-            isoCountryCode: PrefService.getString('_last_place_isoCountryCode'),
+            locality: _preferences.getString('_last_place_locality'),
+            postalCode: _preferences.getString('_last_place_postalCode'),
+            isoCountryCode:
+                _preferences.getString('_last_place_isoCountryCode'),
           ),
         ];
       });
@@ -152,7 +170,7 @@ class LocationModel extends ChangeNotifier with WidgetsBindingObserver {
 
     if (place[0].isoCountryCode != 'AU') {
       _place = place[0];
-      storePlacemark(_place, currentPosition);
+      await storePlacemark(_place, _currentPosition);
       notifyListeners();
       return;
     }
@@ -162,22 +180,30 @@ class LocationModel extends ChangeNotifier with WidgetsBindingObserver {
       notifyListeners();
     }
 
-    storePlacemark(_place, currentPosition);
-
-    WeatherModel.load(_place.locality, _place.postalCode,
-        uvLocation(currentPosition.latitude, currentPosition.longitude));
+    await storePlacemark(_place, _currentPosition);
   }
 
-  void storePlacemark(Placemark place, Position position) {
-    PrefService.setString('_last_place_locality', place.locality);
-    PrefService.setString('_last_place_postalCode', place.postalCode);
-    PrefService.setString('_last_place_isoCountryCode', place.isoCountryCode);
+  String get town => _place.locality;
+  String get postCode => _place.postalCode;
+  String get uvStation =>
+      uvLocation(_currentPosition?.latitude, _currentPosition?.longitude);
 
-    PrefService.setDouble('_last_place_position_longitude', position.longitude);
-    PrefService.setDouble('_last_place_position_latitude', position.latitude);
+  Future<void> storePlacemark(Placemark place, Position position) async {
+    await _preferences.setString('_last_place_locality', place.locality);
+    await _preferences.setString('_last_place_postalCode', place.postalCode);
+    await _preferences.setString(
+        '_last_place_isoCountryCode', place.isoCountryCode);
+
+    await _preferences.setDouble(
+        '_last_place_position_longitude', position.longitude);
+    await _preferences.setDouble(
+        '_last_place_position_latitude', position.latitude);
   }
 
   String uvLocation(double latitude, double longitude) {
+    if (latitude == null || longitude == null) {
+      return '';
+    }
     // Source: https://api.willyweather.com.au/v2/{key}/search.json?query={location}&limit=1
     final Map<String, List<double>> locations = <String, List<double>>{
       'adl': <double>[-34.926, 138.6],

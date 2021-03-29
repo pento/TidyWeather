@@ -1,23 +1,29 @@
 import 'dart:convert';
+import 'dart:developer' as developer;
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:pedantic/pedantic.dart';
-import 'package:preferences/preference_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'location_model.dart';
 
 /// Contains the weather data model.
 class WeatherModel extends ChangeNotifier {
   Map<String, dynamic> _weather;
-  static WeatherModel _self;
   static const MethodChannel _platform =
       MethodChannel('net.pento.tidyweather/widget');
   BuildContext _context;
+  SharedPreferences _preferences;
+  LocationModel _location;
 
   /// Construct a WeatherModel.
-  WeatherModel({BuildContext context}) {
-    final String weatherCache = PrefService.getString('cached_weather_data');
+  WeatherModel(LocationModel location,
+      {BuildContext context, SharedPreferences preferences}) {
+    _preferences = preferences;
+    final String weatherCache = _preferences.getString('cached_weather_data');
     if (weatherCache != null) {
       final Map<String, dynamic> data =
           // ignore: avoid_as
@@ -28,8 +34,10 @@ class WeatherModel extends ChangeNotifier {
       }
     }
 
-    _self = this;
     _context = context;
+    _location = location;
+
+    loadData();
   }
 
   /// Find the index of today in _weather[ 'forecasts' ].
@@ -37,7 +45,7 @@ class WeatherModel extends ChangeNotifier {
   int todayIndex() {
     final DateTime now = DateTime.now();
 
-    if (_weather == null) {
+    if (_weather == null || _weather.containsKey('error')) {
       return -1;
     }
 
@@ -60,22 +68,26 @@ class WeatherModel extends ChangeNotifier {
   /// Get the forecast for the coming week.
   WeatherWeek get week => WeatherWeek.fromJson(_weather, todayIndex());
 
-  /// Provide a static method for loading the data for the given location.
-  static void load(String town, String postcode, String uvStation) {
-    _self.loadData(town, postcode, uvStation);
-  }
-
   /// Load the data for the given location.
-  Future<void> loadData(String town, String postcode, String uvStation) async {
+  Future<void> loadData() async {
+    if (_location.town == '' ||
+        _location.postCode == '' ||
+        _location.uvStation == '') {
+      return;
+    }
+
     final Uri url = Uri.parse(
-        'https://api.tidyweather.com/api/weather?town=$town&postcode=$postcode&uvstation=$uvStation');
+        'https://api.tidyweather.com/api/weather?town=${_location.town}&postcode=${_location.postCode}&uvstation=${_location.uvStation}');
     final http.Response weatherResponse = await http.get(url);
     final dynamic data = jsonDecode(weatherResponse.body);
     if (data is Map<String, dynamic>) {
+      if (data.containsKey('error')) {
+        developer.log('API error retrieving weather: ${data['error']}');
+      }
       _weather = data;
     }
 
-    PrefService.setString('cached_weather_data', weatherResponse.body);
+    await _preferences.setString('cached_weather_data', weatherResponse.body);
 
     if (_context != null && today.radar != null) {
       for (final WeatherRadarImage image in today.radar.overlays) {

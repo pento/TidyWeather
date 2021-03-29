@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
-import 'package:tidyweather/data/location_model.dart';
 
+import '../data/location_model.dart';
 import '../data/preference_model.dart';
 import '../pages/about.dart';
 import '../pages/settings.dart';
@@ -12,7 +12,7 @@ Drawer buildDrawer(BuildContext context, String currentRoute) => Drawer(
       child: Selector2<PreferenceModel, LocationModel, bool>(
         selector: (BuildContext context, PreferenceModel preferences,
                 LocationModel location) =>
-            !preferences.seenPermissionExplanation &&
+            !preferences.seenPermissionExplanation(context) &&
             location.permissionStatus != LocationPermission.always,
         builder:
             (BuildContext context, bool showPermissionWarning, Widget child) =>
@@ -40,7 +40,7 @@ Drawer buildDrawer(BuildContext context, String currentRoute) => Drawer(
               onTap: () async {
                 Navigator.pop(context);
                 await Navigator.pushNamed(context, SettingsPage.route);
-                PreferenceModel.sawPermissionExplanation();
+                PreferenceModel.sawPermissionExplanation(context);
               },
             ),
             const Divider(),
