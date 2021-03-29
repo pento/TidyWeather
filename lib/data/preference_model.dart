@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:preferences/preference_service.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import './weather_model.dart';
 
 class PreferenceModel extends ChangeNotifier with WidgetsBindingObserver {
   static PreferenceModel _self;
-  String _theme = 'system';
-  bool _seenPermissionExplanation = false;
 
   final ThemeData _lightTheme = ThemeData(
     brightness: Brightness.light,
@@ -20,12 +18,12 @@ class PreferenceModel extends ChangeNotifier with WidgetsBindingObserver {
     primaryColorLight: Colors.grey.shade400,
   );
 
+  SharedPreferences _preferences;
+
   /// Constructor.
-  PreferenceModel() {
-    _theme = PrefService.getString('ui_theme');
-    _seenPermissionExplanation =
-        PrefService.getBool('seen_permission_explanation');
+  PreferenceModel({SharedPreferences preferences}) {
     _self = this;
+    _preferences = preferences;
     WidgetsBinding.instance.addObserver(this);
   }
 
@@ -35,6 +33,7 @@ class PreferenceModel extends ChangeNotifier with WidgetsBindingObserver {
   }
 
   ThemeData lightTheme(BuildContext context) {
+    final String _theme = _preferences.getString('ui_theme');
     if (_theme == 'sun') {
       final WeatherForecast forecast =
           Provider.of<WeatherModel>(context, listen: false).today.forecast;
@@ -54,6 +53,7 @@ class PreferenceModel extends ChangeNotifier with WidgetsBindingObserver {
   }
 
   ThemeData darkTheme(BuildContext context) {
+    final String _theme = _preferences.getString('ui_theme');
     if (_theme == 'sun') {
       final WeatherForecast forecast =
           Provider.of<WeatherModel>(context, listen: false).today.forecast;
@@ -72,27 +72,41 @@ class PreferenceModel extends ChangeNotifier with WidgetsBindingObserver {
     return _darkTheme;
   }
 
-  bool get seenPermissionExplanation => _seenPermissionExplanation ?? false;
+  bool get seenPermissionExplanation {
+    final bool seen = _preferences.getBool('seen_permission_explanation');
+    if (seen == null) {
+      return false;
+    }
+    return seen;
+  }
 
   static void sawPermissionExplanation() {
     _self._sawPermissionExplanation();
   }
 
   void _sawPermissionExplanation() {
-    PrefService.setBool('seen_permission_explanation', true);
-    _seenPermissionExplanation = true;
-    notifyListeners();
+    _preferences
+        .setBool('seen_permission_explanation', true)
+        .then((bool success) => notifyListeners());
   }
 
-  String get theme => _theme;
+  String get theme {
+    final String theme = _preferences.getString('ui_theme');
 
-  static void updateTheme(String theme) {
-    _self._updateTheme(theme);
+    if (theme == null) {
+      return 'system';
+    }
+
+    return theme;
   }
 
-  void _updateTheme(String theme) {
-    _theme = theme;
+  static void updateTheme({String theme}) {
+    _self._updateTheme(theme: theme);
+  }
 
-    notifyListeners();
+  void _updateTheme({String theme}) {
+    _preferences
+        .setString('ui_theme', theme)
+        .then((bool success) => notifyListeners());
   }
 }

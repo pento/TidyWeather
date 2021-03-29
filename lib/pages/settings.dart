@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:preferences/preferences.dart';
 import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
 
@@ -22,20 +21,22 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) => Selector2<PreferenceModel,
-          LocationModel, Tuple3<bool, LocationPermission, Color>>(
+          LocationModel, Tuple4<bool, String, LocationPermission, Color>>(
         selector: (BuildContext context, PreferenceModel preferences,
                 LocationModel location) =>
-            Tuple3<bool, LocationPermission, Color>(
+            Tuple4<bool, String, LocationPermission, Color>(
           preferences.seenPermissionExplanation,
+          preferences.theme,
           location.permissionStatus,
           Theme.of(context).iconTheme.color,
         ),
         builder: (BuildContext context,
-            Tuple3<bool, LocationPermission, Color> data, Widget child) {
+            Tuple4<bool, String, LocationPermission, Color> data,
+            Widget child) {
           Container permissionMessage;
           Text permissionButton;
           bool highlightPermission = !data.item1;
-          switch (data.item2) {
+          switch (data.item3) {
             case LocationPermission.denied:
             case LocationPermission.deniedForever:
               permissionMessage = Container(
@@ -66,82 +67,100 @@ class _SettingsPageState extends State<SettingsPage> {
               highlightPermission = false;
               break;
           }
+
+          final TextStyle headingStyle = TextStyle(
+              color: Theme.of(context).accentColor,
+              fontWeight: FontWeight.bold);
+
           return Scaffold(
             appBar: AppBar(
               title: const Text('Settings'),
             ),
-            body: PreferencePage(<Widget>[
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  PreferenceTitle('Theme'),
-                  RadioPreference<String>(
-                    'System theme',
-                    'system',
-                    'ui_theme',
-                    isDefault: true,
-                    onSelect: () {
-                      PreferenceModel.updateTheme('system');
-                    },
-                  ),
-                  RadioPreference<String>(
-                    'Dark theme after sunset',
-                    'sun',
-                    'ui_theme',
-                    onSelect: () {
-                      PreferenceModel.updateTheme('sun');
-                    },
-                  ),
-                  Container(
-                    color: highlightPermission
-                        ? Theme.of(context).highlightColor
-                        : null,
-                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Row(
-                          children: <Widget>[
-                            if (highlightPermission)
-                              Padding(
-                                padding:
-                                    const EdgeInsets.only(left: 10, top: 20),
-                                child: Icon(
-                                  Icons.warning,
-                                  color: data.item3,
-                                  size: Theme.of(context)
-                                      .textTheme
-                                      .bodyText1
-                                      .fontSize,
-                                ),
+            body: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                const SettingsGroupTitle('Theme'),
+                RadioListTile<String>(
+                  title: const Text('System theme'),
+                  value: 'system',
+                  groupValue: data.item2,
+                  onChanged: (String value) {
+                    PreferenceModel.updateTheme(theme: 'system');
+                  },
+                ),
+                RadioListTile<String>(
+                  title: const Text('Dark theme after sunset'),
+                  value: 'sun',
+                  groupValue: data.item2,
+                  onChanged: (String value) {
+                    PreferenceModel.updateTheme(theme: 'sun');
+                  },
+                ),
+                Container(
+                  color: highlightPermission
+                      ? Theme.of(context).highlightColor
+                      : null,
+                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Row(
+                        children: <Widget>[
+                          if (highlightPermission)
+                            Padding(
+                              padding: const EdgeInsets.only(left: 10, top: 20),
+                              child: Icon(
+                                Icons.warning,
+                                color: data.item4,
+                                size: Theme.of(context)
+                                    .textTheme
+                                    .bodyText1
+                                    .fontSize,
                               ),
-                            PreferenceTitle('Permissions'),
+                            ),
+                          const SettingsGroupTitle('Permissions'),
+                        ],
+                      ),
+                      if (permissionMessage != null) permissionMessage,
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: <Widget>[
+                            ElevatedButton(
+                              onPressed: () async {
+                                await LocationModel.requestPermission(
+                                  forceOpen: true,
+                                );
+                              },
+                              child: permissionButton,
+                            ),
                           ],
                         ),
-                        if (permissionMessage != null) permissionMessage,
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: <Widget>[
-                              ElevatedButton(
-                                onPressed: () async {
-                                  await LocationModel.requestPermission(
-                                    forceOpen: true,
-                                  );
-                                },
-                                child: permissionButton,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ]),
+                ),
+              ],
+            ),
           );
         },
+      );
+}
+
+class SettingsGroupTitle extends StatelessWidget {
+  final String title;
+
+  const SettingsGroupTitle(this.title);
+
+  @override
+  Widget build(BuildContext context) => Padding(
+        padding: EdgeInsets.only(left: 10, bottom: 0.0, top: 20.0),
+        child: Text(
+          title,
+          style: TextStyle(
+              color: Theme.of(context).accentColor,
+              fontWeight: FontWeight.bold),
+        ),
       );
 }

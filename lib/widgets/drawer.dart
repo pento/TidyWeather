@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
-import 'package:tidyweather/data/location_model.dart';
 
+import '../data/location_model.dart';
 import '../data/preference_model.dart';
 import '../pages/about.dart';
 import '../pages/settings.dart';

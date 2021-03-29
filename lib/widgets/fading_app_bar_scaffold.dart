@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:gradient_app_bar/gradient_app_bar.dart';
 
 import '../pages/home.dart';
 import '../widgets/drawer.dart';
@@ -66,9 +65,13 @@ class FadingAppBarScaffoldState extends State<FadingAppBarScaffold> {
         body: widget.body,
         drawer: buildDrawer(context, HomePage.route),
         extendBodyBehindAppBar: true,
-        appBar: GradientAppBar(
+        appBar: AppBar(
           title: Text(widget.title),
-          gradient: weatherGradient(context, widget.weatherCode, _opacity),
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              gradient: weatherGradient(context, widget.weatherCode, _opacity),
+            ),
+          ),
           elevation: 0,
         ),
       );
