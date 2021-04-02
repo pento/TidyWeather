@@ -35,7 +35,7 @@ packages:
       name: background_fetch
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.0-nullsafety.1"
+    version: "1.0.0-nullsafety.2"
   boolean_selector:
     dependency: transitive
     description:
@@ -84,7 +84,7 @@ packages:
       name: crypto
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.0"
+    version: "3.0.1"
   fake_async:
     dependency: transitive
     description:
@@ -109,11 +109,9 @@ packages:
   flip_card:
     dependency: "direct main"
     description:
-      path: "."
-      ref: HEAD
-      resolved-ref: d651c879f789ebfb17f163a6f857b7331a9eb5a2
-      url: "https://github.com/BrunoJurkovic/flip_card.git"
-    source: git
+      name: flip_card
+      url: "https://pub.dartlang.org"
+    source: hosted
     version: "0.5.0"
   flutter:
     dependency: "direct main"
@@ -194,7 +192,7 @@ packages:
       name: geolocator_web
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.2"
+    version: "2.0.3"
   http:
     dependency: "direct main"
     description:
