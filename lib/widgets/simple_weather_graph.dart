@@ -448,12 +448,12 @@ class ChartPainter extends CustomPainter {
       if (rainfallData.dateTime
               .compareTo(DateTime.parse(entries[0]['dateTime'].toString())) <
           0) {
-        return;
+        continue;
       }
 
       if (rainfallData.probability == 0) {
         entry++;
-        return;
+        continue;
       }
 
       final ui.Paint bubbleStyle = Paint()
