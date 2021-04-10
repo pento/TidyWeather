@@ -17,7 +17,7 @@ dependencies:
     git:
       url: git://github.com/pento/flutter_map.git
       ref: try/fast-tile-replace
-  flutter_svg: 0.21.0-nullsafety.0
+  flutter_svg: 0.21.0+1
   geocoding: 2.0.0
   geolocator: 7.0.1
   http: 0.13.1
